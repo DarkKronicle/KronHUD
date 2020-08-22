@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "kronhud",
+  "version": "${version}",
+  "name": "KronHUD",
+  "description": "Add new features into the Minecraft HUD",
+  "authors": [
+    "DarkKronicle"
+  ],
+  "entrypoints": {
+    "client": [
+      "io.github.darkkronicle.kronhud.KronHUD"
+    ]
+  },
+  "license": "CC0-1.0",
+  "icon": "assets/KronHUD/icon.png",
+  "environment": "client",
+  "mixins": [
+    "kronhud.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.9.0",
+    "fabric": "*",
+    "minecraft": "1.16.x"
+  }
+}

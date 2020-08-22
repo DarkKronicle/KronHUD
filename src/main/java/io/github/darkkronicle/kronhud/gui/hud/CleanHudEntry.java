@@ -1,0 +1,74 @@
+package io.github.darkkronicle.kronhud.gui.hud;
+
+import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
+import io.github.darkkronicle.polish.util.Colors;
+import io.github.darkkronicle.polish.util.DrawPosition;
+import io.github.darkkronicle.polish.util.SimpleColor;
+import net.minecraft.client.util.math.MatrixStack;
+
+public abstract class CleanHudEntry extends AbstractHudEntry {
+
+    public CleanHudEntry() {
+      //  super(x, y, 47, 13, scale);
+        super();
+    }
+
+    @Override
+    public void render(MatrixStack matrices) {
+        matrices.push();
+        matrices.scale(getS().scale, getS().scale, 1);
+        DrawPosition pos = getScaledPos();
+        rect(matrices, pos.getX(), pos.getY(), getS().width, getS().height, getStorage().backgroundColor.color());
+        drawCenteredString(matrices, client.textRenderer, getValue(), pos.getX() + ( Math.round(getStorage().width) / 2), pos.getY() + (Math.round((float) getStorage().height / 2)) - 4, getStorage().textColor.color());
+        matrices.pop();
+    }
+
+    @Override
+    public void renderPlaceholder(MatrixStack matrices) {
+        matrices.push();
+        matrices.scale(getS().scale, getS().scale, 1);
+        DrawPosition pos = getScaledPos();
+        if (hovered) {
+            rect(matrices, pos.getX(), pos.getY(), getS().width, getS().height, Colors.WHITE.color().withAlpha(150).color());
+        } else {
+            rect(matrices, pos.getX(), pos.getY(), getS().width, getS().height, Colors.WHITE.color().withAlpha(50).color());
+        }
+        outlineRect(matrices, pos.getX(), pos.getY(), getS().width, getS().height, Colors.BLACK.color().color());
+        drawCenteredString(matrices, client.textRenderer, getPlaceholder(), pos.getX() + ( Math.round(getStorage().width) / 2), pos.getY() + (Math.round((float) getStorage().height / 2)) - 4, getStorage().textColor.color());
+        matrices.pop();
+        hovered = false;
+    }
+
+    @Override
+    public boolean moveable() {
+        return true;
+    }
+
+    public abstract String getValue();
+
+    public abstract String getPlaceholder();
+
+    @Override
+    public Storage getStorage() {
+        // Need to change the datatype so the compiler doesn't get mad.
+        return getS();
+    }
+
+    public abstract Storage getS();
+
+    public static class Storage extends AbstractStorage {
+        SimpleColor textColor;
+        SimpleColor backgroundColor;
+
+        public Storage() {
+            x = 1F;
+            y = 0F;
+            width = 47;
+            height = 13;
+            scale = 1;
+            textColor = new SimpleColor(255, 255, 255, 255);
+            backgroundColor  = new SimpleColor(0, 0, 0, 100);
+        }
+    }
+
+}

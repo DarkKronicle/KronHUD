@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "io.github.darkkronicle.kronhud.mixins",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  ],
+  "client": [
+    "MixinInGameHud",
+    "MixinMinecraftClient",
+    "MixinMouse"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
