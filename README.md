@@ -2,7 +2,7 @@
 
 A mod to add clean and useful HUD widgets.
 
-***This mod is currently in early beta, things may not look/work correctly***
+***This mod is currently in early beta, things may not look/work correctly.***
 
 ## Widgets
 
@@ -13,9 +13,26 @@ Currenty KronHUD has:
 - Crosshairs
 - Ping
 - FPS
-- Cps
+- CPS
 - Potions
 - Arrows
+
+All modules can be moved around freely, and have snapable movement so you can get everything in line!
+
+Colors are customizable too!
+
+More modules are planned to be added. Make sure you add a feature request if you have any ideas! 
+
+## Images
+
+![keystrokes](images/keystrokes.png)
+![potions](images/potions.png)
+![clean](images/small.png)
+![armor](images/armor.png)
+![itemupdate](images/items.png)
+![arrow](images/arrow.png)
+![snap](images/snapping.png)
+![full](images/full.png)
 
 ## To compile
 
