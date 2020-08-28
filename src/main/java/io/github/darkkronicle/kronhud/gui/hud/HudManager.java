@@ -27,7 +27,7 @@ public class HudManager {
         ClientTickEvents.END_CLIENT_TICK.register(minecraftClient -> {
             for (AbstractHudEntry entry : getEntries()) {
                 placeholder = client.currentScreen instanceof SetScreen;
-                if (entry.tickable()) {
+                if (entry.tickable() && entry.isEnabled()) {
                     entry.tick();
                 }
             }

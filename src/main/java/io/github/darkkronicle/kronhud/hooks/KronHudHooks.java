@@ -20,4 +20,16 @@ public class KronHudHooks {
             listener.onMouseButton(window, button, action, mods);
         }
     }));
+
+    public static final Event<KeyBindingCallback.ChangeBind> KEYBIND_CHANGE = EventFactory.createArrayBacked(KeyBindingCallback.ChangeBind.class, listeners -> ((key) -> {
+        for (KeyBindingCallback.ChangeBind listener : listeners) {
+            listener.setBoundKey(key);
+        }
+    }));
+
+    public static final Event<KeyBindingCallback.OnPress> KEYBIND_PRESS = EventFactory.createArrayBacked(KeyBindingCallback.OnPress.class, listeners -> ((key) -> {
+        for (KeyBindingCallback.OnPress listener : listeners) {
+            listener.onPress(key);
+        }
+    }));
 }

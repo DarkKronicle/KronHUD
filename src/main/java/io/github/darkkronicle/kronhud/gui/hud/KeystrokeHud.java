@@ -2,6 +2,7 @@ package io.github.darkkronicle.kronhud.gui.hud;
 
 import io.github.darkkronicle.kronhud.KronHUD;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
+import io.github.darkkronicle.kronhud.hooks.KronHudHooks;
 import io.github.darkkronicle.polish.api.EntryBuilder;
 import io.github.darkkronicle.polish.gui.complexwidgets.EntryButtonList;
 import io.github.darkkronicle.polish.gui.screens.BasicConfigScreen;
@@ -14,13 +15,16 @@ import io.github.darkkronicle.polish.util.SimpleRectangle;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class KeystrokeHud extends AbstractHudEntry {
     public static final Identifier ID = new Identifier("kronhud", "keystrokehud");
@@ -32,30 +36,44 @@ public class KeystrokeHud extends AbstractHudEntry {
         super();
         //super(x, y, 54, 61, scale);
         this.client = MinecraftClient.getInstance();
+        KronHudHooks.KEYBIND_CHANGE.register(key -> setKeystrokes());
 
     }
 
     public void setKeystrokes() {
         keystrokes = new ArrayList<>();
         DrawPosition scaledPos = getScaledPos();
-        // W
-        keystrokes.add(createFromString(new SimpleRectangle(18, 0, 17, 17), scaledPos, client.options.keyForward, "W"));
-        // A
-        keystrokes.add(createFromString(new SimpleRectangle(0, 18, 17, 17), scaledPos, client.options.keyLeft, "A"));
-        // S
-        keystrokes.add(createFromString(new SimpleRectangle(18, 18, 17, 17), scaledPos, client.options.keyBack, "S"));
-        // D
-        keystrokes.add(createFromString(new SimpleRectangle(36, 18, 17, 17), scaledPos, client.options.keyRight, "D"));
         // LMB
-        keystrokes.add(createFromString(new SimpleRectangle(0, 36, 26, 17), scaledPos, client.options.keyAttack, "LMB"));
+        keystrokes.add(createFromKey(new SimpleRectangle(0, 36, 26, 17), scaledPos, client.options.keyAttack));
         // RMB
-        keystrokes.add(createFromString(new SimpleRectangle(27, 36, 26, 17), scaledPos, client.options.keyUse, "RMB"));
+        keystrokes.add(createFromKey(new SimpleRectangle(27, 36, 26, 17), scaledPos, client.options.keyUse));
+        // W
+        keystrokes.add(createFromKey(new SimpleRectangle(18, 0, 17, 17), scaledPos, client.options.keyForward));
+        // A
+        keystrokes.add(createFromKey(new SimpleRectangle(0, 18, 17, 17), scaledPos, client.options.keyLeft));
+        // S
+        keystrokes.add(createFromKey(new SimpleRectangle(18, 18, 17, 17), scaledPos, client.options.keyBack));
+        // D
+        keystrokes.add(createFromKey(new SimpleRectangle(36, 18, 17, 17), scaledPos, client.options.keyRight));
+
         // Space
         keystrokes.add(new Keystroke(new SimpleRectangle(0, 54, 53, 7), scaledPos, client.options.keyJump, (stroke, matrices) -> {
             SimpleRectangle bounds = stroke.bounds;
             rect(matrices, bounds.x() + stroke.offset.getX()+ 2, bounds.y() + stroke.offset.getY() + 2, bounds.width() - 4, 1, stroke.getColor(true).withAlpha(150).color());
         }, getStorage().unselected, getStorage().selected));
+        KeyBinding.unpressAll();
+        KeyBinding.updatePressedStates();
+    }
 
+    public static Optional<String> getMouseKeyBindName(KeyBinding keyBinding) {
+        if (keyBinding.getBoundKeyTranslationKey().equalsIgnoreCase(InputUtil.Type.MOUSE.createFromCode(GLFW.GLFW_MOUSE_BUTTON_1).getTranslationKey())) {
+            return Optional.of("LMB");
+        } else if (keyBinding.getBoundKeyTranslationKey().equalsIgnoreCase(InputUtil.Type.MOUSE.createFromCode(GLFW.GLFW_MOUSE_BUTTON_2).getTranslationKey())) {
+            return Optional.of("RMB");
+        } else if (keyBinding.getBoundKeyTranslationKey().equalsIgnoreCase(InputUtil.Type.MOUSE.createFromCode(GLFW.GLFW_MOUSE_BUTTON_3).getTranslationKey())) {
+            return Optional.of("MMB");
+        }
+        return Optional.empty();
     }
 
 
@@ -100,6 +118,14 @@ public class KeystrokeHud extends AbstractHudEntry {
         renderHud(matrices);
         hovered = false;
         matrices.pop();
+    }
+
+    public Keystroke createFromKey(SimpleRectangle bounds, DrawPosition offset, KeyBinding key) {
+        String name = getMouseKeyBindName(key).orElse(key.getBoundKeyLocalizedText().asString().toUpperCase());
+        if (name.length() > 4) {
+            name = name.substring(0, 2);
+        }
+        return createFromString(bounds, offset, key, name);
     }
 
     public Keystroke createFromString(SimpleRectangle bounds, DrawPosition offset, KeyBinding key, String word) {

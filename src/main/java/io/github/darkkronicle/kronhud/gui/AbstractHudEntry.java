@@ -70,12 +70,12 @@ public abstract class AbstractHudEntry extends DrawUtil {
     }
 
     public void setX(int x) {
-        getStorage().x = intToFloat(x, client.getWindow().getScaledWidth(), getStorage().width);
+        getStorage().x = intToFloat(x, client.getWindow().getScaledWidth(), Math.round(getStorage().width * getStorage().scale));
 
     }
 
     public void setY(int y) {
-        getStorage().y = intToFloat(y, client.getWindow().getScaledHeight(), getStorage().height);
+        getStorage().y = intToFloat(y, client.getWindow().getScaledHeight(), Math.round(getStorage().height * getStorage().scale));
     }
 
     public static int floatToInt(float percent, int max, int offset) {
@@ -87,11 +87,11 @@ public abstract class AbstractHudEntry extends DrawUtil {
     }
 
     public int getX() {
-        return floatToInt(getStorage().x, client.getWindow().getScaledWidth(), getStorage().width);
+        return floatToInt(getStorage().x, client.getWindow().getScaledWidth(), Math.round(getStorage().width * getStorage().scale));
     }
 
     public int getY() {
-        return floatToInt(getStorage().y, client.getWindow().getScaledHeight(), getStorage().height);
+        return floatToInt(getStorage().y, client.getWindow().getScaledHeight(), Math.round(getStorage().height * getStorage().scale));
     }
 
     public SimpleRectangle getBounds() {

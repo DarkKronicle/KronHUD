@@ -5,6 +5,7 @@ import io.github.darkkronicle.kronhud.config.ConfigStorage;
 import io.github.darkkronicle.kronhud.gui.hud.ArmorHud;
 import io.github.darkkronicle.kronhud.gui.hud.ArrowHud;
 import io.github.darkkronicle.kronhud.gui.hud.CPSHud;
+import io.github.darkkronicle.kronhud.gui.hud.CoordsHud;
 import io.github.darkkronicle.kronhud.gui.hud.CrossHairHud;
 import io.github.darkkronicle.kronhud.gui.hud.FPSHud;
 import io.github.darkkronicle.kronhud.gui.hud.HudManager;
@@ -65,6 +66,7 @@ public class KronHUD implements ClientModInitializer {
         hudManager.add(new KeystrokeHud());
         hudManager.add(new PingHud());
         hudManager.add(new PotionsHud());
+        hudManager.add(new CoordsHud());
         HudRenderCallback.EVENT.register((matrixStack, v) -> hudManager.render(matrixStack));
         setupComplete = true;
     }

@@ -125,6 +125,7 @@ public class CrossHairHud extends AbstractHudEntry {
             }
         };
     }
+
     @Override
     public String getName() {
         return "CrossHairHud";

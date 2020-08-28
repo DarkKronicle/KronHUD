@@ -22,7 +22,14 @@ public class CPSHud extends CleanHudEntry {
         super();
         clicks = new ArrayList<>();
         KronHudHooks.MOUSE_INPUT.register((window, button, action, mods) -> {
-            clicks.add(Util.getMeasuringTimeMs());
+            if (!getS().clicksCPS) {
+                clicks.add(Util.getMeasuringTimeMs());
+            }
+        });
+        KronHudHooks.KEYBIND_PRESS.register((key) -> {
+            if (getS().clicksCPS && (key.equals(client.options.keyAttack) || key.equals(client.options.keyUse))) {
+                clicks.add(Util.getMeasuringTimeMs());
+            }
         });
     }
 
@@ -52,7 +59,7 @@ public class CPSHud extends CleanHudEntry {
     }
 
     @Override
-    public Storage getS() {
+    public CPSStorage getS() {
         return KronHUD.storage.cpsHudStorage;
     }
 
@@ -69,6 +76,7 @@ public class CPSHud extends CleanHudEntry {
         list.addEntry(builder.startFloatSliderEntry(new LiteralText("Scale"), getStorage().scale, 0.2F, 1.5F).setWidth(80).setSavable(val -> getStorage().scale = val).build(list));
         list.addEntry(builder.startColorButtonEntry(new LiteralText("Background Color"), getStorage().backgroundColor).setSavable(val -> getStorage().backgroundColor = val).build(list));
         list.addEntry(builder.startColorButtonEntry(new LiteralText("Text Color"), getStorage().textColor).setSavable(val -> getStorage().textColor = val).build(list));
+        list.addEntry(builder.startToggleEntry(new LiteralText("CPS based off of keybindings"), getS().clicksCPS).setSavable(val -> getS().clicksCPS = val).build(list));
         return new BasicConfigScreen(new LiteralText("CPSHud"), list) {
             @Override
             public void onClose() {
@@ -76,6 +84,16 @@ public class CPSHud extends CleanHudEntry {
                 KronHUD.storageHandler.saveDefaultHandling();
             }
         };
+    }
+
+    public static class CPSStorage extends Storage {
+        public boolean clicksCPS;
+
+        public CPSStorage() {
+            super();
+            clicksCPS = false;
+        }
+
     }
 
     @Override

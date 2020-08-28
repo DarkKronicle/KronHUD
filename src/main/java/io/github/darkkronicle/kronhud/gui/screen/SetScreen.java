@@ -92,6 +92,9 @@ public class SetScreen extends Screen {
                     current.setY(snapY);
                 }
             }
+            if (current.tickable()) {
+                current.tick();
+            }
             return true;
         }
         manager.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
