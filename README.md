@@ -16,6 +16,7 @@ Currenty KronHUD has:
 - CPS
 - Potions
 - Arrows
+- Coordinates
 
 All modules can be moved around freely, and have snapable movement so you can get everything in line!
 
@@ -31,6 +32,7 @@ More modules are planned to be added. Make sure you add a feature request if you
 ![armor](images/armor.png)
 ![itemupdate](images/items.png)
 ![arrow](images/arrow.png)
+![coords](images/coords.png)
 ![snap](images/snapping.png)
 ![full](images/full.png)
 
