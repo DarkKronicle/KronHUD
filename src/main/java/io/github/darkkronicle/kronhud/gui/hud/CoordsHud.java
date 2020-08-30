@@ -19,12 +19,20 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 public class CoordsHud extends AbstractHudEntry {
+
+    public CoordsHud() {
+        super(79, 31);
+    }
+
     @Override
     public void render(MatrixStack matrices) {
+        if (width <= 70) {
+            width = 79;
+        }
         matrices.push();
         matrices.scale(getStorage().scale, getStorage().scale, 1);
         DrawPosition pos = getScaledPos();
-        rect(matrices, pos.getX(), pos.getY(), getStorage().width, getStorage().height, getStorage().backgroundColor.color());
+        rect(matrices, pos.getX(), pos.getY(), width, height, getStorage().backgroundColor.color());
         StringBuilder format = new StringBuilder("#");
         if (getStorage().decimalNum > 0) {
             format.append(".");
@@ -38,7 +46,8 @@ public class CoordsHud extends AbstractHudEntry {
         double y = client.player.getY();
         double z = client.player.getZ();
         double yaw = client.player.getYaw(0) + 180;
-        String direction = getWordedDirection(yaw);
+        int dir = getDirection(yaw);
+        String direction = getWordedDirection(dir);
         TextRenderer textRenderer = client.textRenderer;
         textRenderer.drawWithShadow(matrices, "X", pos.getX() + 1, pos.getY() + 2, getStorage().firstTextColor.color());
         textRenderer.drawWithShadow(matrices, String.valueOf(df.format(x)), pos.getX() + 11, pos.getY() + 2, getStorage().secondTextColor.color());
@@ -47,7 +56,8 @@ public class CoordsHud extends AbstractHudEntry {
         textRenderer.drawWithShadow(matrices, "Z", pos.getX() + 1, pos.getY() + 22, getStorage().firstTextColor.color());
         textRenderer.drawWithShadow(matrices, String.valueOf(df.format(z)), pos.getX() + 11, pos.getY() + 22, getStorage().secondTextColor.color());
         textRenderer.drawWithShadow(matrices, direction, pos.getX() + 60, pos.getY() + 12, getStorage().firstTextColor.color());
-
+        textRenderer.drawWithShadow(matrices, getXDir(dir), pos.getX() + 60, pos.getY() + 2, getStorage().secondTextColor.color());
+        textRenderer.drawWithShadow(matrices, getZDir(dir), pos.getX() + 60, pos.getY() + 22, getStorage().secondTextColor.color());
         matrices.pop();
     }
 
@@ -57,11 +67,11 @@ public class CoordsHud extends AbstractHudEntry {
         matrices.scale(getStorage().scale, getStorage().scale, 1);
         DrawPosition pos = getScaledPos();
         if (hovered) {
-            DrawUtil.rect(matrices, pos.getX(), pos.getY(), getStorage().width, getStorage().height, Colors.WHITE.color().withAlpha(150).color());
+            DrawUtil.rect(matrices, pos.getX(), pos.getY(), width, height, Colors.WHITE.color().withAlpha(150).color());
         } else {
-            DrawUtil.rect(matrices, pos.getX(), pos.getY(), getStorage().width, getStorage().height, Colors.WHITE.color().withAlpha(50).color());
+            DrawUtil.rect(matrices, pos.getX(), pos.getY(), width, height, Colors.WHITE.color().withAlpha(50).color());
         }
-        DrawUtil.outlineRect(matrices, pos.getX(), pos.getY(), getStorage().width, getStorage().height, Colors.BLACK.color().color());
+        DrawUtil.outlineRect(matrices, pos.getX(), pos.getY(), width, height, Colors.BLACK.color().color());
         StringBuilder format = new StringBuilder("#");
         if (getStorage().decimalNum > 0) {
             format.append(".");
@@ -76,7 +86,8 @@ public class CoordsHud extends AbstractHudEntry {
         double y = 180.8981;
         double z = -5098.32698;
         double yaw = 180;
-        String direction = getWordedDirection(yaw);
+        int dir = getDirection(yaw);
+        String direction = getWordedDirection(dir);
         TextRenderer textRenderer = client.textRenderer;
         textRenderer.drawWithShadow(matrices, "X", pos.getX() + 1, pos.getY() + 2, getStorage().firstTextColor.color());
         textRenderer.drawWithShadow(matrices, String.valueOf(df.format(x)), pos.getX() + 11, pos.getY() + 2, getStorage().secondTextColor.color());
@@ -85,24 +96,39 @@ public class CoordsHud extends AbstractHudEntry {
         textRenderer.drawWithShadow(matrices, "Z", pos.getX() + 1, pos.getY() + 22, getStorage().firstTextColor.color());
         textRenderer.drawWithShadow(matrices, String.valueOf(df.format(z)), pos.getX() + 11, pos.getY() + 22, getStorage().secondTextColor.color());
         textRenderer.drawWithShadow(matrices, direction, pos.getX() + 60, pos.getY() + 12, getStorage().firstTextColor.color());
+        textRenderer.drawWithShadow(matrices, getXDir(dir), pos.getX() + 60, pos.getY() + 2, getStorage().secondTextColor.color());
+        textRenderer.drawWithShadow(matrices, getZDir(dir), pos.getX() + 60, pos.getY() + 22, getStorage().secondTextColor.color());
+
         matrices.pop();
         hovered = false;
     }
 
-    public String getWordedDirection(double yaw) {
+    public String getWordedDirection(int dir) {
         String direction = "";
-        switch (getDirection(yaw)) {
+        switch (dir) {
             case 1:
                 direction = "N";
                 break;
             case 2:
-                direction = "E";
+                direction = "NE";
                 break;
             case 3:
-                direction = "S";
+                direction = "E";
                 break;
             case 4:
+                direction = "SE";
+                break;
+            case 5:
+                direction = "S";
+                break;
+            case 6:
+                direction = "SW";
+                break;
+            case 7:
                 direction = "W";
+                break;
+            case 8:
+                direction = "NW";
                 break;
             case 0:
                 direction = "NaN";
@@ -111,8 +137,40 @@ public class CoordsHud extends AbstractHudEntry {
         return direction;
     }
 
+    public static String getZDir(int dir) {
+        switch(dir) {
+            case 5:
+                return "++";
+            case 4:
+            case 6:
+                return "+";
+            case 8:
+            case 2:
+                return "-";
+            case 1:
+                return "--";
+        }
+        return "";
+    }
+
+    public static String getXDir(int dir) {
+        switch(dir) {
+            case 3:
+                return "++";
+            case 2:
+            case 4:
+                return "+";
+            case 6:
+            case 8:
+                return "-";
+            case 7:
+                return "--";
+        }
+        return "";
+    }
+
     /**
-     * Get direction. 1 = North, 2 East, 3 South, 4 West
+     * Get direction. 1 = North, 2 North East, 3 East, 4 South East...
      * @param yaw
      * @return
      */
@@ -126,14 +184,21 @@ public class CoordsHud extends AbstractHudEntry {
             yaw = yaw + 360;
             plzdontcrash++;
         }
-        if ((yaw >= 0 && yaw < 45) || (yaw <= 360 && yaw > 315)) {
-            return 1;
-        } else if (yaw >= 45 && yaw < 135) {
-            return 2;
-        } else if (yaw >= 135 && yaw < 225) {
-            return 3;
-        } else if (yaw >= 225 && yaw < 315) {
-            return 4;
+        int[] directions = {0, 23, 68, 113, 158, 203, 248, 293, 338, 360};
+        for (int i = 0; i < directions.length; i++) {
+            int min = directions[i];
+            int max;
+            if (i + 1 >= directions.length) {
+                max = directions[0];
+            } else {
+                max = directions[i + 1];
+            }
+            if (yaw >= min && yaw < max) {
+                if (i >= 8) {
+                    return 1;
+                }
+                return i + 1;
+            }
         }
         return 0;
     }
@@ -166,8 +231,6 @@ public class CoordsHud extends AbstractHudEntry {
         public int decimalNum;
 
         public Storage() {
-            width = 70;
-            height = 31;
             decimalNum = 1;
             backgroundColor = Colors.BLACK.color().withAlpha(100);
             firstTextColor = Colors.SELECTOR_BLUE.color();
@@ -187,13 +250,8 @@ public class CoordsHud extends AbstractHudEntry {
         list.addEntry(builder.startColorButtonEntry(new LiteralText("Second Text Color"), getStorage().secondTextColor).setSavable(val -> getStorage().secondTextColor = val).build(list));
         list.addEntry(builder.startIntSliderEntry(new LiteralText("Decimals"), getStorage().decimalNum, 0, 3).setSavable(val -> getStorage().decimalNum = val).setWidth(60).build(list));
 
-        return new BasicConfigScreen(new LiteralText(getName()), list) {
-            @Override
-            public void onClose() {
-                super.onClose();
-                KronHUD.storageHandler.saveDefaultHandling();
-            }
-        };
+        return new BasicConfigScreen(new LiteralText(getName()), list, () -> KronHUD.storageHandler.saveDefaultHandling());
+
     }
 
 }

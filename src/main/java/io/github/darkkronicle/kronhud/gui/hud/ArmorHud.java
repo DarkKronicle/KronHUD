@@ -25,8 +25,7 @@ public class ArmorHud extends AbstractHudEntry {
 
 
     public ArmorHud() {
-      //  super(x, y, 20, 100, scale);
-        super();
+        super(20, 100);
     }
 
     @Override
@@ -34,7 +33,7 @@ public class ArmorHud extends AbstractHudEntry {
         matrices.push();
         matrices.scale(getStorage().scale, getStorage().scale, 1);
         DrawPosition pos = getScaledPos();
-        DrawableHelper.fill(matrices, pos.getX(), pos.getY(), pos.getX() + getStorage().width, pos.getY() + getStorage().height, getStorage().backgroundColor.color());
+        DrawableHelper.fill(matrices, pos.getX(), pos.getY(), pos.getX() + width, pos.getY() + height, getStorage().backgroundColor.color());
         int lastY = 2 + (4 * 20);
         renderMainItem(matrices, client.player.inventory.getMainHandStack(), pos.getX() + 2, pos.getY() + lastY);
         lastY = lastY - 20;
@@ -62,11 +61,11 @@ public class ArmorHud extends AbstractHudEntry {
         matrices.scale(getStorage().scale, getStorage().scale, 1);
         DrawPosition pos = getScaledPos();
         if (hovered) {
-            DrawUtil.rect(matrices, pos.getX(), pos.getY(), getStorage().width, getStorage().height, Colors.WHITE.color().withAlpha(150).color());
+            DrawUtil.rect(matrices, pos.getX(), pos.getY(), width, height, Colors.WHITE.color().withAlpha(150).color());
         } else {
-            DrawUtil.rect(matrices, pos.getX(), pos.getY(), getStorage().width, getStorage().height, Colors.WHITE.color().withAlpha(50).color());
+            DrawUtil.rect(matrices, pos.getX(), pos.getY(), width, height, Colors.WHITE.color().withAlpha(50).color());
         }
-        DrawUtil.outlineRect(matrices, pos.getX(), pos.getY(), getStorage().width, getStorage().height, Colors.BLACK.color().color());
+        DrawUtil.outlineRect(matrices, pos.getX(), pos.getY(), width, height, Colors.BLACK.color().color());
         int lastY = 2 + (4 * 20);
         ItemUtil.renderGuiItemModel(matrices, new ItemStack(Items.GRASS_BLOCK), pos.getX() + 2, pos.getY() + lastY);
         ItemUtil.renderGuiItemOverlay(matrices, client.textRenderer, new ItemStack(Items.GRASS_BLOCK), pos.getX() + 2, pos.getY() + lastY, "90");
@@ -97,8 +96,6 @@ public class ArmorHud extends AbstractHudEntry {
             x = 1F;
             y = 1F;
             scale = 1F;
-            width = 20;
-            height = 100;
             enabled = true;
             backgroundColor = new SimpleColor(0, 0, 0, 100);
         }
@@ -111,13 +108,8 @@ public class ArmorHud extends AbstractHudEntry {
         list.addEntry(builder.startToggleEntry(new LiteralText("Enabled"), getStorage().enabled).setDimensions(20, 10).setSavable(val -> getStorage().enabled = val).build(list));
         list.addEntry(builder.startFloatSliderEntry(new LiteralText("Scale"), getStorage().scale, 0.2F, 1.5F).setWidth(80).setSavable(val -> getStorage().scale = val).build(list));
         list.addEntry(builder.startColorButtonEntry(new LiteralText("Background Color"), getStorage().backgroundColor).setSavable(val -> getStorage().backgroundColor = val).build(list));
-        return new BasicConfigScreen(new LiteralText("ArmorHUD"), list) {
-            @Override
-            public void onClose() {
-                super.onClose();
-                KronHUD.storageHandler.saveDefaultHandling();
-            }
-        };
+        return new BasicConfigScreen(new LiteralText(getName()), list, () -> KronHUD.storageHandler.saveDefaultHandling());
+
     }
 
     @Override

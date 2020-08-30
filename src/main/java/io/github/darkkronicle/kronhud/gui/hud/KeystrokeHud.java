@@ -33,8 +33,7 @@ public class KeystrokeHud extends AbstractHudEntry {
     private MinecraftClient client;
 
     public KeystrokeHud() {
-        super();
-        //super(x, y, 54, 61, scale);
+        super(54, 61);
         this.client = MinecraftClient.getInstance();
         KronHudHooks.KEYBIND_CHANGE.register(key -> setKeystrokes());
 
@@ -109,11 +108,11 @@ public class KeystrokeHud extends AbstractHudEntry {
         matrices.scale(getStorage().scale, getStorage().scale, 1);
         DrawPosition pos = getScaledPos();
         if (hovered) {
-            rect(matrices, pos.getX(), pos.getY(), getStorage().width, getStorage().height, Colors.WHITE.color().withAlpha(150).color());
+            rect(matrices, pos.getX(), pos.getY(), width, height, Colors.WHITE.color().withAlpha(150).color());
         } else {
-            rect(matrices, pos.getX(), pos.getY(), getStorage().width, getStorage().height, Colors.WHITE.color().withAlpha(50).color());
+            rect(matrices, pos.getX(), pos.getY(), width, height, Colors.WHITE.color().withAlpha(50).color());
         }
-        outlineRect(matrices, pos.getX(), pos.getY(), getStorage().width, getStorage().height, Colors.BLACK.color().color());
+        outlineRect(matrices, pos.getX(), pos.getY(), width, height, Colors.BLACK.color().color());
         matrices.scale(1 / getStorage().scale, 1 / getStorage().scale, 1);
         renderHud(matrices);
         hovered = false;
@@ -224,8 +223,6 @@ public class KeystrokeHud extends AbstractHudEntry {
         public Storage() {
             x = 0F;
             y = 0F;
-            width = 54;
-            height = 61;
             scale = 1;
             unselected = new SimpleColor(0, 0, 0, 100);
             selected = new SimpleColor(255, 255, 255, 150);
@@ -241,14 +238,8 @@ public class KeystrokeHud extends AbstractHudEntry {
         list.addEntry(builder.startColorButtonEntry(new LiteralText("Unselected Color"), getStorage().unselected).setSavable(val -> getStorage().unselected = val).build(list));
         list.addEntry(builder.startColorButtonEntry(new LiteralText("Selected Color"), getStorage().selected).setSavable(val -> getStorage().selected = val).build(list));
 
-        return new BasicConfigScreen(new LiteralText("KeystrokeHud"), list) {
-            @Override
-            public void onClose() {
-                super.onClose();
-                KronHUD.storageHandler.saveDefaultHandling();
-                setKeystrokes();
-            }
-        };
+        return new BasicConfigScreen(new LiteralText(getName()), list, () -> KronHUD.storageHandler.saveDefaultHandling());
+
     }
 
     @Override

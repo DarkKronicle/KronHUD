@@ -14,27 +14,13 @@ public abstract class AbstractHudEntry extends DrawUtil {
     @Setter
     protected boolean hovered = false;
     protected MinecraftClient client = MinecraftClient.getInstance();
+    public int width;
+    public int height;
 
-//    public AbstractHudEntry(float x, float y, int width, int height, float scale) {
-//        this(x, y, width, height, scale, true);
-//    }
-//
-//    public AbstractHudEntry(int x, int y, int width, int height, float scale) {
-//        this(x, y, width, height, scale, true);
-//    }
-//
-//    public AbstractHudEntry(int x, int y, int width, int height, float scale, boolean enabled) {
-//        this(intToFloat(x, MinecraftClient.getInstance().getWindow().getScaledWidth(), width), intToFloat(y, MinecraftClient.getInstance().getWindow().getScaledHeight(), height), width, height, scale, enabled);
-//    }
-//
-//    public AbstractHudEntry(float x, float y, int width, int height, float scale, boolean enabled) {
-//        getStorage().x = x;
-//        getStorage().y = y;
-//        getStorage().width = width;
-//        getStorage().height = height;
-//        getStorage().scale = scale;
-//        getStorage().enabled = enabled;
-//    }
+    public AbstractHudEntry(int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
 
     public boolean isEnabled() {
         return getStorage().enabled;
@@ -70,12 +56,12 @@ public abstract class AbstractHudEntry extends DrawUtil {
     }
 
     public void setX(int x) {
-        getStorage().x = intToFloat(x, client.getWindow().getScaledWidth(), Math.round(getStorage().width * getStorage().scale));
+        getStorage().x = intToFloat(x, client.getWindow().getScaledWidth(), Math.round(width * getStorage().scale));
 
     }
 
     public void setY(int y) {
-        getStorage().y = intToFloat(y, client.getWindow().getScaledHeight(), Math.round(getStorage().height * getStorage().scale));
+        getStorage().y = intToFloat(y, client.getWindow().getScaledHeight(), Math.round(height * getStorage().scale));
     }
 
     public static int floatToInt(float percent, int max, int offset) {
@@ -87,15 +73,15 @@ public abstract class AbstractHudEntry extends DrawUtil {
     }
 
     public int getX() {
-        return floatToInt(getStorage().x, client.getWindow().getScaledWidth(), Math.round(getStorage().width * getStorage().scale));
+        return floatToInt(getStorage().x, client.getWindow().getScaledWidth(), Math.round(width * getStorage().scale));
     }
 
     public int getY() {
-        return floatToInt(getStorage().y, client.getWindow().getScaledHeight(), Math.round(getStorage().height * getStorage().scale));
+        return floatToInt(getStorage().y, client.getWindow().getScaledHeight(), Math.round(height * getStorage().scale));
     }
 
     public SimpleRectangle getBounds() {
-        return new SimpleRectangle(getX(), getY(), Math.round(getStorage().width * getStorage().scale), Math.round(getStorage().height * getStorage().scale));
+        return new SimpleRectangle(getX(), getY(), Math.round(width * getStorage().scale), Math.round(height * getStorage().scale));
     }
 
     public DrawPosition getScaledPos() {
@@ -113,8 +99,6 @@ public abstract class AbstractHudEntry extends DrawUtil {
     public static class AbstractStorage {
         public float x = 0;
         public float y = 0;
-        public int width = 30;
-        public int height = 30;
         public float scale = 1;
         public boolean enabled = true;
     }

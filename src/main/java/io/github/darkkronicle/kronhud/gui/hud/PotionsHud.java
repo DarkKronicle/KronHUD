@@ -27,8 +27,7 @@ public class PotionsHud extends AbstractHudEntry {
 
 
     public PotionsHud() {
-        super();
-       // super(x, y, 60, 200, scale);
+        super(60, 200);
     }
 
     @Override
@@ -67,11 +66,11 @@ public class PotionsHud extends AbstractHudEntry {
         matrices.scale(getStorage().scale, getStorage().scale, 1);
         DrawPosition pos = getScaledPos();
         if (hovered) {
-            rect(matrices, pos.getX(), pos.getY(), getStorage().width, getStorage().height, Colors.WHITE.color().withAlpha(150).color());
+            rect(matrices, pos.getX(), pos.getY(), width, height, Colors.WHITE.color().withAlpha(150).color());
         } else {
-            rect(matrices, pos.getX(), pos.getY(), getStorage().width, getStorage().height, Colors.WHITE.color().withAlpha(50).color());
+            rect(matrices, pos.getX(), pos.getY(), width, height, Colors.WHITE.color().withAlpha(50).color());
         }
-        outlineRect(matrices, pos.getX(), pos.getY(), getStorage().width, getStorage().height, Colors.BLACK.color().color());
+        outlineRect(matrices, pos.getX(), pos.getY(), width, height, Colors.BLACK.color().color());
         StatusEffectSpriteManager statusEffectSpriteManager = this.client.getStatusEffectSpriteManager();
         StatusEffectInstance effect = new StatusEffectInstance(StatusEffects.SPEED);
         StatusEffect type = effect.getEffectType();
@@ -102,8 +101,6 @@ public class PotionsHud extends AbstractHudEntry {
         public Storage() {
             x = 0;
             y = 0.5F;
-            width = 60;
-            height = 200;
             scale = 1;
         }
     }
@@ -114,13 +111,7 @@ public class PotionsHud extends AbstractHudEntry {
         EntryButtonList list = new EntryButtonList((client.getWindow().getScaledWidth() / 2) - 290, (client.getWindow().getScaledHeight() / 2) - 70, 580, 150, 1, false);
         list.addEntry(builder.startToggleEntry(new LiteralText("Enabled"), getStorage().enabled).setDimensions(20, 10).setSavable(val -> getStorage().enabled = val).build(list));
         list.addEntry(builder.startFloatSliderEntry(new LiteralText("Scale"), getStorage().scale, 0.2F, 1.5F).setWidth(80).setSavable(val -> getStorage().scale = val).build(list));
-        return new BasicConfigScreen(new LiteralText("PotionsHUD"), list) {
-            @Override
-            public void onClose() {
-                super.onClose();
-                KronHUD.storageHandler.saveDefaultHandling();
-            }
-        };
+        return new BasicConfigScreen(new LiteralText(getName()), list, () -> KronHUD.storageHandler.saveDefaultHandling());
     }
 
     @Override

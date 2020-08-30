@@ -44,13 +44,8 @@ public class FPSHud extends CleanHudEntry {
         list.addEntry(builder.startFloatSliderEntry(new LiteralText("Scale"), getStorage().scale, 0.2F, 1.5F).setWidth(80).setSavable(val -> getStorage().scale = val).build(list));
         list.addEntry(builder.startColorButtonEntry(new LiteralText("Background Color"), getStorage().backgroundColor).setSavable(val -> getStorage().backgroundColor = val).build(list));
         list.addEntry(builder.startColorButtonEntry(new LiteralText("Text Color"), getStorage().textColor).setSavable(val -> getStorage().textColor = val).build(list));
-        return new BasicConfigScreen(new LiteralText("FPSHud"), list) {
-            @Override
-            public void onClose() {
-                super.onClose();
-                KronHUD.storageHandler.saveDefaultHandling();
-            }
-        };
+        return new BasicConfigScreen(new LiteralText(getName()), list, () -> KronHUD.storageHandler.saveDefaultHandling());
+
     }
 
     @Override

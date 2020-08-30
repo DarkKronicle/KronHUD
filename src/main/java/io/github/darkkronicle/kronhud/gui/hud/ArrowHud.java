@@ -22,8 +22,7 @@ public class ArrowHud extends AbstractHudEntry {
 
 
     public ArrowHud() {
-     //   super(x, y, 20, 30, scale);
-        super();
+        super(20, 30);
     }
 
     @Override
@@ -31,8 +30,8 @@ public class ArrowHud extends AbstractHudEntry {
         matrices.push();
         matrices.scale(getStorage().scale, getStorage().scale, 1);
         DrawPosition pos = getScaledPos();
-        rect(matrices, pos.getX(), pos.getY(), getStorage().width, getStorage().height, Colors.DARKGRAY.color().withAlpha(100).color());
-        drawCenteredString(matrices, client.textRenderer, String.valueOf(arrows), pos.getX() + getStorage().width / 2, pos.getY() + getStorage().height - 10, getStorage().textColor.color());
+        rect(matrices, pos.getX(), pos.getY(), width, height, getStorage().backgroundColor.color());
+        drawCenteredString(matrices, client.textRenderer, String.valueOf(arrows), pos.getX() + width / 2, pos.getY() + height - 10, getStorage().textColor.color());
         ItemUtil.renderGuiItemModel(matrices, new ItemStack(Items.ARROW), pos.getX() + 2, pos.getY() + 2);
         matrices.pop();
     }
@@ -53,12 +52,12 @@ public class ArrowHud extends AbstractHudEntry {
         matrices.scale(getStorage().scale, getStorage().scale, 1);
         DrawPosition pos = getScaledPos();
         if (hovered) {
-            rect(matrices, pos.getX(), pos.getY(), getStorage().width, getStorage().height, Colors.WHITE.color().withAlpha(150).color());
+            rect(matrices, pos.getX(), pos.getY(), width, height, Colors.WHITE.color().withAlpha(150).color());
         } else {
-            rect(matrices, pos.getX(), pos.getY(), getStorage().width, getStorage().height, Colors.WHITE.color().withAlpha(50).color());
+            rect(matrices, pos.getX(), pos.getY(), width, height, Colors.WHITE.color().withAlpha(50).color());
         }
-        outlineRect(matrices, pos.getX(), pos.getY(), getStorage().width, getStorage().height, Colors.BLACK.color().color());
-        drawCenteredString(matrices, client.textRenderer, "64", pos.getX() + getStorage().width / 2, pos.getY() + getStorage().height - 10, getStorage().textColor.color());
+        outlineRect(matrices, pos.getX(), pos.getY(), width, height, Colors.BLACK.color().color());
+        drawCenteredString(matrices, client.textRenderer, "64", pos.getX() + width / 2, pos.getY() + height - 10, getStorage().textColor.color());
         ItemUtil.renderGuiItemModel(matrices, new ItemStack(Items.ARROW), pos.getX() + 2, pos.getY() + 2);
         hovered = false;
         matrices.pop();
@@ -87,8 +86,6 @@ public class ArrowHud extends AbstractHudEntry {
             x = 0.5F;
             y = 0F;
             scale = 1F;
-            width = 20;
-            height = 30;
             enabled = true;
             backgroundColor = new SimpleColor(0, 0, 0, 100);
             textColor = new SimpleColor(255, 255, 255, 255);
@@ -104,13 +101,8 @@ public class ArrowHud extends AbstractHudEntry {
         list.addEntry(builder.startColorButtonEntry(new LiteralText("Background Color"), getStorage().backgroundColor).setSavable(val -> getStorage().backgroundColor = val).build(list));
         list.addEntry(builder.startColorButtonEntry(new LiteralText("Text Color"), getStorage().textColor).setSavable(val -> getStorage().textColor = val).build(list));
 
-        return new BasicConfigScreen(new LiteralText("ArrowHUD"), list) {
-            @Override
-            public void onClose() {
-                super.onClose();
-                KronHUD.storageHandler.saveDefaultHandling();
-            }
-        };
+        return new BasicConfigScreen(new LiteralText(getName()), list, () -> KronHUD.storageHandler.saveDefaultHandling());
+
     }
 
     @Override

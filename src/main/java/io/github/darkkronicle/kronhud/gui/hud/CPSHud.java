@@ -77,13 +77,8 @@ public class CPSHud extends CleanHudEntry {
         list.addEntry(builder.startColorButtonEntry(new LiteralText("Background Color"), getStorage().backgroundColor).setSavable(val -> getStorage().backgroundColor = val).build(list));
         list.addEntry(builder.startColorButtonEntry(new LiteralText("Text Color"), getStorage().textColor).setSavable(val -> getStorage().textColor = val).build(list));
         list.addEntry(builder.startToggleEntry(new LiteralText("CPS based off of keybindings"), getS().clicksCPS).setSavable(val -> getS().clicksCPS = val).build(list));
-        return new BasicConfigScreen(new LiteralText("CPSHud"), list) {
-            @Override
-            public void onClose() {
-                super.onClose();
-                KronHUD.storageHandler.saveDefaultHandling();
-            }
-        };
+        return new BasicConfigScreen(new LiteralText(getName()), list, () -> KronHUD.storageHandler.saveDefaultHandling());
+
     }
 
     public static class CPSStorage extends Storage {

@@ -13,7 +13,7 @@
     ]
   },
   "license": "GNUGPL v3",
-  "icon": "assets/KronHUD/icon.png",
+  "icon": "assets/kronhud/icon.png",
   "environment": "client",
   "mixins": [
     "kronhud.mixins.json"

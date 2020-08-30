@@ -79,7 +79,7 @@ public class HudManager {
 
     public Optional<AbstractHudEntry> getEntryXY(int x, int y) {
         for (AbstractHudEntry entry : getMoveableEntries()) {
-            if (entry.getX() <= x && entry.getX() + entry.getStorage().width * entry.getStorage().scale >= x && entry.getY() <= y && entry.getY() + entry.getStorage().height * entry.getStorage().scale >= y) {
+            if (entry.getX() <= x && entry.getX() + entry.width * entry.getStorage().scale >= x && entry.getY() <= y && entry.getY() + entry.height * entry.getStorage().scale >= y) {
                 return Optional.of(entry);
             }
         }

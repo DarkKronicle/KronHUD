@@ -23,8 +23,7 @@ public class CrossHairHud extends AbstractHudEntry {
 
 
     public CrossHairHud() {
-      //  super(0.5F, 0.5F, 17, 17, 1);
-        super();
+        super(17, 17);
     }
 
     @Override
@@ -34,12 +33,12 @@ public class CrossHairHud extends AbstractHudEntry {
         DrawPosition pos = getScaledPos();
         SimpleColor color = getColor();
         if (getStorage().type == CrossHairs.DOT) {
-            DrawUtil.rect(matrices, pos.getX() + (getStorage().width / 2) - 2, pos.getY() + (getStorage().height / 2) - 2, 3, 3, color.color());
+            DrawUtil.rect(matrices, pos.getX() + (width / 2) - 2, pos.getY() + (height / 2) - 2, 3, 3, color.color());
         } else if (getStorage().type == CrossHairs.CROSS) {
-            DrawUtil.rect(matrices, pos.getX() + (getStorage().width / 2) - 6, pos.getY() + (getStorage().height / 2) - 1, 6, 1, color.color());
-            DrawUtil.rect(matrices, pos.getX() + (getStorage().width / 2), pos.getY() + (getStorage().height / 2) - 1, 5, 1, color.color());
-            DrawUtil.rect(matrices, pos.getX() + (getStorage().width / 2) - 1, pos.getY() + (getStorage().height / 2) - 6, 1, 6, color.color());
-            DrawUtil.rect(matrices, pos.getX() + (getStorage().width / 2) - 1, pos.getY() + (getStorage().height / 2), 1, 5, color.color());
+            DrawUtil.rect(matrices, pos.getX() + (width / 2) - 6, pos.getY() + (height / 2) - 1, 6, 1, color.color());
+            DrawUtil.rect(matrices, pos.getX() + (width / 2), pos.getY() + (height / 2) - 1, 5, 1, color.color());
+            DrawUtil.rect(matrices, pos.getX() + (width / 2) - 1, pos.getY() + (height / 2) - 6, 1, 6, color.color());
+            DrawUtil.rect(matrices, pos.getX() + (width / 2) - 1, pos.getY() + (height / 2), 1, 5, color.color());
         }
         matrices.pop();
     }
@@ -95,8 +94,6 @@ public class CrossHairHud extends AbstractHudEntry {
             x = 0.5F;
             y = 0.5F;
             scale = 1F;
-            width = 17;
-            height = 17;
             enabled = true;
 
             type = CrossHairs.CROSS;
@@ -117,13 +114,8 @@ public class CrossHairHud extends AbstractHudEntry {
         list.addEntry(builder.startColorButtonEntry(new LiteralText("Entity Color"), getStorage().entity).setSavable(val -> getStorage().entity = val).build(list));
         list.addEntry(builder.startColorButtonEntry(new LiteralText("Block Color"), getStorage().block).setSavable(val -> getStorage().block = val).build(list));
 
-        return new BasicConfigScreen(new LiteralText("CrossHairHud"), list) {
-            @Override
-            public void onClose() {
-                super.onClose();
-                KronHUD.storageHandler.saveDefaultHandling();
-            }
-        };
+        return new BasicConfigScreen(new LiteralText(getName()), list, () -> KronHUD.storageHandler.saveDefaultHandling());
+
     }
 
     @Override

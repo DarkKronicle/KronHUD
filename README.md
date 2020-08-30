@@ -4,7 +4,7 @@ A mod to add clean and useful HUD widgets.
 
 ![No forge](images/noforge.png)
 
-***This mod is currently in early beta, things may not look/work correctly.***
+***This mod is currently in early beta, things may n/ot look/work correctly.***
 
 ## Widgets
 

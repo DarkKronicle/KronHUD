@@ -41,8 +41,7 @@ public class ItemUpdateHud extends AbstractHudEntry {
     private ArrayList<ItemUtil.TimedItemStorage> added;
 
     public ItemUpdateHud() {
-        super();
-  //      super(x, y, width, height, scale);
+        super(200, 80);
         this.client = MinecraftClient.getInstance();
         removed = new ArrayList<>();
         added = new ArrayList<>();
@@ -110,10 +109,10 @@ public class ItemUpdateHud extends AbstractHudEntry {
         matrices.push();
         matrices.scale(getStorage().scale, getStorage().scale, 1);
         DrawPosition pos = getScaledPos();
-        ScissorsHelper.INSTANCE.addScissor(new SimpleRectangle(getX(), getY(), getStorage().width, getStorage().height));
+        ScissorsHelper.INSTANCE.addScissor(new SimpleRectangle(getX(), getY(), width, height));
         int lastY = 1;
         for (ItemUtil.ItemStorage item : this.added) {
-            if (lastY > getStorage().height) {
+            if (lastY > height) {
                 break;
             }
             TextCollector message = new TextCollector();
@@ -127,7 +126,7 @@ public class ItemUpdateHud extends AbstractHudEntry {
             lastY = lastY + client.textRenderer.fontHeight + 2;
         }
         for (ItemUtil.ItemStorage item : this.removed) {
-            if (lastY > getStorage().height) {
+            if (lastY > height) {
                 break;
             }
             TextCollector message = new TextCollector();
@@ -150,11 +149,11 @@ public class ItemUpdateHud extends AbstractHudEntry {
         matrices.scale(getStorage().scale, getStorage().scale, 1);
         DrawPosition pos = getScaledPos();
         if (hovered) {
-            rect(matrices, pos.getX(), pos.getY(), getStorage().width, getStorage().height, Colors.WHITE.color().withAlpha(150).color());
+            rect(matrices, pos.getX(), pos.getY(), width, height, Colors.WHITE.color().withAlpha(150).color());
         } else {
-            rect(matrices, pos.getX(), pos.getY(), getStorage().width, getStorage().height, Colors.WHITE.color().withAlpha(50).color());
+            rect(matrices, pos.getX(), pos.getY(), width, height, Colors.WHITE.color().withAlpha(50).color());
         }
-        outlineRect(matrices, pos.getX(), pos.getY(), getStorage().width, getStorage().height, Colors.BLACK.color().color());
+        outlineRect(matrices, pos.getX(), pos.getY(), width, height, Colors.BLACK.color().color());
         TextCollector addM = new TextCollector();
         addM.add(new LiteralText("+ "));
         addM.add(new LiteralText("[").setStyle(Style.EMPTY.withColor(TextColor.fromRgb(Colors.DARKGRAY.color().color()))));
@@ -197,8 +196,6 @@ public class ItemUpdateHud extends AbstractHudEntry {
         public Storage() {
             x = 0.2F;
             y = 0F;
-            width = 200;
-            height = 80;
             scale = 1;
             timeout = 6000;
         }
@@ -210,13 +207,8 @@ public class ItemUpdateHud extends AbstractHudEntry {
         EntryButtonList list = new EntryButtonList((client.getWindow().getScaledWidth() / 2) - 290, (client.getWindow().getScaledHeight() / 2) - 70, 580, 150, 1, false);
         list.addEntry(builder.startToggleEntry(new LiteralText("Enabled"), getStorage().enabled).setDimensions(20, 10).setSavable(val -> getStorage().enabled = val).build(list));
         list.addEntry(builder.startFloatSliderEntry(new LiteralText("Scale"), getStorage().scale, 0.2F, 1.5F).setWidth(80).setSavable(val -> getStorage().scale = val).build(list));
-        return new BasicConfigScreen(new LiteralText("ItemUpdateHud"), list) {
-            @Override
-            public void onClose() {
-                super.onClose();
-                KronHUD.storageHandler.saveDefaultHandling();
-            }
-        };
+        return new BasicConfigScreen(new LiteralText(getName()), list, () -> KronHUD.storageHandler.saveDefaultHandling());
+
     }
 
     @Override

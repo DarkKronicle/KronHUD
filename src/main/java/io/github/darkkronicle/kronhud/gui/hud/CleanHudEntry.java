@@ -9,8 +9,11 @@ import net.minecraft.client.util.math.MatrixStack;
 public abstract class CleanHudEntry extends AbstractHudEntry {
 
     public CleanHudEntry() {
-      //  super(x, y, 47, 13, scale);
-        super();
+        super(47, 13);
+    }
+
+    protected CleanHudEntry(int width, int height) {
+        super(width, height);
     }
 
     @Override
@@ -18,8 +21,8 @@ public abstract class CleanHudEntry extends AbstractHudEntry {
         matrices.push();
         matrices.scale(getS().scale, getS().scale, 1);
         DrawPosition pos = getScaledPos();
-        rect(matrices, pos.getX(), pos.getY(), getS().width, getS().height, getStorage().backgroundColor.color());
-        drawCenteredString(matrices, client.textRenderer, getValue(), pos.getX() + ( Math.round(getStorage().width) / 2), pos.getY() + (Math.round((float) getStorage().height / 2)) - 4, getStorage().textColor.color());
+        rect(matrices, pos.getX(), pos.getY(), width, height, getStorage().backgroundColor.color());
+        drawCenteredString(matrices, client.textRenderer, getValue(), pos.getX() + ( Math.round(width) / 2), pos.getY() + (Math.round((float) height / 2)) - 4, getStorage().textColor.color());
         matrices.pop();
     }
 
@@ -29,12 +32,12 @@ public abstract class CleanHudEntry extends AbstractHudEntry {
         matrices.scale(getS().scale, getS().scale, 1);
         DrawPosition pos = getScaledPos();
         if (hovered) {
-            rect(matrices, pos.getX(), pos.getY(), getS().width, getS().height, Colors.WHITE.color().withAlpha(150).color());
+            rect(matrices, pos.getX(), pos.getY(), width, height, Colors.WHITE.color().withAlpha(150).color());
         } else {
-            rect(matrices, pos.getX(), pos.getY(), getS().width, getS().height, Colors.WHITE.color().withAlpha(50).color());
+            rect(matrices, pos.getX(), pos.getY(), width, height, Colors.WHITE.color().withAlpha(50).color());
         }
-        outlineRect(matrices, pos.getX(), pos.getY(), getS().width, getS().height, Colors.BLACK.color().color());
-        drawCenteredString(matrices, client.textRenderer, getPlaceholder(), pos.getX() + ( Math.round(getStorage().width) / 2), pos.getY() + (Math.round((float) getStorage().height / 2)) - 4, getStorage().textColor.color());
+        outlineRect(matrices, pos.getX(), pos.getY(), width, height, Colors.BLACK.color().color());
+        drawCenteredString(matrices, client.textRenderer, getPlaceholder(), pos.getX() + ( Math.round(width) / 2), pos.getY() + (Math.round((float) height / 2)) - 4, getStorage().textColor.color());
         matrices.pop();
         hovered = false;
     }
@@ -63,8 +66,6 @@ public abstract class CleanHudEntry extends AbstractHudEntry {
         public Storage() {
             x = 1F;
             y = 0F;
-            width = 47;
-            height = 13;
             scale = 1;
             textColor = new SimpleColor(255, 255, 255, 255);
             backgroundColor  = new SimpleColor(0, 0, 0, 100);

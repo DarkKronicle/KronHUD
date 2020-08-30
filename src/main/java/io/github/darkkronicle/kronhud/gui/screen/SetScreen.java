@@ -49,16 +49,20 @@ public class SetScreen extends Screen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         Optional<AbstractHudEntry> entry = KronHUD.hudManager.getEntryXY((int) Math.round(mouseX), (int) Math.round(mouseY));
-        mouseDown = true;
-        if (entry.isPresent()) {
-            current = entry.get();
-            offset = new DrawPosition((int)Math.round(mouseX - current.getX()), (int)Math.round(mouseY - current.getY()));
-            List<SimpleRectangle> bounds = KronHUD.hudManager.getAllBounds();
-            bounds.remove(current.getBounds());
-            snap = new SnappingHelper(bounds, current.getBounds());
-            return true;
-        } else {
-            current = null;
+        if (button == 0) {
+            mouseDown = true;
+            if (entry.isPresent()) {
+                current = entry.get();
+                offset = new DrawPosition((int) Math.round(mouseX - current.getX()), (int) Math.round(mouseY - current.getY()));
+                List<SimpleRectangle> bounds = KronHUD.hudManager.getAllBounds();
+                bounds.remove(current.getBounds());
+                snap = new SnappingHelper(bounds, current.getBounds());
+                return true;
+            } else {
+                current = null;
+            }
+        } else if (button == 1) {
+            entry.ifPresent(abstractHudEntry -> client.openScreen(abstractHudEntry.getConfigScreen()));
         }
         manager.mouseClicked(mouseX, mouseY, button);
         return false;
