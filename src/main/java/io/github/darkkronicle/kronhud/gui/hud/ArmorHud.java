@@ -1,7 +1,5 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.darkkronicle.kronhud.KronHUD;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.util.ItemUtil;
@@ -17,7 +15,8 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 public class ArmorHud extends AbstractHudEntry {
@@ -89,9 +88,25 @@ public class ArmorHud extends AbstractHudEntry {
         return KronHUD.storage.armorHudStorage;
     }
 
+    @Override
+    public Screen getConfigScreen() {
+        EntryBuilder builder = EntryBuilder.create();
+        EntryButtonList list = BasicConfigScreen.createButtonList(1);
+        list.addEntry(builder.startToggleEntry(new TranslatableText("option.kronhud.enabled"), getStorage().enabled).setDimensions(20, 10).setSavable(val -> getStorage().enabled = val).build(list));
+        list.addEntry(builder.startFloatSliderEntry(new TranslatableText("option.kronhud.scale"), getStorage().scale, 0.2F, 1.5F).setWidth(80).setSavable(val -> getStorage().scale = val).build(list));
+        list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.backgroundcolor"), getStorage().backgroundColor).setSavable(val -> getStorage().backgroundColor = val).build(list));
+        return new BasicConfigScreen(getName(), list, () -> KronHUD.storageHandler.saveDefaultHandling());
+
+    }
+
+    @Override
+    public Text getName() {
+        return new TranslatableText("hud.kronhud.armorhud");
+    }
 
     public static class Storage extends AbstractStorage {
         SimpleColor backgroundColor;
+
         public Storage() {
             x = 1F;
             y = 1F;
@@ -99,21 +114,5 @@ public class ArmorHud extends AbstractHudEntry {
             enabled = true;
             backgroundColor = new SimpleColor(0, 0, 0, 100);
         }
-    }
-
-    @Override
-    public Screen getConfigScreen() {
-        EntryBuilder builder = EntryBuilder.create();
-        EntryButtonList list = BasicConfigScreen.createButtonList(1);
-        list.addEntry(builder.startToggleEntry(new LiteralText("Enabled"), getStorage().enabled).setDimensions(20, 10).setSavable(val -> getStorage().enabled = val).build(list));
-        list.addEntry(builder.startFloatSliderEntry(new LiteralText("Scale"), getStorage().scale, 0.2F, 1.5F).setWidth(80).setSavable(val -> getStorage().scale = val).build(list));
-        list.addEntry(builder.startColorButtonEntry(new LiteralText("Background Color"), getStorage().backgroundColor).setSavable(val -> getStorage().backgroundColor = val).build(list));
-        return new BasicConfigScreen(new LiteralText(getName()), list, () -> KronHUD.storageHandler.saveDefaultHandling());
-
-    }
-
-    @Override
-    public String getName() {
-        return "ArmorHUD";
     }
 }

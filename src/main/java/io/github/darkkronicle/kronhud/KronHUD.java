@@ -31,8 +31,8 @@ public class KronHUD implements ClientModInitializer {
     public static HudManager hudManager;
     public static ConfigStorage storage;
     public static ConfigHandler storageHandler;
-    private boolean rendered = false;
     public static int fps = 0;
+    private boolean rendered = false;
     @Getter
     private boolean setupComplete;
 

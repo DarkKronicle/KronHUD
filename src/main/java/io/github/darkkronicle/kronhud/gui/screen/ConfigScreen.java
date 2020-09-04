@@ -2,30 +2,26 @@ package io.github.darkkronicle.kronhud.gui.screen;
 
 import io.github.darkkronicle.kronhud.KronHUD;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
-import io.github.darkkronicle.kronhud.gui.hud.ArmorHud;
-import io.github.darkkronicle.polish.api.EntryBuilder;
-import io.github.darkkronicle.polish.gui.complexwidgets.EntryButtonList;
 import io.github.darkkronicle.polish.gui.complexwidgets.ToggleModuleList;
 import io.github.darkkronicle.polish.gui.complexwidgets.ToggleModuleWidget;
 import io.github.darkkronicle.polish.gui.screens.ToggleModuleScreen;
 import io.github.darkkronicle.polish.util.WidgetManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.TranslatableText;
 
 public class ConfigScreen extends Screen {
-    private WidgetManager widgetManager = new WidgetManager(this, children);
-    private MinecraftClient client;
+    private final WidgetManager widgetManager = new WidgetManager(this, children);
+    private final MinecraftClient client;
 
     private ConfigScreen() {
-        super(new LiteralText("Configuration"));
+        super(new TranslatableText("button.kronhud.configuration"));
         client = MinecraftClient.getInstance();
 //        EntryButtonList list = new EntryButtonList((window.getScaledWidth() / 2) - 300, (window.getScaledHeight() / 2) - 200, 600, 400, 2);
         ToggleModuleList modules = ToggleModuleScreen.createButtonList();
         for (AbstractHudEntry entry : KronHUD.hudManager.getEntries()) {
-            modules.addEntry(new ToggleModuleWidget(0, 0, new LiteralText(entry.getName()), entry.getStorage().enabled, (button) -> client.openScreen(entry.getConfigScreen())), aBoolean -> entry.getStorage().enabled = aBoolean);
+            modules.addEntry(new ToggleModuleWidget(0, 0, entry.getName(), entry.getStorage().enabled, (button) -> client.openScreen(entry.getConfigScreen())), aBoolean -> entry.getStorage().enabled = aBoolean);
         }
 //        EntryBuilder builder = EntryBuilder.create();
 //        for (AbstractHudEntry entry : KronHUD.hudManager.getEntries()) {
@@ -39,13 +35,13 @@ public class ConfigScreen extends Screen {
         ToggleModuleList modules = ToggleModuleScreen.createButtonList();
         MinecraftClient client = MinecraftClient.getInstance();
         for (AbstractHudEntry entry : KronHUD.hudManager.getEntries()) {
-            modules.addEntry(new ToggleModuleWidget(0, 0, new LiteralText(entry.getName()), entry.getStorage().enabled, (button) -> {
+            modules.addEntry(new ToggleModuleWidget(0, 0, entry.getName(), entry.getStorage().enabled, (button) -> {
                 modules.save();
                 KronHUD.storageHandler.saveDefaultHandling();
                 client.openScreen(entry.getConfigScreen());
             }), aBoolean -> entry.getStorage().enabled = aBoolean);
         }
-        return new ToggleModuleScreen(new LiteralText("Configuration"), modules, () -> KronHUD.storageHandler.saveDefaultHandling());
+        return new ToggleModuleScreen(new TranslatableText("button.kronhud.configuration"), modules, () -> KronHUD.storageHandler.saveDefaultHandling());
     }
 
     @Override

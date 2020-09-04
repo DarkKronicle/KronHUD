@@ -17,8 +17,8 @@ import java.util.Optional;
 
 @Environment(EnvType.CLIENT)
 public class HudManager {
-    private HashMap<Identifier, AbstractHudEntry> entries;
-    private MinecraftClient client;
+    private final HashMap<Identifier, AbstractHudEntry> entries;
+    private final MinecraftClient client;
     private boolean placeholder = false;
 
     public HudManager() {
@@ -93,8 +93,6 @@ public class HudManager {
         }
         return bounds;
     }
-
-
 
 
 }

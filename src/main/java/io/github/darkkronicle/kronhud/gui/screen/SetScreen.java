@@ -13,7 +13,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.TranslatableText;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,11 +27,11 @@ public class SetScreen extends Screen {
     private MinecraftClient client;
 
     public SetScreen() {
-        super(new LiteralText("Set up Screen"));
+        super(new TranslatableText("screen.kronhud.set"));
         client = MinecraftClient.getInstance();
         Window window = client.getWindow();
         manager = new WidgetManager(this, children);
-        manager.add(new CleanButton((window.getScaledWidth() / 2 ) - 50, window.getScaledHeight() - 50, 100, 15, Colors.BLACK.color().withAlpha(150), new LiteralText("Configuration"), cleanButton -> client.openScreen(ConfigScreen.getScreen())));
+        manager.add(new CleanButton((window.getScaledWidth() / 2 ) - 50, window.getScaledHeight() - 50, 100, 15, Colors.BLACK.color().withAlpha(150), new TranslatableText("button.kronhud.configuration"), cleanButton -> client.openScreen(ConfigScreen.getScreen())));
     }
 
     @Override
@@ -48,6 +48,7 @@ public class SetScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        manager.mouseClicked(mouseX, mouseY, button);
         Optional<AbstractHudEntry> entry = KronHUD.hudManager.getEntryXY((int) Math.round(mouseX), (int) Math.round(mouseY));
         if (button == 0) {
             mouseDown = true;
@@ -64,7 +65,6 @@ public class SetScreen extends Screen {
         } else if (button == 1) {
             entry.ifPresent(abstractHudEntry -> client.openScreen(abstractHudEntry.getConfigScreen()));
         }
-        manager.mouseClicked(mouseX, mouseY, button);
         return false;
     }
 

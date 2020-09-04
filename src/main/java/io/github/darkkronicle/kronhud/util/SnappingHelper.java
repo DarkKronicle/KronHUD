@@ -14,18 +14,26 @@ import java.util.Optional;
 
 public class SnappingHelper {
     private final int distance = 4;
-    private SimpleColor lineColor = Colors.SELECTOR_BLUE.color();
-    @Setter
-    private SimpleRectangle current;
-
     private final HashSet<Integer> x = new HashSet<>();
     private final HashSet<Integer> y = new HashSet<>();
-    private MinecraftClient client;
+    private final SimpleColor lineColor = Colors.SELECTOR_BLUE.color();
+    @Setter
+    private SimpleRectangle current;
+    private final MinecraftClient client;
 
     public SnappingHelper(List<SimpleRectangle> rects, SimpleRectangle current) {
         addAllRects(rects);
         this.current = current;
         this.client = MinecraftClient.getInstance();
+    }
+
+    public static Optional<Integer> getNearby(int pos, HashSet<Integer> set, int distance) {
+        for (Integer integer : set) {
+            if (integer - distance <= pos && integer + distance >= pos) {
+                return Optional.of(integer);
+            }
+        }
+        return Optional.empty();
     }
 
     public void addAllRects(List<SimpleRectangle> rects) {
@@ -49,7 +57,7 @@ public class SnappingHelper {
         if ((cury = getRawYSnap()) != null) {
             DrawUtil.rect(matrices, 0, cury, client.getWindow().getScaledWidth(), 1, lineColor.color());
         }
-       // renderAll(matrices);
+        // renderAll(matrices);
 
     }
 
@@ -126,15 +134,6 @@ public class SnappingHelper {
             return ySnap;
         }
         return null;
-    }
-
-    public static Optional<Integer> getNearby(int pos, HashSet<Integer> set, int distance) {
-        for (Integer integer : set) {
-            if (integer - distance <= pos && integer + distance >= pos) {
-                return Optional.of(integer);
-            }
-        }
-        return Optional.empty();
     }
 
 }

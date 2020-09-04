@@ -17,7 +17,8 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
@@ -30,13 +31,24 @@ public class KeystrokeHud extends AbstractHudEntry {
     public static final Identifier ID = new Identifier("kronhud", "keystrokehud");
 
     private ArrayList<Keystroke> keystrokes;
-    private MinecraftClient client;
+    private final MinecraftClient client;
 
     public KeystrokeHud() {
         super(54, 61);
         this.client = MinecraftClient.getInstance();
         KronHudHooks.KEYBIND_CHANGE.register(key -> setKeystrokes());
 
+    }
+
+    public static Optional<String> getMouseKeyBindName(KeyBinding keyBinding) {
+        if (keyBinding.getBoundKeyTranslationKey().equalsIgnoreCase(InputUtil.Type.MOUSE.createFromCode(GLFW.GLFW_MOUSE_BUTTON_1).getTranslationKey())) {
+            return Optional.of("LMB");
+        } else if (keyBinding.getBoundKeyTranslationKey().equalsIgnoreCase(InputUtil.Type.MOUSE.createFromCode(GLFW.GLFW_MOUSE_BUTTON_2).getTranslationKey())) {
+            return Optional.of("RMB");
+        } else if (keyBinding.getBoundKeyTranslationKey().equalsIgnoreCase(InputUtil.Type.MOUSE.createFromCode(GLFW.GLFW_MOUSE_BUTTON_3).getTranslationKey())) {
+            return Optional.of("MMB");
+        }
+        return Optional.empty();
     }
 
     public void setKeystrokes() {
@@ -58,23 +70,11 @@ public class KeystrokeHud extends AbstractHudEntry {
         // Space
         keystrokes.add(new Keystroke(new SimpleRectangle(0, 54, 53, 7), scaledPos, client.options.keyJump, (stroke, matrices) -> {
             SimpleRectangle bounds = stroke.bounds;
-            rect(matrices, bounds.x() + stroke.offset.getX()+ 2, bounds.y() + stroke.offset.getY() + 2, bounds.width() - 4, 1, stroke.getColor(true).withAlpha(150).color());
+            rect(matrices, bounds.x() + stroke.offset.getX() + 2, bounds.y() + stroke.offset.getY() + 2, bounds.width() - 4, 1, stroke.getColor(true).withAlpha(150).color());
         }, getStorage().unselected, getStorage().selected));
         KeyBinding.unpressAll();
         KeyBinding.updatePressedStates();
     }
-
-    public static Optional<String> getMouseKeyBindName(KeyBinding keyBinding) {
-        if (keyBinding.getBoundKeyTranslationKey().equalsIgnoreCase(InputUtil.Type.MOUSE.createFromCode(GLFW.GLFW_MOUSE_BUTTON_1).getTranslationKey())) {
-            return Optional.of("LMB");
-        } else if (keyBinding.getBoundKeyTranslationKey().equalsIgnoreCase(InputUtil.Type.MOUSE.createFromCode(GLFW.GLFW_MOUSE_BUTTON_2).getTranslationKey())) {
-            return Optional.of("RMB");
-        } else if (keyBinding.getBoundKeyTranslationKey().equalsIgnoreCase(InputUtil.Type.MOUSE.createFromCode(GLFW.GLFW_MOUSE_BUTTON_3).getTranslationKey())) {
-            return Optional.of("MMB");
-        }
-        return Optional.empty();
-    }
-
 
     @Override
     public void render(MatrixStack matrices) {
@@ -97,6 +97,9 @@ public class KeystrokeHud extends AbstractHudEntry {
     @Override
     public void tick() {
         DrawPosition pos = getScaledPos();
+        if (keystrokes == null) {
+            setKeystrokes();
+        }
         for (Keystroke stroke : keystrokes) {
             stroke.offset = pos;
         }
@@ -130,21 +133,54 @@ public class KeystrokeHud extends AbstractHudEntry {
     public Keystroke createFromString(SimpleRectangle bounds, DrawPosition offset, KeyBinding key, String word) {
         return new Keystroke(bounds, offset, key, (stroke, matrices) -> {
             SimpleRectangle strokeBound = stroke.bounds;
-            client.textRenderer.draw(matrices, word, (strokeBound.x() + stroke.offset.getX() + ((float)strokeBound.width() / 2 + 1)) - ((float) client.textRenderer.getWidth(word) / 2), strokeBound.y() + stroke.offset.getY() + ((float) strokeBound.height() / 2) - 4, stroke.getColor(true).withAlpha(150).color());
+            client.textRenderer.draw(matrices, word, (strokeBound.x() + stroke.offset.getX() + ((float) strokeBound.width() / 2 + 1)) - ((float) client.textRenderer.getWidth(word) / 2), strokeBound.y() + stroke.offset.getY() + ((float) strokeBound.height() / 2) - 4, stroke.getColor(true).withAlpha(150).color());
         }, getStorage().unselected, getStorage().selected);
     }
 
+    @Override
+    public Identifier getID() {
+        return ID;
+    }
+
+    @Override
+    public boolean moveable() {
+        return true;
+    }
+
+    @Override
+    public Storage getStorage() {
+        return KronHUD.storage.keystrokeHudStorage;
+    }
+
+    @Override
+    public Screen getConfigScreen() {
+        EntryBuilder builder = EntryBuilder.create();
+        EntryButtonList list = new EntryButtonList((client.getWindow().getScaledWidth() / 2) - 290, (client.getWindow().getScaledHeight() / 2) - 70, 580, 150, 1, false);
+        list.addEntry(builder.startToggleEntry(new TranslatableText("option.kronhud.enabled"), getStorage().enabled).setDimensions(20, 10).setSavable(val -> getStorage().enabled = val).build(list));
+        list.addEntry(builder.startFloatSliderEntry(new TranslatableText("option.kronhud.scale"), getStorage().scale, 0.2F, 1.5F).setWidth(80).setSavable(val -> getStorage().scale = val).build(list));
+        list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.keystrokehud.unselectedcolor"), getStorage().unselected).setSavable(val -> getStorage().unselected = val).build(list));
+        list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.keystrokehud.selectedcolor"), getStorage().selected).setSavable(val -> getStorage().selected = val).build(list));
+
+        return new BasicConfigScreen(getName(), list, () -> KronHUD.storageHandler.saveDefaultHandling());
+
+    }
+
+    @Override
+    public Text getName() {
+        return new TranslatableText("hud.kronhud.keystrokehud");
+    }
+
     public static class Keystroke {
-        public SimpleRectangle bounds;
-        public DrawPosition offset;
         public final KeyBinding key;
         public final KeystrokeRender render;
-        private float start = -1;
-        private int animTime = 100;
-        private EasingFunctions ease = EasingFunctions.Types.SINE_IN;
-        private SimpleColor unselected;
-        private SimpleColor selected;
+        public SimpleRectangle bounds;
+        public DrawPosition offset;
         public float percent = 1;
+        private float start = -1;
+        private final int animTime = 100;
+        private final EasingFunctions ease = EasingFunctions.Types.SINE_IN;
+        private final SimpleColor unselected;
+        private final SimpleColor selected;
         private boolean wasPressed = false;
 
         public Keystroke(SimpleRectangle bounds, DrawPosition offset, KeyBinding key, KeystrokeRender render, SimpleColor unselected, SimpleColor selected) {
@@ -201,21 +237,6 @@ public class KeystrokeHud extends AbstractHudEntry {
         }
     }
 
-    @Override
-    public Identifier getID() {
-        return ID;
-    }
-
-    @Override
-    public boolean moveable() {
-        return true;
-    }
-
-    @Override
-    public Storage getStorage() {
-        return KronHUD.storage.keystrokeHudStorage;
-    }
-
     public static class Storage extends AbstractStorage {
         public SimpleColor unselected;
         public SimpleColor selected;
@@ -227,23 +248,5 @@ public class KeystrokeHud extends AbstractHudEntry {
             unselected = new SimpleColor(0, 0, 0, 100);
             selected = new SimpleColor(255, 255, 255, 150);
         }
-    }
-
-    @Override
-    public Screen getConfigScreen() {
-        EntryBuilder builder = EntryBuilder.create();
-        EntryButtonList list = new EntryButtonList((client.getWindow().getScaledWidth() / 2) - 290, (client.getWindow().getScaledHeight() / 2) - 70, 580, 150, 1, false);
-        list.addEntry(builder.startToggleEntry(new LiteralText("Enabled"), getStorage().enabled).setDimensions(20, 10).setSavable(val -> getStorage().enabled = val).build(list));
-        list.addEntry(builder.startFloatSliderEntry(new LiteralText("Scale"), getStorage().scale, 0.2F, 1.5F).setWidth(80).setSavable(val -> getStorage().scale = val).build(list));
-        list.addEntry(builder.startColorButtonEntry(new LiteralText("Unselected Color"), getStorage().unselected).setSavable(val -> getStorage().unselected = val).build(list));
-        list.addEntry(builder.startColorButtonEntry(new LiteralText("Selected Color"), getStorage().selected).setSavable(val -> getStorage().selected = val).build(list));
-
-        return new BasicConfigScreen(new LiteralText(getName()), list, () -> KronHUD.storageHandler.saveDefaultHandling());
-
-    }
-
-    @Override
-    public String getName() {
-        return "KeystrokeHUD";
     }
 }

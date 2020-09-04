@@ -16,7 +16,6 @@ import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 
@@ -100,7 +99,7 @@ public class ItemUtil {
         if (item == null || item.isEmpty()) {
             return 0;
         }
-        List<ItemUtil.ItemStorage> items =  ItemUtil.storageFromItem(item);
+        List<ItemUtil.ItemStorage> items = ItemUtil.storageFromItem(item);
         Optional<ItemUtil.ItemStorage> stor = ItemUtil.getItemFromItem(stack, items);
         return stor.map(itemStorage -> itemStorage.times).orElse(0);
     }
@@ -109,6 +108,7 @@ public class ItemUtil {
      * Compares two ItemStorage Lists.
      * If list1.get(1) is 10, and list2 is 5, it will return 5.
      * Will return nothing if negative...
+     *
      * @param list1 one to be based off of
      * @param list2 one to compare to
      * @return
@@ -128,6 +128,87 @@ public class ItemUtil {
             }
         }
         return list;
+    }
+
+    public static void renderGuiItemModel(MatrixStack matrices, ItemStack stack, int x, int y) {
+        matrices.push();
+        MinecraftClient client = MinecraftClient.getInstance();
+        ItemRenderer itemRenderer = client.getItemRenderer();
+        BakedModel model = itemRenderer.getHeldItemModel(stack, null, null);
+        RenderSystem.defaultAlphaFunc();
+        RenderSystem.enableBlend();
+        RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
+        matrices.translate(x + 8, y + 8, 100 + 50);
+        matrices.scale(16, -16, 16);
+        VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+        boolean bl = !model.isSideLit();
+        if (bl) {
+            DiffuseLighting.disableGuiDepthLighting();
+        }
+        itemRenderer.renderItem(stack, ModelTransformation.Mode.GUI, false, matrices, immediate, 15728880, OverlayTexture.DEFAULT_UV, model);
+        immediate.draw();
+        RenderSystem.enableDepthTest();
+        if (bl) {
+            DiffuseLighting.enableGuiDepthLighting();
+        }
+        matrices.pop();
+    }
+
+    public static void renderGuiItemOverlay(MatrixStack matrices, TextRenderer renderer, ItemStack stack, int x, int y, String countLabel) {
+        if (!stack.isEmpty()) {
+            ItemRenderer itemRenderer = MinecraftClient.getInstance().getItemRenderer();
+            if (stack.getCount() != 1 || countLabel != null) {
+                String string = countLabel == null ? String.valueOf(stack.getCount()) : countLabel;
+                matrices.translate(0.0D, 0.0D, 50 + 200.0F);
+                VertexConsumerProvider.Immediate immediate = VertexConsumerProvider.immediate(Tessellator.getInstance().getBuffer());
+                renderer.draw(string, (float) (x + 19 - 2 - renderer.getWidth(string)), (float) (y + 6 + 3), 16777215, true, matrices.peek().getModel(), immediate, false, 0, 15728880);
+                immediate.draw();
+            }
+
+            if (stack.isDamaged()) {
+                RenderSystem.disableDepthTest();
+                RenderSystem.disableTexture();
+                RenderSystem.disableBlend();
+                Tessellator tessellator = Tessellator.getInstance();
+                BufferBuilder bufferBuilder = tessellator.getBuffer();
+                float f = (float) stack.getDamage();
+                float g = (float) stack.getMaxDamage();
+                float h = Math.max(0.0F, (g - f) / g);
+                int i = Math.round(13.0F - f * 13.0F / g);
+                int j = MathHelper.hsvToRgb(h / 3.0F, 1.0F, 1.0F);
+                renderGuiQuad(bufferBuilder, x + 2, y + 13, 13, 2, 0, 0, 0, 255);
+                renderGuiQuad(bufferBuilder, x + 2, y + 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
+                RenderSystem.enableBlend();
+                RenderSystem.enableTexture();
+                RenderSystem.enableDepthTest();
+            }
+
+            ClientPlayerEntity clientPlayerEntity = MinecraftClient.getInstance().player;
+            float k = clientPlayerEntity == null ? 0.0F : clientPlayerEntity.getItemCooldownManager().getCooldownProgress(stack.getItem(), MinecraftClient.getInstance().getTickDelta());
+            if (k > 0.0F) {
+                RenderSystem.disableDepthTest();
+                RenderSystem.disableTexture();
+                RenderSystem.enableBlend();
+                RenderSystem.defaultBlendFunc();
+                Tessellator tessellator2 = Tessellator.getInstance();
+                BufferBuilder bufferBuilder2 = tessellator2.getBuffer();
+                renderGuiQuad(bufferBuilder2, x, y + MathHelper.floor(16.0F * (1.0F - k)), 16, MathHelper.ceil(16.0F * k), 255, 255, 255, 127);
+                RenderSystem.enableTexture();
+                RenderSystem.enableDepthTest();
+            }
+
+        }
+    }
+
+    // Minecraft has decided to not use matrixstack's in their itemrender class. So this is implementing itemRenderer stuff with matrices.s
+
+    public static void renderGuiQuad(BufferBuilder buffer, int x, int y, int width, int height, int red, int green, int blue, int alpha) {
+        buffer.begin(7, VertexFormats.POSITION_COLOR);
+        buffer.vertex(x, y, 0.0D).color(red, green, blue, alpha).next();
+        buffer.vertex(x, y + height, 0.0D).color(red, green, blue, alpha).next();
+        buffer.vertex(x + width, y + height, 0.0D).color(red, green, blue, alpha).next();
+        buffer.vertex(x + width, y, 0.0D).color(red, green, blue, alpha).next();
+        Tessellator.getInstance().draw();
     }
 
     public static class ItemStorage {
@@ -187,86 +268,5 @@ public class ItemUtil {
         }
 
 
-    }
-
-    // Minecraft has decided to not use matrixstack's in their itemrender class. So this is implementing itemRenderer stuff with matrices.s
-
-    public static void renderGuiItemModel(MatrixStack matrices, ItemStack stack, int x, int y) {
-        matrices.push();
-        MinecraftClient client = MinecraftClient.getInstance();
-        ItemRenderer itemRenderer = client.getItemRenderer();
-        BakedModel model = itemRenderer.getHeldItemModel(stack, null, null);
-        RenderSystem.defaultAlphaFunc();
-        RenderSystem.enableBlend();
-        RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
-        matrices.translate(x + 8, y + 8, 100 + 50);
-        matrices.scale(16, -16, 16);
-        VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
-        boolean bl = !model.isSideLit();
-        if (bl) {
-            DiffuseLighting.disableGuiDepthLighting();
-        }
-        itemRenderer.renderItem(stack, ModelTransformation.Mode.GUI, false, matrices, immediate, 15728880, OverlayTexture.DEFAULT_UV, model);
-        immediate.draw();
-        RenderSystem.enableDepthTest();
-        if (bl) {
-            DiffuseLighting.enableGuiDepthLighting();
-        }
-        matrices.pop();
-    }
-
-    public static void renderGuiItemOverlay(MatrixStack matrices, TextRenderer renderer, ItemStack stack, int x, int y, String countLabel) {
-        if (!stack.isEmpty()) {
-            ItemRenderer itemRenderer = MinecraftClient.getInstance().getItemRenderer();
-            if (stack.getCount() != 1 || countLabel != null) {
-                String string = countLabel == null ? String.valueOf(stack.getCount()) : countLabel;
-                matrices.translate(0.0D, 0.0D, (double)(50 + 200.0F));
-                VertexConsumerProvider.Immediate immediate = VertexConsumerProvider.immediate(Tessellator.getInstance().getBuffer());
-                renderer.draw((String)string, (float)(x + 19 - 2 - renderer.getWidth(string)), (float)(y + 6 + 3), 16777215, true, matrices.peek().getModel(), immediate, false, 0, 15728880);
-                immediate.draw();
-            }
-
-            if (stack.isDamaged()) {
-                RenderSystem.disableDepthTest();
-                RenderSystem.disableTexture();
-                RenderSystem.disableBlend();
-                Tessellator tessellator = Tessellator.getInstance();
-                BufferBuilder bufferBuilder = tessellator.getBuffer();
-                float f = (float)stack.getDamage();
-                float g = (float)stack.getMaxDamage();
-                float h = Math.max(0.0F, (g - f) / g);
-                int i = Math.round(13.0F - f * 13.0F / g);
-                int j = MathHelper.hsvToRgb(h / 3.0F, 1.0F, 1.0F);
-                renderGuiQuad(bufferBuilder, x + 2, y + 13, 13, 2, 0, 0, 0, 255);
-                renderGuiQuad(bufferBuilder, x + 2, y + 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
-                RenderSystem.enableBlend();
-                RenderSystem.enableTexture();
-                RenderSystem.enableDepthTest();
-            }
-
-            ClientPlayerEntity clientPlayerEntity = MinecraftClient.getInstance().player;
-            float k = clientPlayerEntity == null ? 0.0F : clientPlayerEntity.getItemCooldownManager().getCooldownProgress(stack.getItem(), MinecraftClient.getInstance().getTickDelta());
-            if (k > 0.0F) {
-                RenderSystem.disableDepthTest();
-                RenderSystem.disableTexture();
-                RenderSystem.enableBlend();
-                RenderSystem.defaultBlendFunc();
-                Tessellator tessellator2 = Tessellator.getInstance();
-                BufferBuilder bufferBuilder2 = tessellator2.getBuffer();
-                renderGuiQuad(bufferBuilder2, x, y + MathHelper.floor(16.0F * (1.0F - k)), 16, MathHelper.ceil(16.0F * k), 255, 255, 255, 127);
-                RenderSystem.enableTexture();
-                RenderSystem.enableDepthTest();
-            }
-
-        }
-    }
-
-    public static void renderGuiQuad(BufferBuilder buffer, int x, int y, int width, int height, int red, int green, int blue, int alpha) {
-        buffer.begin(7, VertexFormats.POSITION_COLOR);
-        buffer.vertex((double)(x), (double)(y), 0.0D).color(red, green, blue, alpha).next();
-        buffer.vertex((double)(x), (double)(y + height), 0.0D).color(red, green, blue, alpha).next();
-        buffer.vertex((double)(x + width), (double)(y + height), 0.0D).color(red, green, blue, alpha).next();
-        buffer.vertex((double)(x + width), (double)(y) , 0.0D).color(red, green, blue, alpha).next();
-        Tessellator.getInstance().draw();
     }
 }

@@ -12,7 +12,8 @@ import io.github.darkkronicle.polish.util.SimpleColor;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 import java.math.RoundingMode;
@@ -22,6 +23,73 @@ public class CoordsHud extends AbstractHudEntry {
 
     public CoordsHud() {
         super(79, 31);
+    }
+
+    public static String getZDir(int dir) {
+        switch (dir) {
+            case 5:
+                return "++";
+            case 4:
+            case 6:
+                return "+";
+            case 8:
+            case 2:
+                return "-";
+            case 1:
+                return "--";
+        }
+        return "";
+    }
+
+    public static String getXDir(int dir) {
+        switch (dir) {
+            case 3:
+                return "++";
+            case 2:
+            case 4:
+                return "+";
+            case 6:
+            case 8:
+                return "-";
+            case 7:
+                return "--";
+        }
+        return "";
+    }
+
+    /**
+     * Get direction. 1 = North, 2 North East, 3 East, 4 South East...
+     *
+     * @param yaw
+     * @return
+     */
+    public static int getDirection(double yaw) {
+        yaw = yaw % 360;
+        int plzdontcrash = 0;
+        while (yaw < 0) {
+            if (plzdontcrash > 10) {
+                return 0;
+            }
+            yaw = yaw + 360;
+            plzdontcrash++;
+        }
+        int[] directions = {0, 23, 68, 113, 158, 203, 248, 293, 338, 360};
+        for (int i = 0; i < directions.length; i++) {
+            int min = directions[i];
+            int max;
+            if (i + 1 >= directions.length) {
+                max = directions[0];
+            } else {
+                max = directions[i + 1];
+            }
+            if (yaw >= min && yaw < max) {
+                if (i >= 8) {
+                    return 1;
+                }
+                return i + 1;
+            }
+        }
+        return 0;
     }
 
     @Override
@@ -137,73 +205,6 @@ public class CoordsHud extends AbstractHudEntry {
         return direction;
     }
 
-    public static String getZDir(int dir) {
-        switch(dir) {
-            case 5:
-                return "++";
-            case 4:
-            case 6:
-                return "+";
-            case 8:
-            case 2:
-                return "-";
-            case 1:
-                return "--";
-        }
-        return "";
-    }
-
-    public static String getXDir(int dir) {
-        switch(dir) {
-            case 3:
-                return "++";
-            case 2:
-            case 4:
-                return "+";
-            case 6:
-            case 8:
-                return "-";
-            case 7:
-                return "--";
-        }
-        return "";
-    }
-
-    /**
-     * Get direction. 1 = North, 2 North East, 3 East, 4 South East...
-     * @param yaw
-     * @return
-     */
-    public static int getDirection(double yaw) {
-        yaw = yaw % 360;
-        int plzdontcrash = 0;
-        while (yaw < 0) {
-            if (plzdontcrash > 10) {
-                return 0;
-            }
-            yaw = yaw + 360;
-            plzdontcrash++;
-        }
-        int[] directions = {0, 23, 68, 113, 158, 203, 248, 293, 338, 360};
-        for (int i = 0; i < directions.length; i++) {
-            int min = directions[i];
-            int max;
-            if (i + 1 >= directions.length) {
-                max = directions[0];
-            } else {
-                max = directions[i + 1];
-            }
-            if (yaw >= min && yaw < max) {
-                if (i >= 8) {
-                    return 1;
-                }
-                return i + 1;
-            }
-        }
-        return 0;
-    }
-
-
     @Override
     public boolean moveable() {
         return true;
@@ -220,8 +221,23 @@ public class CoordsHud extends AbstractHudEntry {
     }
 
     @Override
-    public String getName() {
-        return "CoordsHUD";
+    public Screen getConfigScreen() {
+        EntryBuilder builder = EntryBuilder.create();
+        EntryButtonList list = new EntryButtonList((client.getWindow().getScaledWidth() / 2) - 290, (client.getWindow().getScaledHeight() / 2) - 70, 580, 150, 1, false);
+        list.addEntry(builder.startToggleEntry(new TranslatableText("option.kronhud.enabled"), getStorage().enabled).setDimensions(20, 10).setSavable(val -> getStorage().enabled = val).build(list));
+        list.addEntry(builder.startFloatSliderEntry(new TranslatableText("option.kronhud.scale"), getStorage().scale, 0.2F, 1.5F).setWidth(80).setSavable(val -> getStorage().scale = val).build(list));
+        list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.backgroundcolor"), getStorage().backgroundColor).setSavable(val -> getStorage().backgroundColor = val).build(list));
+        list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.coordshud.firstcolor"), getStorage().firstTextColor).setSavable(val -> getStorage().firstTextColor = val).build(list));
+        list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.coordshud.secondcolor"), getStorage().secondTextColor).setSavable(val -> getStorage().secondTextColor = val).build(list));
+        list.addEntry(builder.startIntSliderEntry(new TranslatableText("option.kronhud.coordshud.decimals"), getStorage().decimalNum, 0, 3).setSavable(val -> getStorage().decimalNum = val).setWidth(60).build(list));
+
+        return new BasicConfigScreen(getName(), list, () -> KronHUD.storageHandler.saveDefaultHandling());
+
+    }
+
+    @Override
+    public Text getName() {
+        return new TranslatableText("hud.kronhud.coordshud");
     }
 
     public static class Storage extends AbstractStorage {
@@ -236,21 +252,6 @@ public class CoordsHud extends AbstractHudEntry {
             firstTextColor = Colors.SELECTOR_BLUE.color();
             secondTextColor = Colors.WHITE.color();
         }
-
-    }
-
-    @Override
-    public Screen getConfigScreen() {
-        EntryBuilder builder = EntryBuilder.create();
-        EntryButtonList list = new EntryButtonList((client.getWindow().getScaledWidth() / 2) - 290, (client.getWindow().getScaledHeight() / 2) - 70, 580, 150, 1, false);
-        list.addEntry(builder.startToggleEntry(new LiteralText("Enabled"), getStorage().enabled).setDimensions(20, 10).setSavable(val -> getStorage().enabled = val).build(list));
-        list.addEntry(builder.startFloatSliderEntry(new LiteralText("Scale"), getStorage().scale, 0.2F, 1.5F).setWidth(80).setSavable(val -> getStorage().scale = val).build(list));
-        list.addEntry(builder.startColorButtonEntry(new LiteralText("Background Color"), getStorage().backgroundColor).setSavable(val -> getStorage().backgroundColor = val).build(list));
-        list.addEntry(builder.startColorButtonEntry(new LiteralText("First Text Color"), getStorage().firstTextColor).setSavable(val -> getStorage().firstTextColor = val).build(list));
-        list.addEntry(builder.startColorButtonEntry(new LiteralText("Second Text Color"), getStorage().secondTextColor).setSavable(val -> getStorage().secondTextColor = val).build(list));
-        list.addEntry(builder.startIntSliderEntry(new LiteralText("Decimals"), getStorage().decimalNum, 0, 3).setSavable(val -> getStorage().decimalNum = val).setWidth(60).build(list));
-
-        return new BasicConfigScreen(new LiteralText(getName()), list, () -> KronHUD.storageHandler.saveDefaultHandling());
 
     }
 

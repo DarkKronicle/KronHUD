@@ -5,13 +5,13 @@ import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.polish.api.EntryBuilder;
 import io.github.darkkronicle.polish.gui.complexwidgets.EntryButtonList;
 import io.github.darkkronicle.polish.gui.screens.BasicConfigScreen;
-import io.github.darkkronicle.polish.util.Colors;
 import io.github.darkkronicle.polish.util.DrawPosition;
 import io.github.darkkronicle.polish.util.DrawUtil;
 import io.github.darkkronicle.polish.util.SimpleColor;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -50,7 +50,7 @@ public class CrossHairHud extends AbstractHudEntry {
         } else if (hit.getType() == HitResult.Type.ENTITY) {
             return getStorage().entity;
         } else if (hit.getType() == HitResult.Type.BLOCK) {
-            BlockPos blockPos = ((BlockHitResult)hit).getBlockPos();
+            BlockPos blockPos = ((BlockHitResult) hit).getBlockPos();
             World world = this.client.world;
             if (world.getBlockState(blockPos).createScreenHandlerFactory(world, blockPos) != null) {
                 return getStorage().block;
@@ -74,14 +74,34 @@ public class CrossHairHud extends AbstractHudEntry {
         return ID;
     }
 
-    public enum CrossHairs {
-        CROSS,
-        DOT
-    }
-
     @Override
     public Storage getStorage() {
         return KronHUD.storage.crossHairHudStorage;
+    }
+
+    @Override
+    public Screen getConfigScreen() {
+        EntryBuilder builder = EntryBuilder.create();
+        EntryButtonList list = new EntryButtonList((client.getWindow().getScaledWidth() / 2) - 290, (client.getWindow().getScaledHeight() / 2) - 70, 580, 150, 1, false);
+        list.addEntry(builder.startToggleEntry(new TranslatableText("option.kronhud.enabled"), getStorage().enabled).setDimensions(20, 10).setSavable(val -> getStorage().enabled = val).build(list));
+        list.addEntry(builder.startFloatSliderEntry(new TranslatableText("option.kronhud.scale"), getStorage().scale, 0.2F, 1.5F).setWidth(80).setSavable(val -> getStorage().scale = val).build(list));
+        list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.crosshairhud.defaultcolor"), getStorage().basic).setSavable(val -> getStorage().basic = val).build(list));
+        list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.crosshairhud.entitycolor"), getStorage().entity).setSavable(val -> getStorage().entity = val).build(list));
+        list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.crosshairhud.blockcolor"), getStorage().block).setSavable(val -> getStorage().block = val).build(list));
+        //   list.addEntry(builder.startDropdownEntry(new LiteralText("Crosshair Type"), getStorage().type).add(CrossHairs.CROSS, "Cross").add(CrossHairs.DOT, "Dot").);
+
+        return new BasicConfigScreen(getName(), list, () -> KronHUD.storageHandler.saveDefaultHandling());
+
+    }
+
+    @Override
+    public Text getName() {
+        return new TranslatableText("hud.kronhud.crosshairhud");
+    }
+
+    public enum CrossHairs {
+        CROSS,
+        DOT
     }
 
     public static class Storage extends AbstractStorage {
@@ -102,24 +122,5 @@ public class CrossHairHud extends AbstractHudEntry {
             entity = new SimpleColor(191, 34, 34, 255);
             block = new SimpleColor(51, 153, 255, 255);
         }
-    }
-
-    @Override
-    public Screen getConfigScreen() {
-        EntryBuilder builder = EntryBuilder.create();
-        EntryButtonList list = new EntryButtonList((client.getWindow().getScaledWidth() / 2) - 290, (client.getWindow().getScaledHeight() / 2) - 70, 580, 150, 1, false);
-        list.addEntry(builder.startToggleEntry(new LiteralText("Enabled"), getStorage().enabled).setDimensions(20, 10).setSavable(val -> getStorage().enabled = val).build(list));
-        list.addEntry(builder.startFloatSliderEntry(new LiteralText("Scale"), getStorage().scale, 0.2F, 1.5F).setWidth(80).setSavable(val -> getStorage().scale = val).build(list));
-        list.addEntry(builder.startColorButtonEntry(new LiteralText("Default Color"), getStorage().basic).setSavable(val -> getStorage().basic = val).build(list));
-        list.addEntry(builder.startColorButtonEntry(new LiteralText("Entity Color"), getStorage().entity).setSavable(val -> getStorage().entity = val).build(list));
-        list.addEntry(builder.startColorButtonEntry(new LiteralText("Block Color"), getStorage().block).setSavable(val -> getStorage().block = val).build(list));
-
-        return new BasicConfigScreen(new LiteralText(getName()), list, () -> KronHUD.storageHandler.saveDefaultHandling());
-
-    }
-
-    @Override
-    public String getName() {
-        return "CrossHairHud";
     }
 }
