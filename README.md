@@ -6,6 +6,8 @@ A mod to add clean and useful HUD widgets.
 
 ***This mod is currently in early beta, things may n/ot look/work correctly.***
 
+[CurseForge](https://www.curseforge.com/minecraft/mc-mods/kronhud)
+
 ## Widgets
 
 Currenty KronHUD has: 
@@ -41,3 +43,9 @@ More modules are planned to be added. Make sure you add a feature request if you
 ## To compile
 
 Currently, I am using [PolishAPI](https://github.com/DarkKronicle/Polish) for the UI of this mod. If you want to build this mod you'll have to first build polish and put it into a `./libs/` folder.
+
+## Credits
+
+- DarkKronicle - Developer for KronHUD
+- Chronos22 - Created logo 
+- qsefthuopq - Chinese translation

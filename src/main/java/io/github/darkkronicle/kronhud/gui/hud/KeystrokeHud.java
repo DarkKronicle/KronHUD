@@ -161,7 +161,10 @@ public class KeystrokeHud extends AbstractHudEntry {
         list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.keystrokehud.unselectedcolor"), getStorage().unselected).setSavable(val -> getStorage().unselected = val).build(list));
         list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.keystrokehud.selectedcolor"), getStorage().selected).setSavable(val -> getStorage().selected = val).build(list));
 
-        return new BasicConfigScreen(getName(), list, () -> KronHUD.storageHandler.saveDefaultHandling());
+        return new BasicConfigScreen(getName(), list, () -> {
+            KronHUD.storageHandler.saveDefaultHandling();
+            setKeystrokes();
+        });
 
     }
 
