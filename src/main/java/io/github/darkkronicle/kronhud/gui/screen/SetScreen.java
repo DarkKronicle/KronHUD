@@ -26,7 +26,11 @@ public class SetScreen extends Screen {
     private WidgetManager manager;
     private MinecraftClient client;
 
-    public SetScreen() {
+    public static Screen getScreen() {
+        return new SetScreen();
+    }
+
+    private SetScreen() {
         super(new TranslatableText("screen.kronhud.set"));
         client = MinecraftClient.getInstance();
         Window window = client.getWindow();

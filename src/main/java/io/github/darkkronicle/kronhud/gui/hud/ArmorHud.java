@@ -60,7 +60,7 @@ public class ArmorHud extends AbstractHudEntry {
         matrices.scale(getStorage().scale, getStorage().scale, 1);
         DrawPosition pos = getScaledPos();
         if (hovered) {
-            DrawUtil.rect(matrices, pos.getX(), pos.getY(), width, height, Colors.WHITE.color().withAlpha(150).color());
+            DrawUtil.rect(matrices, pos.getX(), pos.getY(), width, height, Colors.SELECTOR_BLUE.color().withAlpha(100).color());
         } else {
             DrawUtil.rect(matrices, pos.getX(), pos.getY(), width, height, Colors.WHITE.color().withAlpha(50).color());
         }

@@ -10,6 +10,7 @@ import io.github.darkkronicle.polish.util.DrawUtil;
 import io.github.darkkronicle.polish.util.SimpleColor;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
@@ -88,7 +89,7 @@ public class CrossHairHud extends AbstractHudEntry {
         list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.crosshairhud.defaultcolor"), getStorage().basic).setSavable(val -> getStorage().basic = val).build(list));
         list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.crosshairhud.entitycolor"), getStorage().entity).setSavable(val -> getStorage().entity = val).build(list));
         list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.crosshairhud.blockcolor"), getStorage().block).setSavable(val -> getStorage().block = val).build(list));
-        //   list.addEntry(builder.startDropdownEntry(new LiteralText("Crosshair Type"), getStorage().type).add(CrossHairs.CROSS, "Cross").add(CrossHairs.DOT, "Dot").);
+        list.addEntry(builder.startDropdownEntry(new TranslatableText("option.kronhud.crosshairhud.type"), getStorage().type).add(CrossHairs.CROSS, "Cross").add(CrossHairs.DOT, "Dot").setSavable(val -> getStorage().type = val).build(list));
 
         return new BasicConfigScreen(getName(), list, () -> KronHUD.storageHandler.saveDefaultHandling());
 

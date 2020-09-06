@@ -3,6 +3,7 @@ package io.github.darkkronicle.kronhud.gui.hud;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.polish.util.Colors;
 import io.github.darkkronicle.polish.util.DrawPosition;
+import io.github.darkkronicle.polish.util.DrawUtil;
 import io.github.darkkronicle.polish.util.SimpleColor;
 import net.minecraft.client.util.math.MatrixStack;
 
@@ -32,7 +33,7 @@ public abstract class CleanHudEntry extends AbstractHudEntry {
         matrices.scale(getS().scale, getS().scale, 1);
         DrawPosition pos = getScaledPos();
         if (hovered) {
-            rect(matrices, pos.getX(), pos.getY(), width, height, Colors.WHITE.color().withAlpha(150).color());
+            DrawUtil.rect(matrices, pos.getX(), pos.getY(), width, height, Colors.SELECTOR_BLUE.color().withAlpha(100).color());
         } else {
             rect(matrices, pos.getX(), pos.getY(), width, height, Colors.WHITE.color().withAlpha(50).color());
         }

@@ -2,12 +2,14 @@ package io.github.darkkronicle.kronhud.mixins;
 
 import io.github.darkkronicle.kronhud.KronHUD;
 import io.github.darkkronicle.kronhud.gui.hud.CrossHairHud;
+import io.github.darkkronicle.kronhud.gui.hud.ScoreboardHud;
 import io.github.darkkronicle.kronhud.hooks.KronHudHooks;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
+import net.minecraft.scoreboard.ScoreboardObjective;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -23,17 +25,29 @@ public class MixinInGameHud {
 
     @Inject(method = "renderStatusEffectOverlay", at = @At("HEAD"), cancellable = true)
     public void renderStatusEffect(MatrixStack matrices, CallbackInfo ci) {
-        ci.cancel();
+        if (KronHUD.storage.disableVanillaPotionHud) {
+            ci.cancel();
+        }
     }
 
     @Inject(method = "renderVignetteOverlay", at = @At("HEAD"), cancellable = true)
     public void renderVignette(Entity entity, CallbackInfo ci) {
-        ci.cancel();
+        if (KronHUD.storage.disableVanillaVignette) {
+            ci.cancel();
+        }
     }
 
     @Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
     public void renderCrosshair(MatrixStack matrices, CallbackInfo ci) {
         CrossHairHud hud = (CrossHairHud) KronHUD.hudManager.get(CrossHairHud.ID);
+        if (hud != null && hud.isEnabled()) {
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "renderScoreboardSidebar", at = @At("HEAD"), cancellable = true)
+    public void renderScoreboard(MatrixStack matrices, ScoreboardObjective objective, CallbackInfo ci) {
+        ScoreboardHud hud = (ScoreboardHud) KronHUD.hudManager.get(ScoreboardHud.ID);
         if (hud != null && hud.isEnabled()) {
             ci.cancel();
         }

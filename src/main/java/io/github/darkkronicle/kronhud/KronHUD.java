@@ -4,6 +4,7 @@ import io.github.darkkronicle.kronhud.config.ConfigHandler;
 import io.github.darkkronicle.kronhud.config.ConfigStorage;
 import io.github.darkkronicle.kronhud.gui.hud.ArmorHud;
 import io.github.darkkronicle.kronhud.gui.hud.ArrowHud;
+import io.github.darkkronicle.kronhud.gui.hud.BossBarHud;
 import io.github.darkkronicle.kronhud.gui.hud.CPSHud;
 import io.github.darkkronicle.kronhud.gui.hud.CoordsHud;
 import io.github.darkkronicle.kronhud.gui.hud.CrossHairHud;
@@ -13,6 +14,7 @@ import io.github.darkkronicle.kronhud.gui.hud.ItemUpdateHud;
 import io.github.darkkronicle.kronhud.gui.hud.KeystrokeHud;
 import io.github.darkkronicle.kronhud.gui.hud.PingHud;
 import io.github.darkkronicle.kronhud.gui.hud.PotionsHud;
+import io.github.darkkronicle.kronhud.gui.hud.ScoreboardHud;
 import io.github.darkkronicle.kronhud.gui.screen.SetScreen;
 import io.github.darkkronicle.kronhud.hooks.KronHudHooks;
 import lombok.Getter;
@@ -39,11 +41,11 @@ public class KronHUD implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        KeyBinding key = new KeyBinding("kronhud.edithud", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_Y, "category.kronhud.keys");
+        KeyBinding key = new KeyBinding("keys.kronhud.edithud", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_Y, "keys.category.kronhud.keys");
         KeyBindingHelper.registerKeyBinding(key);
         ClientTickEvents.START_CLIENT_TICK.register(s -> {
             if (key.wasPressed()) {
-                s.openScreen(new SetScreen());
+                s.openScreen(SetScreen.getScreen());
             }
         });
         KronHudHooks.HUD_RENDER_PRE.register((matrices, delta) -> {
@@ -67,6 +69,8 @@ public class KronHUD implements ClientModInitializer {
         hudManager.add(new PingHud());
         hudManager.add(new PotionsHud());
         hudManager.add(new CoordsHud());
+        hudManager.add(new BossBarHud());
+        hudManager.add(new ScoreboardHud());
         HudRenderCallback.EVENT.register((matrixStack, v) -> hudManager.render(matrixStack));
         setupComplete = true;
     }

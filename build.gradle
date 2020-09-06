@@ -35,6 +35,7 @@ dependencies {
     include name: 'Polish-1.0.3'
     modCompile name: 'Polish-1.0.3-dev'
 
+    modCompileOnly "io.github.prospector:modmenu:1.14.6+build.31"
 }
 
 processResources {

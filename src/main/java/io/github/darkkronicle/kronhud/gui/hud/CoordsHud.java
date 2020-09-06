@@ -135,7 +135,7 @@ public class CoordsHud extends AbstractHudEntry {
         matrices.scale(getStorage().scale, getStorage().scale, 1);
         DrawPosition pos = getScaledPos();
         if (hovered) {
-            DrawUtil.rect(matrices, pos.getX(), pos.getY(), width, height, Colors.WHITE.color().withAlpha(150).color());
+            DrawUtil.rect(matrices, pos.getX(), pos.getY(), width, height, Colors.SELECTOR_BLUE.color().withAlpha(100).color());
         } else {
             DrawUtil.rect(matrices, pos.getX(), pos.getY(), width, height, Colors.WHITE.color().withAlpha(50).color());
         }
@@ -149,7 +149,7 @@ public class CoordsHud extends AbstractHudEntry {
         }
 
         DecimalFormat df = new DecimalFormat(format.toString());
-        df.setRoundingMode(RoundingMode.CEILING);
+        df.setRoundingMode(RoundingMode.FLOOR);
         double x = 109.2325;
         double y = 180.8981;
         double z = -5098.32698;
@@ -247,6 +247,8 @@ public class CoordsHud extends AbstractHudEntry {
         public int decimalNum;
 
         public Storage() {
+            x = 0.8F;
+            y = 0;
             decimalNum = 1;
             backgroundColor = Colors.BLACK.color().withAlpha(100);
             firstTextColor = Colors.SELECTOR_BLUE.color();

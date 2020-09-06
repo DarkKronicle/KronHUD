@@ -9,6 +9,7 @@ import io.github.darkkronicle.polish.gui.screens.BasicConfigScreen;
 import io.github.darkkronicle.polish.util.ColorUtil;
 import io.github.darkkronicle.polish.util.Colors;
 import io.github.darkkronicle.polish.util.DrawPosition;
+import io.github.darkkronicle.polish.util.DrawUtil;
 import io.github.darkkronicle.polish.util.EasingFunctions;
 import io.github.darkkronicle.polish.util.SimpleColor;
 import io.github.darkkronicle.polish.util.SimpleRectangle;
@@ -111,7 +112,7 @@ public class KeystrokeHud extends AbstractHudEntry {
         matrices.scale(getStorage().scale, getStorage().scale, 1);
         DrawPosition pos = getScaledPos();
         if (hovered) {
-            rect(matrices, pos.getX(), pos.getY(), width, height, Colors.WHITE.color().withAlpha(150).color());
+            DrawUtil.rect(matrices, pos.getX(), pos.getY(), width, height, Colors.SELECTOR_BLUE.color().withAlpha(100).color());
         } else {
             rect(matrices, pos.getX(), pos.getY(), width, height, Colors.WHITE.color().withAlpha(50).color());
         }

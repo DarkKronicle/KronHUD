@@ -5,10 +5,12 @@
   "mixins": [
   ],
   "client": [
+    "AccessorBossBarHud",
     "MixinInGameHud",
     "MixinKeybind",
     "MixinMinecraftClient",
-    "MixinMouse"
+    "MixinMouse",
+    "MixinBossBarHud"
   ],
   "injectors": {
     "defaultRequire": 1

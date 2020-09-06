@@ -60,7 +60,7 @@ public class HudManager {
     }
 
     public void render(MatrixStack matrices) {
-        if (!placeholder) {
+        if (!placeholder && !client.options.debugEnabled) {
             for (AbstractHudEntry hud : getEntries()) {
                 if (hud.isEnabled()) {
                     hud.renderHud(matrices);

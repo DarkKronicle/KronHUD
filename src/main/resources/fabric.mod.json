@@ -10,6 +10,9 @@
   "entrypoints": {
     "client": [
       "io.github.darkkronicle.kronhud.KronHUD"
+    ],
+    "modmenu":[
+      "io.github.darkkronicle.kronhud.gui.screen.ModMenuImpl"
     ]
   },
   "license": "GNUGPL v3",

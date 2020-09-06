@@ -21,6 +21,8 @@ Currenty KronHUD has:
 - Potions
 - Arrows
 - Coordinates
+- Scoreboard
+- Bossbar
 
 All modules can be moved around freely, and have snapable movement so you can get everything in line!
 

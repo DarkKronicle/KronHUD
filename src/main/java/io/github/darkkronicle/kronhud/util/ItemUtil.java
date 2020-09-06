@@ -155,14 +155,15 @@ public class ItemUtil {
     }
 
     public static void renderGuiItemOverlay(MatrixStack matrices, TextRenderer renderer, ItemStack stack, int x, int y, String countLabel) {
+        matrices.push();
         if (!stack.isEmpty()) {
-            ItemRenderer itemRenderer = MinecraftClient.getInstance().getItemRenderer();
             if (stack.getCount() != 1 || countLabel != null) {
                 String string = countLabel == null ? String.valueOf(stack.getCount()) : countLabel;
                 matrices.translate(0.0D, 0.0D, 50 + 200.0F);
                 VertexConsumerProvider.Immediate immediate = VertexConsumerProvider.immediate(Tessellator.getInstance().getBuffer());
                 renderer.draw(string, (float) (x + 19 - 2 - renderer.getWidth(string)), (float) (y + 6 + 3), 16777215, true, matrices.peek().getModel(), immediate, false, 0, 15728880);
                 immediate.draw();
+                matrices.translate(0.0D, 0.0D,  - 50 - 200.0F);
             }
 
             if (stack.isDamaged()) {
@@ -198,6 +199,7 @@ public class ItemUtil {
             }
 
         }
+        matrices.pop();
     }
 
     // Minecraft has decided to not use matrixstack's in their itemrender class. So this is implementing itemRenderer stuff with matrices.s
