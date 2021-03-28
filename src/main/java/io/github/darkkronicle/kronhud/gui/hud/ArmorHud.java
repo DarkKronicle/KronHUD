@@ -32,7 +32,9 @@ public class ArmorHud extends AbstractHudEntry {
         matrices.push();
         matrices.scale(getStorage().scale, getStorage().scale, 1);
         DrawPosition pos = getScaledPos();
-        DrawableHelper.fill(matrices, pos.getX(), pos.getY(), pos.getX() + width, pos.getY() + height, getStorage().backgroundColor.color());
+        if (getStorage().background) {
+            DrawableHelper.fill(matrices, pos.getX(), pos.getY(), pos.getX() + width, pos.getY() + height, getStorage().backgroundColor.color());
+        }
         int lastY = 2 + (4 * 20);
         renderMainItem(matrices, client.player.inventory.getMainHandStack(), pos.getX() + 2, pos.getY() + lastY);
         lastY = lastY - 20;
@@ -94,6 +96,7 @@ public class ArmorHud extends AbstractHudEntry {
         EntryButtonList list = BasicConfigScreen.createButtonList(1);
         list.addEntry(builder.startToggleEntry(new TranslatableText("option.kronhud.enabled"), getStorage().enabled).setDimensions(20, 10).setSavable(val -> getStorage().enabled = val).build(list));
         list.addEntry(builder.startFloatSliderEntry(new TranslatableText("option.kronhud.scale"), getStorage().scale, 0.2F, 1.5F).setWidth(80).setSavable(val -> getStorage().scale = val).build(list));
+        list.addEntry(builder.startToggleEntry(new TranslatableText("option.kronhud.background"), getStorage().background).setSavable(val -> getStorage().background = val).build(list));
         list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.backgroundcolor"), getStorage().backgroundColor).setSavable(val -> getStorage().backgroundColor = val).build(list));
         return new BasicConfigScreen(getName(), list, () -> KronHUD.storageHandler.saveDefaultHandling());
 
@@ -105,6 +108,7 @@ public class ArmorHud extends AbstractHudEntry {
     }
 
     public static class Storage extends AbstractStorage {
+        boolean background;
         SimpleColor backgroundColor;
 
         public Storage() {
@@ -112,6 +116,7 @@ public class ArmorHud extends AbstractHudEntry {
             y = 1F;
             scale = 1F;
             enabled = true;
+            background = true;
             backgroundColor = new SimpleColor(0, 0, 0, 100);
         }
     }

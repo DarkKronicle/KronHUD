@@ -10,7 +10,7 @@ import net.minecraft.client.util.math.MatrixStack;
 public abstract class CleanHudEntry extends AbstractHudEntry {
 
     public CleanHudEntry() {
-        super(47, 13);
+        super(54, 13);
     }
 
     protected CleanHudEntry(int width, int height) {
@@ -22,7 +22,9 @@ public abstract class CleanHudEntry extends AbstractHudEntry {
         matrices.push();
         matrices.scale(getS().scale, getS().scale, 1);
         DrawPosition pos = getScaledPos();
-        rect(matrices, pos.getX(), pos.getY(), width, height, getStorage().backgroundColor.color());
+        if (getStorage().background) {
+            rect(matrices, pos.getX(), pos.getY(), width, height, getStorage().backgroundColor.color());
+        }
         drawCenteredString(matrices, client.textRenderer, getValue(), pos.getX() + (Math.round(width) / 2), pos.getY() + (Math.round((float) height / 2)) - 4, getStorage().textColor.color());
         matrices.pop();
     }
@@ -63,6 +65,7 @@ public abstract class CleanHudEntry extends AbstractHudEntry {
     public static class Storage extends AbstractStorage {
         SimpleColor textColor;
         SimpleColor backgroundColor;
+        boolean background;
 
         public Storage() {
             x = 1F;
@@ -70,6 +73,7 @@ public abstract class CleanHudEntry extends AbstractHudEntry {
             scale = 1;
             textColor = new SimpleColor(255, 255, 255, 255);
             backgroundColor = new SimpleColor(0, 0, 0, 100);
+            background = true;
         }
     }
 

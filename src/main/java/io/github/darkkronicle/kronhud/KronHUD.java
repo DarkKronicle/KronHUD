@@ -2,21 +2,8 @@ package io.github.darkkronicle.kronhud;
 
 import io.github.darkkronicle.kronhud.config.ConfigHandler;
 import io.github.darkkronicle.kronhud.config.ConfigStorage;
-import io.github.darkkronicle.kronhud.gui.hud.ArmorHud;
-import io.github.darkkronicle.kronhud.gui.hud.ArrowHud;
-import io.github.darkkronicle.kronhud.gui.hud.BossBarHud;
-import io.github.darkkronicle.kronhud.gui.hud.CPSHud;
-import io.github.darkkronicle.kronhud.gui.hud.CoordsHud;
-import io.github.darkkronicle.kronhud.gui.hud.CrossHairHud;
-import io.github.darkkronicle.kronhud.gui.hud.FPSHud;
-import io.github.darkkronicle.kronhud.gui.hud.HudManager;
-import io.github.darkkronicle.kronhud.gui.hud.ItemUpdateHud;
-import io.github.darkkronicle.kronhud.gui.hud.KeystrokeHud;
-import io.github.darkkronicle.kronhud.gui.hud.PingHud;
-import io.github.darkkronicle.kronhud.gui.hud.PotionsHud;
-import io.github.darkkronicle.kronhud.gui.hud.ScoreboardHud;
+import io.github.darkkronicle.kronhud.gui.hud.*;
 import io.github.darkkronicle.kronhud.gui.screen.SetScreen;
-import io.github.darkkronicle.kronhud.hooks.KronHudHooks;
 import lombok.Getter;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -47,8 +34,6 @@ public class KronHUD implements ClientModInitializer {
             if (key.wasPressed()) {
                 s.openScreen(SetScreen.getScreen());
             }
-        });
-        KronHudHooks.HUD_RENDER_PRE.register((matrices, delta) -> {
             if (!rendered) {
                 setHud();
                 rendered = true;

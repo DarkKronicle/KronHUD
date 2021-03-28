@@ -100,7 +100,9 @@ public class CoordsHud extends AbstractHudEntry {
         matrices.push();
         matrices.scale(getStorage().scale, getStorage().scale, 1);
         DrawPosition pos = getScaledPos();
-        rect(matrices, pos.getX(), pos.getY(), width, height, getStorage().backgroundColor.color());
+        if (getStorage().background) {
+            rect(matrices, pos.getX(), pos.getY(), width, height, getStorage().backgroundColor.color());
+        }
         StringBuilder format = new StringBuilder("#");
         if (getStorage().decimalNum > 0) {
             format.append(".");
@@ -199,7 +201,7 @@ public class CoordsHud extends AbstractHudEntry {
                 direction = "NW";
                 break;
             case 0:
-                direction = "NaN";
+                direction = "?";
                 break;
         }
         return direction;
@@ -226,11 +228,11 @@ public class CoordsHud extends AbstractHudEntry {
         EntryButtonList list = new EntryButtonList((client.getWindow().getScaledWidth() / 2) - 290, (client.getWindow().getScaledHeight() / 2) - 70, 580, 150, 1, false);
         list.addEntry(builder.startToggleEntry(new TranslatableText("option.kronhud.enabled"), getStorage().enabled).setDimensions(20, 10).setSavable(val -> getStorage().enabled = val).build(list));
         list.addEntry(builder.startFloatSliderEntry(new TranslatableText("option.kronhud.scale"), getStorage().scale, 0.2F, 1.5F).setWidth(80).setSavable(val -> getStorage().scale = val).build(list));
+        list.addEntry(builder.startToggleEntry(new TranslatableText("option.kronhud.background"), getStorage().background).setSavable(val -> getStorage().background = val).build(list));
         list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.backgroundcolor"), getStorage().backgroundColor).setSavable(val -> getStorage().backgroundColor = val).build(list));
         list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.coordshud.firstcolor"), getStorage().firstTextColor).setSavable(val -> getStorage().firstTextColor = val).build(list));
         list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.coordshud.secondcolor"), getStorage().secondTextColor).setSavable(val -> getStorage().secondTextColor = val).build(list));
         list.addEntry(builder.startIntSliderEntry(new TranslatableText("option.kronhud.coordshud.decimals"), getStorage().decimalNum, 0, 3).setSavable(val -> getStorage().decimalNum = val).setWidth(60).build(list));
-
         return new BasicConfigScreen(getName(), list, () -> KronHUD.storageHandler.saveDefaultHandling());
 
     }
@@ -245,6 +247,7 @@ public class CoordsHud extends AbstractHudEntry {
         public SimpleColor firstTextColor;
         public SimpleColor secondTextColor;
         public int decimalNum;
+        private boolean background;
 
         public Storage() {
             x = 0.8F;
@@ -253,6 +256,7 @@ public class CoordsHud extends AbstractHudEntry {
             backgroundColor = Colors.BLACK.color().withAlpha(100);
             firstTextColor = Colors.SELECTOR_BLUE.color();
             secondTextColor = Colors.WHITE.color();
+            background = true;
         }
 
     }

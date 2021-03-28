@@ -10,12 +10,16 @@ import io.github.darkkronicle.polish.util.Colors;
 import io.github.darkkronicle.polish.util.DrawPosition;
 import io.github.darkkronicle.polish.util.DrawUtil;
 import io.github.darkkronicle.polish.util.SimpleColor;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 
 public class ArrowHud extends AbstractHudEntry {
@@ -29,10 +33,19 @@ public class ArrowHud extends AbstractHudEntry {
 
     @Override
     public void render(MatrixStack matrices) {
+        if (getStorage().dynamic) {
+            ClientPlayerEntity player = MinecraftClient.getInstance().player;
+            if (!(player.getStackInHand(Hand.MAIN_HAND).getItem() instanceof RangedWeaponItem
+                    || player.getStackInHand(Hand.OFF_HAND).getItem() instanceof RangedWeaponItem)) {
+                return;
+            }
+        }
         matrices.push();
         matrices.scale(getStorage().scale, getStorage().scale, 1);
         DrawPosition pos = getScaledPos();
-        rect(matrices, pos.getX(), pos.getY(), width, height, getStorage().backgroundColor.color());
+        if (getStorage().background) {
+            rect(matrices, pos.getX(), pos.getY(), width, height, getStorage().backgroundColor.color());
+        }
         drawCenteredString(matrices, client.textRenderer, String.valueOf(arrows), pos.getX() + width / 2, pos.getY() + height - 10, getStorage().textColor.color());
         ItemUtil.renderGuiItemModel(matrices, new ItemStack(Items.ARROW), pos.getX() + 2, pos.getY() + 2);
         matrices.pop();
@@ -86,8 +99,10 @@ public class ArrowHud extends AbstractHudEntry {
         EntryButtonList list = new EntryButtonList((client.getWindow().getScaledWidth() / 2) - 290, (client.getWindow().getScaledHeight() / 2) - 70, 580, 150, 1, false);
         list.addEntry(builder.startToggleEntry(new TranslatableText("option.kronhud.enabled"), getStorage().enabled).setDimensions(20, 10).setSavable(val -> getStorage().enabled = val).build(list));
         list.addEntry(builder.startFloatSliderEntry(new TranslatableText("option.kronhud.scale"), getStorage().scale, 0.2F, 1.5F).setWidth(80).setSavable(val -> getStorage().scale = val).build(list));
+        list.addEntry(builder.startToggleEntry(new TranslatableText("option.kronhud.background"), getStorage().background).setSavable(val -> getStorage().background = val).build(list));
         list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.backgroundcolor"), getStorage().backgroundColor).setSavable(val -> getStorage().backgroundColor = val).build(list));
         list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.textcolor"), getStorage().textColor).setSavable(val -> getStorage().textColor = val).build(list));
+        list.addEntry(builder.startToggleEntry(new TranslatableText("option.kronhud.arrowhud.dynamic"), getStorage().dynamic).setDimensions(20, 10).setSavable(val -> getStorage().dynamic = val).build(list));
 
         return new BasicConfigScreen(getName(), list, () -> KronHUD.storageHandler.saveDefaultHandling());
 
@@ -99,16 +114,20 @@ public class ArrowHud extends AbstractHudEntry {
     }
 
     public static class Storage extends AbstractStorage {
+        boolean background;
         SimpleColor backgroundColor;
         SimpleColor textColor;
+        boolean dynamic;
 
         public Storage() {
             x = 0.5F;
             y = 0F;
             scale = 1F;
             enabled = true;
+            background = true;
             backgroundColor = new SimpleColor(0, 0, 0, 100);
             textColor = new SimpleColor(255, 255, 255, 255);
+            dynamic = true;
         }
     }
 }
