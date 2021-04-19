@@ -6,13 +6,7 @@ import io.github.darkkronicle.kronhud.hooks.KronHudHooks;
 import io.github.darkkronicle.polish.api.EntryBuilder;
 import io.github.darkkronicle.polish.gui.complexwidgets.EntryButtonList;
 import io.github.darkkronicle.polish.gui.screens.BasicConfigScreen;
-import io.github.darkkronicle.polish.util.ColorUtil;
-import io.github.darkkronicle.polish.util.Colors;
-import io.github.darkkronicle.polish.util.DrawPosition;
-import io.github.darkkronicle.polish.util.DrawUtil;
-import io.github.darkkronicle.polish.util.EasingFunctions;
-import io.github.darkkronicle.polish.util.SimpleColor;
-import io.github.darkkronicle.polish.util.SimpleRectangle;
+import io.github.darkkronicle.polish.util.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.options.KeyBinding;
@@ -38,7 +32,6 @@ public class KeystrokeHud extends AbstractHudEntry {
         super(54, 61);
         this.client = MinecraftClient.getInstance();
         KronHudHooks.KEYBIND_CHANGE.register(key -> setKeystrokes());
-
     }
 
     public static Optional<String> getMouseKeyBindName(KeyBinding keyBinding) {
@@ -71,8 +64,8 @@ public class KeystrokeHud extends AbstractHudEntry {
         // Space
         keystrokes.add(new Keystroke(new SimpleRectangle(0, 54, 53, 7), scaledPos, client.options.keyJump, (stroke, matrices) -> {
             SimpleRectangle bounds = stroke.bounds;
-            rect(matrices, bounds.x() + stroke.offset.getX() + 2, bounds.y() + stroke.offset.getY() + 2, bounds.width() - 4, 1, stroke.getColor(true).withAlpha(150).color());
-        }, getStorage().unselected, getStorage().selected));
+            rect(matrices, bounds.x() + stroke.offset.getX() + 2, bounds.y() + stroke.offset.getY() + 2, bounds.width() - 4, 1, stroke.getFGColor().color());
+        }, getStorage().unselected, getStorage().selected, getStorage().unselectedFG, getStorage().selectedFG));
         KeyBinding.unpressAll();
         KeyBinding.updatePressedStates();
     }
@@ -133,9 +126,9 @@ public class KeystrokeHud extends AbstractHudEntry {
 
     public Keystroke createFromString(SimpleRectangle bounds, DrawPosition offset, KeyBinding key, String word) {
         return new Keystroke(bounds, offset, key, (stroke, matrices) -> {
-            SimpleRectangle strokeBound = stroke.bounds;
-            client.textRenderer.draw(matrices, word, (strokeBound.x() + stroke.offset.getX() + ((float) strokeBound.width() / 2 + 1)) - ((float) client.textRenderer.getWidth(word) / 2), strokeBound.y() + stroke.offset.getY() + ((float) strokeBound.height() / 2) - 4, stroke.getColor(true).withAlpha(150).color());
-        }, getStorage().unselected, getStorage().selected);
+            SimpleRectangle strokeBounds = stroke.bounds;
+            client.textRenderer.draw(matrices, word, (strokeBounds.x() + stroke.offset.getX() + ((float) strokeBounds.width() / 2)) - ((float) client.textRenderer.getWidth(word) / 2), strokeBounds.y() + stroke.offset.getY() + ((float) strokeBounds.height() / 2) - 4, stroke.getFGColor().color());
+        }, getStorage().unselected, getStorage().selected, getStorage().unselectedFG, getStorage().selectedFG);
     }
 
     @Override
@@ -161,6 +154,8 @@ public class KeystrokeHud extends AbstractHudEntry {
         list.addEntry(builder.startFloatSliderEntry(new TranslatableText("option.kronhud.scale"), getStorage().scale, 0.2F, 1.5F).setWidth(80).setSavable(val -> getStorage().scale = val).build(list));
         list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.keystrokehud.unselectedcolor"), getStorage().unselected).setSavable(val -> getStorage().unselected = val).build(list));
         list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.keystrokehud.selectedcolor"), getStorage().selected).setSavable(val -> getStorage().selected = val).build(list));
+        list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.keystrokehud.unselectedfgcolor"), getStorage().unselectedFG).setSavable(val -> getStorage().unselectedFG = val).build(list));
+        list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.keystrokehud.selectedfgcolor"), getStorage().selectedFG).setSavable(val -> getStorage().selectedFG = val).build(list));
 
         return new BasicConfigScreen(getName(), list, () -> {
             KronHUD.storageHandler.saveDefaultHandling();
@@ -185,15 +180,19 @@ public class KeystrokeHud extends AbstractHudEntry {
         private final EasingFunctions ease = EasingFunctions.Types.SINE_IN;
         private final SimpleColor unselected;
         private final SimpleColor selected;
+        private final SimpleColor unselectedFG;
+        private final SimpleColor selectedFG;
         private boolean wasPressed = false;
 
-        public Keystroke(SimpleRectangle bounds, DrawPosition offset, KeyBinding key, KeystrokeRender render, SimpleColor unselected, SimpleColor selected) {
+        public Keystroke(SimpleRectangle bounds, DrawPosition offset, KeyBinding key, KeystrokeRender render, SimpleColor unselected, SimpleColor selected, SimpleColor unselectedFG, SimpleColor selectedFG) {
             this.bounds = bounds;
             this.offset = offset;
             this.key = key;
             this.render = render;
             this.selected = selected;
             this.unselected = unselected;
+            this.unselectedFG = unselectedFG;
+            this.selectedFG = selectedFG;
         }
 
         public void setPos(int x, int y) {
@@ -220,18 +219,17 @@ public class KeystrokeHud extends AbstractHudEntry {
         }
 
         public SimpleColor getColor() {
-            return getColor(false);
-        }
-
-        public SimpleColor getColor(boolean invert) {
             percent = start == -1 ? 1 : (float) ease.apply(MathHelper.clamp((Util.getMeasuringTimeMs() - start) / animTime, 0, 1));
-            if (invert) {
-                return key.isPressed() ? ColorUtil.blend(selected, unselected, percent) : ColorUtil.blend(unselected, selected, percent);
-            }
             return key.isPressed() ? ColorUtil.blend(unselected, selected, percent) : ColorUtil.blend(selected, unselected, percent);
         }
 
+        public SimpleColor getFGColor() {
+            percent = start == -1 ? 1 : (float) ease.apply(MathHelper.clamp((Util.getMeasuringTimeMs() - start) / animTime, 0, 1));
+            return key.isPressed() ? ColorUtil.blend(unselectedFG, selectedFG, percent) : ColorUtil.blend(selectedFG, unselectedFG, percent);
+        }
+
         public void render(MatrixStack matrices) {
+
             renderStroke(matrices);
             render.render(this, matrices);
         }
@@ -244,6 +242,8 @@ public class KeystrokeHud extends AbstractHudEntry {
     public static class Storage extends AbstractStorage {
         public SimpleColor unselected;
         public SimpleColor selected;
+        public SimpleColor unselectedFG;
+        public SimpleColor selectedFG;
 
         public Storage() {
             x = 0F;
@@ -251,6 +251,8 @@ public class KeystrokeHud extends AbstractHudEntry {
             scale = 1;
             unselected = new SimpleColor(0, 0, 0, 100);
             selected = new SimpleColor(255, 255, 255, 150);
+            unselectedFG = new SimpleColor(16777215);
+            selectedFG = new SimpleColor(4210752);
         }
     }
 }

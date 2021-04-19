@@ -4,11 +4,7 @@ import io.github.darkkronicle.kronhud.KronHUD;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.util.SnappingHelper;
 import io.github.darkkronicle.polish.gui.widgets.CleanButton;
-import io.github.darkkronicle.polish.util.Colors;
-import io.github.darkkronicle.polish.util.DrawPosition;
-import io.github.darkkronicle.polish.util.DrawUtil;
-import io.github.darkkronicle.polish.util.SimpleRectangle;
-import io.github.darkkronicle.polish.util.WidgetManager;
+import io.github.darkkronicle.polish.util.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.Window;
@@ -23,6 +19,7 @@ public class SetScreen extends Screen {
     private AbstractHudEntry current = null;
     private DrawPosition offset = null;
     private SnappingHelper snap;
+    private boolean snapEnabled;
     private WidgetManager manager;
     private MinecraftClient client;
 
@@ -35,7 +32,13 @@ public class SetScreen extends Screen {
         client = MinecraftClient.getInstance();
         Window window = client.getWindow();
         manager = new WidgetManager(this, children);
-        manager.add(new CleanButton((window.getScaledWidth() / 2 ) - 50, window.getScaledHeight() - 50, 100, 15, Colors.BLACK.color().withAlpha(150), new TranslatableText("button.kronhud.configuration"), cleanButton -> client.openScreen(ConfigScreen.getScreen())));
+        manager.add(new CleanButton((window.getScaledWidth() / 2) - 50, window.getScaledHeight() - 50, 100, 15, Colors.BLACK.color().withAlpha(150), new TranslatableText("button.kronhud.configuration"), cleanButton -> client.openScreen(ConfigScreen.getScreen())));
+        manager.add(new CleanButton((window.getScaledWidth() / 2) - 50, window.getScaledHeight() - 70, 100, 15, new SimpleColor(50, 50, 50, 150), new TranslatableText("button.kronhud.snapping"), cleanButton -> {
+            snapEnabled = !snapEnabled;
+            snap = null;
+            cleanButton.setBaseColor(snapEnabled ? new SimpleColor(50, 50, 50, 150) : new SimpleColor(0, 0, 0, 150));
+        }));
+        snapEnabled = true;
     }
 
     @Override
@@ -61,7 +64,9 @@ public class SetScreen extends Screen {
                 offset = new DrawPosition((int) Math.round(mouseX - current.getX()), (int) Math.round(mouseY - current.getY()));
                 List<SimpleRectangle> bounds = KronHUD.hudManager.getAllBounds();
                 bounds.remove(current.getBounds());
-                snap = new SnappingHelper(bounds, current.getBounds());
+                if (snapEnabled) {
+                    snap = new SnappingHelper(bounds, current.getBounds());
+                }
                 return true;
             } else {
                 current = null;

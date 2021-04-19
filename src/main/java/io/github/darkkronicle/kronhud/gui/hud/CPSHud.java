@@ -12,23 +12,30 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CPSHud extends CleanHudEntry {
     public static final Identifier ID = new Identifier("kronhud", "cpshud");
-    private final ArrayList<Long> clicks;
 
     public CPSHud() {
         //  super(x, y, scale);
         super();
-        clicks = new ArrayList<>();
         KronHudHooks.MOUSE_INPUT.register((window, button, action, mods) -> {
             if (!getS().clicksCPS) {
-                clicks.add(Util.getMeasuringTimeMs());
+                if (button == 0) {
+                    ClickList.LEFT.click();
+                } else if (button == 1) {
+                    ClickList.RIGHT.click();
+                }
             }
         });
         KronHudHooks.KEYBIND_PRESS.register((key) -> {
-            if (getS().clicksCPS && (key.equals(client.options.keyAttack) || key.equals(client.options.keyUse))) {
-                clicks.add(Util.getMeasuringTimeMs());
+            if (getS().clicksCPS) {
+                if (key.equals(client.options.keyAttack)) {
+                    ClickList.LEFT.click();
+                } else if (key.equals(client.options.keyUse)) {
+                    ClickList.RIGHT.click();
+                }
             }
         });
     }
@@ -40,22 +47,28 @@ public class CPSHud extends CleanHudEntry {
 
     @Override
     public void tick() {
-        removeOldClicks();
-    }
-
-    public void removeOldClicks() {
-        long time = Util.getMeasuringTimeMs();
-        clicks.removeIf((click) -> time - click > 1000);
+        ClickList.LEFT.update();
+        ClickList.RIGHT.update();
     }
 
     @Override
     public String getValue() {
-        return clicks.size() + " CPS";
+        if (getS().rightCPS) {
+            return ClickList.LEFT.clicks() + " | " + ClickList.RIGHT.clicks() + " CPS";
+        } else {
+            return ClickList.LEFT.clicks() + " CPS";
+        }
+
+
     }
 
     @Override
     public String getPlaceholder() {
-        return "0 CPS";
+        if (getS().rightCPS) {
+            return "0 | 0 CPS";
+        } else {
+            return "0 CPS";
+        }
     }
 
     @Override
@@ -74,9 +87,11 @@ public class CPSHud extends CleanHudEntry {
         EntryButtonList list = new EntryButtonList((client.getWindow().getScaledWidth() / 2) - 290, (client.getWindow().getScaledHeight() / 2) - 70, 580, 150, 1, false);
         list.addEntry(builder.startToggleEntry(new TranslatableText("option.kronhud.enabled"), getStorage().enabled).setDimensions(20, 10).setSavable(val -> getStorage().enabled = val).build(list));
         list.addEntry(builder.startFloatSliderEntry(new TranslatableText("option.kronhud.scale"), getStorage().scale, 0.2F, 1.5F).setWidth(80).setSavable(val -> getStorage().scale = val).build(list));
+        list.addEntry(builder.startToggleEntry(new TranslatableText("option.kronhud.background"), getStorage().background).setSavable(val -> getStorage().background = val).build(list));
         list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.backgroundcolor"), getStorage().backgroundColor).setSavable(val -> getStorage().backgroundColor = val).build(list));
         list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.textcolor"), getStorage().textColor).setSavable(val -> getStorage().textColor = val).build(list));
         list.addEntry(builder.startToggleEntry(new TranslatableText("option.kronhud.cpshud.cpskeybind"), getS().clicksCPS).setSavable(val -> getS().clicksCPS = val).build(list));
+        list.addEntry(builder.startToggleEntry(new TranslatableText("option.kronhud.cpshud.rightcps"), getS().rightCPS).setSavable(val -> getS().rightCPS = val).build(list));
         return new BasicConfigScreen(getName(), list, () -> KronHUD.storageHandler.saveDefaultHandling());
 
     }
@@ -88,11 +103,38 @@ public class CPSHud extends CleanHudEntry {
 
     public static class CPSStorage extends Storage {
         public boolean clicksCPS;
+        public boolean rightCPS;
 
         public CPSStorage() {
             super();
             clicksCPS = false;
+            rightCPS = false;
         }
 
     }
+
+    public static class ClickList {
+
+        public static ClickList LEFT = new ClickList();
+        public static ClickList RIGHT = new ClickList();
+        private List<Long> clicks;
+
+        public ClickList() {
+            clicks = new ArrayList<Long>();
+        }
+
+        public void update() {
+            clicks.removeIf((click) -> Util.getMeasuringTimeMs() - click > 1000);
+        }
+
+        public void click() {
+            clicks.add(Util.getMeasuringTimeMs());
+        }
+
+        public int clicks() {
+            return clicks.size();
+        }
+
+    }
+
 }
