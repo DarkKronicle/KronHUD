@@ -157,7 +157,7 @@ public abstract class AbstractHudEntry extends DrawUtil {
     }
 
     public List<IConfigBase> getOptions() {
-        if(options == null) {
+        if (options == null) {
             options = new ArrayList<>();
             addConfigOptions(options);
         }

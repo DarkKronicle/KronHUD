@@ -87,8 +87,7 @@ public class HudEditScreen extends GuiBase {
             List<Rectangle> bounds = KronHUD.hudManager.getAllBounds();
             bounds.remove(current.getScaledBounds());
             snap = new SnappingHelper(bounds, current.getScaledBounds());
-        }
-        else if(snap != null) {
+        } else if (snap != null) {
             snap = null;
         }
     }
@@ -104,7 +103,7 @@ public class HudEditScreen extends GuiBase {
     @Override
     protected void closeGui(boolean showParent) {
         KronHUD.storageHandler.saveDefaultHandling();
-        if(showParent) {
+        if (showParent) {
             client.setScreen(parent);
         }
     }

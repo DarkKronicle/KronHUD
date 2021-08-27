@@ -59,17 +59,13 @@ public class KronColor extends ConfigInteger implements KronConfig {
     {
         try
         {
-            if (element.isJsonPrimitive())
-            {
+            if (element.isJsonPrimitive()) {
                 value = this.getClampedValue((color = Color.parse(element.getAsString())).color());
-            }
-            else
-            {
+            } else {
                 MaLiLib.logger.warn("Failed to set config value for '{}' from the JSON element '{}'", this.getName(), element);
             }
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             MaLiLib.logger.warn("Failed to set config value for '{}' from the JSON element '{}'", this.getName(), element, e);
         }
     }

@@ -11,10 +11,9 @@ public interface KronConfig {
     String getId();
 
     default String getTranslationKeyBase() {
-        if(getEntryId() == null) {
+        if (getEntryId() == null) {
             return "option.kronhud." + getId();
-        }
-        else {
+        } else {
             return "option.kronhud." + getEntryId() + "." + getId();
         }
     }

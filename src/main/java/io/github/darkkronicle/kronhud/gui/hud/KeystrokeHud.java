@@ -68,7 +68,7 @@ public class KeystrokeHud extends AbstractHudEntry {
                     bounds.y() + stroke.offset.y() + 2,
                     bounds.width() - 8, 1);
             fillRect(matrices, spaceBounds, stroke.getFGColor());
-            if(shadow.getBooleanValue()) {
+            if (shadow.getBooleanValue()) {
                 fillRect(matrices, spaceBounds.offset(1, 1),
                         new Color((stroke.getFGColor().color() & 16579836) >> 2 | stroke.getFGColor().color() & -16777216));
             }
@@ -192,7 +192,7 @@ public class KeystrokeHud extends AbstractHudEntry {
             if (key.isPressed() != wasPressed) {
                 start = Util.getMeasuringTimeMs();
             }
-            if(background.getBooleanValue()) {
+            if (background.getBooleanValue()) {
                 fillRect(matrices, bounds.offset(offset),
                         getColor());
             }

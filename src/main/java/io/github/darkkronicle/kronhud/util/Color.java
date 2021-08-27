@@ -50,20 +50,16 @@ public class Color {
     public static Color parse(String color) {
         try {
             return new Color(Integer.parseInt(color));
-        }
-        catch(NumberFormatException ignored) {
+        } catch (NumberFormatException ignored) {
         }
 
         if(color.startsWith("#")) {
             color = color.substring(1);
-        }
-        else if(color.startsWith("0x")) {
+        } else if(color.startsWith("0x")) {
             color = color.substring(2);
-        }
-        if(color.length() == 6) {
+        } if(color.length() == 6) {
             color = "FF" + color;
-        }
-        else if(color.length() != 8) {
+        } else if (color.length() != 8) {
             return ERROR;
         }
         try {
@@ -71,8 +67,7 @@ public class Color {
                     Integer.valueOf(color.substring(4, 6), 16),
                     Integer.valueOf(color.substring(6, 8), 16),
                     Integer.valueOf(color.substring(0, 2), 16));
-        }
-        catch(NumberFormatException error) {
+        } catch (NumberFormatException error) {
             return ERROR;
         }
     }

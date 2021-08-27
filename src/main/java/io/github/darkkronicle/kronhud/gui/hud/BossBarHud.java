@@ -104,10 +104,9 @@ public class BossBarHud extends AbstractHudEntry {
             Text text = bossBar.getName();
             float textX = x + ((float) width / 2) - ((float) client.textRenderer.getWidth(text) / 2);
             float textY = y - 9;
-            if(shadow.getBooleanValue()) {
+            if (shadow.getBooleanValue()) {
                 client.textRenderer.drawWithShadow(matrices, text, textX, textY, textColor.getColor().color());
-            }
-            else {
+            } else {
                 client.textRenderer.draw(matrices, text, textX, textY, textColor.getColor().color());
             }
         }

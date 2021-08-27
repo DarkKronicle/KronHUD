@@ -47,7 +47,7 @@ public class ArmorHud extends AbstractHudEntry {
     public void renderMainItem(MatrixStack matrices, ItemStack stack, int x, int y) {
         ItemUtil.renderGuiItemModel(matrices, stack, x, y);
         String total = String.valueOf(ItemUtil.getTotal(client, stack));
-        if(total.equals("1")) {
+        if (total.equals("1")) {
             total = null;
         }
         ItemUtil.renderGuiItemOverlay(matrices, client.textRenderer, stack, x, y,

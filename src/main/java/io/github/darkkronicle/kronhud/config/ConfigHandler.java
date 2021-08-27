@@ -31,7 +31,7 @@ public class ConfigHandler {
         if(!config.exists()) {
             try {
                 ConfigVersions.attemptConvert();
-            } catch(IOException | IllegalStateException e) {
+            } catch (IOException | IllegalStateException e) {
                 LOGGER.error("Failed to convert old config", e);
             }
         }
@@ -62,9 +62,9 @@ public class ConfigHandler {
 
         JsonObject object = new JsonObject();
         object.addProperty("configVersion", "2");
-        for(AbstractHudEntry hud : KronHUD.hudManager.getEntries()) {
+        for (AbstractHudEntry hud : KronHUD.hudManager.getEntries()) {
             JsonObject section = new JsonObject();
-            for(IConfigBase config : hud.getAllOptions()) {
+            for (IConfigBase config : hud.getAllOptions()) {
                 section.add(((KronConfig) config).getId(), config.getAsJsonElement());
             }
             object.add(hud.getId().toString(), section);
@@ -86,12 +86,12 @@ public class ConfigHandler {
         } catch (FileNotFoundException e) {
             KronHUD.storage = new JsonObject();
         }
-        for(AbstractHudEntry hud : KronHUD.hudManager.getEntries()) {
-            if(KronHUD.storage.has(hud.getId().toString())) {
+        for (AbstractHudEntry hud : KronHUD.hudManager.getEntries()) {
+            if (KronHUD.storage.has(hud.getId().toString())) {
                 JsonObject section = KronHUD.storage.get(hud.getId().toString()).getAsJsonObject();
-                for(IConfigBase config : hud.getAllOptions()) {
+                for (IConfigBase config : hud.getAllOptions()) {
                     String id = ((KronConfig) config).getId();
-                    if(section.has(id)) {
+                    if (section.has(id)) {
                         config.setValueFromJsonElement(section.get(id));
                     }
                 }
@@ -111,62 +111,54 @@ public class ConfigHandler {
             @Override
             protected JsonObject convert(JsonObject object) {
                 JsonObject result = new JsonObject();
-                for(Map.Entry<String, JsonElement> entry : object.entrySet()) {
-                    if(entry.getKey().endsWith("Storage")) {
+                for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
+                    if (entry.getKey().endsWith("Storage")) {
                         String converted =
                                 "kronhud:" + entry.getKey().substring(0, entry.getKey().indexOf("Storage"))
                             .toLowerCase();
                         JsonObject resultValue = new JsonObject();
 
-                        for(Map.Entry<String, JsonElement> configEntry : entry.getValue().getAsJsonObject().entrySet()) {
+                        for (Map.Entry<String, JsonElement> configEntry : entry.getValue().getAsJsonObject().entrySet()) {
                             String newEntryKey;
                             resultValue.add(newEntryKey = configEntry.getKey().toLowerCase(), configEntry.getValue());
 
-                            if(configEntry.getValue().isJsonObject()) {
-                                if(configEntry.getValue().getAsJsonObject().has("color")) {
+                            if (configEntry.getValue().isJsonObject()) {
+                                if (configEntry.getValue().getAsJsonObject().has("color")) {
                                     resultValue.addProperty(configEntry.getKey(),
                                             new Color(resultValue.remove(newEntryKey)
                                                     .getAsJsonObject().get("color").getAsInt()).toString());
                                 }
                             }
 
-                            if(converted.equals(CrosshairHud.ID.toString())) {
-                                if(newEntryKey.equals("type")) {
+                            if (converted.equals(CrosshairHud.ID.toString())) {
+                                if (newEntryKey.equals("type")) {
                                     resultValue.addProperty(newEntryKey,
                                             resultValue.remove(newEntryKey).getAsString().toLowerCase());
-                                }
-                                else if(newEntryKey.equals("basic")) {
+                                } else if (newEntryKey.equals("basic")) {
                                     resultValue.add(newEntryKey = "defaultcolor", resultValue.remove("basic"));
-                                }
-                                else if(newEntryKey.equals("entity")) {
+                                } else if (newEntryKey.equals("entity")) {
                                     resultValue.add(newEntryKey = "entitycolor", resultValue.remove("entity"));
-                                }
-                                else if(newEntryKey.equals("block")) {
+                                } else if (newEntryKey.equals("block")) {
                                     resultValue.add(newEntryKey = "blockcolor", resultValue.remove("block"));
                                 }
-                            }
-                            else if(converted.equals(CoordsHud.ID.toString())) {
+                            } else if (converted.equals(CoordsHud.ID.toString())) {
                                 if(newEntryKey.equals("decimalnum")) {
                                     resultValue.addProperty(newEntryKey = "decimalplaces",
                                             resultValue.get("decimalnum").getAsInt());
                                 }
-                            }
-                            else if(converted.equals(ScoreboardHud.ID.toString())) {
-                                if(newEntryKey.equals("top")) {
+                            } else if (converted.equals(ScoreboardHud.ID.toString())) {
+                                if (newEntryKey.equals("top")) {
                                     resultValue.add(newEntryKey = "topbackgroundcolor",
                                             resultValue.get("top"));
-                                }
-                                else if(newEntryKey.equals("background")) {
+                                } else if (newEntryKey.equals("background")) {
                                     resultValue.add(newEntryKey = "backgroundcolor",
                                             resultValue.get("background"));
                                 }
-                            }
-                            else if(converted.equals(ScoreboardHud.ID)) {
-                                if(newEntryKey.equals("unselected")) {
+                            } else if (converted.equals(ScoreboardHud.ID)) {
+                                if (newEntryKey.equals("unselected")) {
                                     resultValue.add(newEntryKey = "backgroundcolor",
                                             resultValue.get("unselected"));
-                                }
-                                else if(newEntryKey.equals("selected")) {
+                                } else if (newEntryKey.equals("selected")) {
                                     resultValue.add(newEntryKey = "heldbackgroundcolor",
                                             resultValue.get("selected"));
                                 }
@@ -209,12 +201,12 @@ public class ConfigHandler {
         public static void attemptConvert() throws IOException {
             ConfigVersions current;
             ConfigVersions next = values()[0];
-            for(int i = 0; i < values().length - 1; i++) {
+            for (int i = 0; i < values().length - 1; i++) {
                 current = next;
                 next = values()[i + 1];
-                if(current.getFile().exists() && !next.getFile().exists()) {
+                if (current.getFile().exists() && !next.getFile().exists()) {
                     JsonObject content = new JsonParser().parse(new FileReader(current.getFile())).getAsJsonObject();
-                    if(current.test(content)) {
+                    if (current.test(content)) {
                         JsonObject result = current.convert(content);
                         FileWriter writer = new FileWriter(next.getFile());
                         writer.write(result.toString());

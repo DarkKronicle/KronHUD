@@ -139,30 +139,29 @@ public class ScoreboardHud extends AbstractHudEntry {
             Text scoreText = scoreboardPlayerScoreTextPair.getSecond();
             String score = "" + scoreboardPlayerScore2.getScore();
             int relativeY = scoreY - num * 9;
-            if(background.getBooleanValue()) {
+            if (background.getBooleanValue()) {
                 fillRect(matrices, new Rectangle(textOffset, relativeY, maxWidth, 9), backgroundColor.getColor());
             }
-            if(shadow.getBooleanValue()) {
+            if (shadow.getBooleanValue()) {
                 client.textRenderer.drawWithShadow(matrices, scoreText, (float) scoreX, (float) relativeY,
                         -1);
-            }
-            else {
+            } else {
                 client.textRenderer.draw(matrices, scoreText, (float) scoreX, (float) relativeY,
                         -1);
             }
-            if(this.scores.getBooleanValue()) {
+            if (this.scores.getBooleanValue()) {
                 drawString(matrices, client.textRenderer, score,
                         (float) (scoreX + maxWidth - client.textRenderer.getWidth(score) - 2), (float) relativeY,
                         scoreColor.getColor().color(), shadow.getBooleanValue());
             }
             if (num == scoresSize) {
-                if(background.getBooleanValue()) {
+                if (background.getBooleanValue()) {
                     fillRect(matrices, new Rectangle(textOffset, relativeY - 10, maxWidth, 9), topColor.getColor());
                     fillRect(matrices, new Rectangle(scoreX - 2, relativeY - 1, maxWidth, 1),
                             backgroundColor.getColor());
                 }
                 float title = (float) (scoreX + maxWidth / 2 - displayNameWidth / 2 - 1);
-                if(shadow.getBooleanValue()) {
+                if (shadow.getBooleanValue()) {
                     client.textRenderer.drawWithShadow(matrices, text, title, (float) (relativeY - 9), -1);
                 }
                 else {
