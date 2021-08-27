@@ -1,15 +1,11 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
-import io.github.darkkronicle.kronhud.KronHUD;
+import com.mojang.blaze3d.systems.RenderSystem;
+import fi.dy.masa.malilib.config.IConfigBase;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
-import io.github.darkkronicle.polish.api.EntryBuilder;
-import io.github.darkkronicle.polish.gui.complexwidgets.EntryButtonList;
-import io.github.darkkronicle.polish.gui.screens.BasicConfigScreen;
-import io.github.darkkronicle.polish.util.Colors;
-import io.github.darkkronicle.polish.util.DrawPosition;
-import io.github.darkkronicle.polish.util.DrawUtil;
+import io.github.darkkronicle.kronhud.util.Color;
+import io.github.darkkronicle.kronhud.util.DrawPosition;
 import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.texture.StatusEffectSpriteManager;
 import net.minecraft.client.util.math.MatrixStack;
@@ -17,16 +13,14 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffectUtil;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PotionsHud extends AbstractHudEntry {
 
     public static final Identifier ID = new Identifier("kronhud", "potionshud");
-
 
     public PotionsHud() {
         super(60, 200);
@@ -35,27 +29,31 @@ public class PotionsHud extends AbstractHudEntry {
     @Override
     public void render(MatrixStack matrices) {
         matrices.push();
-        matrices.scale(getStorage().scale, getStorage().scale, 1);
+        scale(matrices);
         ArrayList<StatusEffectInstance> effects = new ArrayList<>(client.player.getStatusEffects());
         if (!effects.isEmpty()) {
             StatusEffectSpriteManager statusEffectSpriteManager = this.client.getStatusEffectSpriteManager();
             int lastY = 1;
-            DrawPosition pos = getScaledPos();
+            DrawPosition pos = getPos();
             for (int i = 0; i < effects.size(); i++) {
                 StatusEffectInstance effect = effects.get(i);
                 StatusEffect type = effect.getEffectType();
-                if (type == StatusEffects.NIGHT_VISION) {
-                    continue;
-                }
+//                Removed - night vision appears in vanilla, just not with hideParticles flag.
+//                if (type == StatusEffects.NIGHT_VISION) {
+//                    continue;
+//                }
                 if (i > 8) {
                     break;
                 }
-                Sprite sprite = statusEffectSpriteManager.getSprite(type);
-                this.client.getTextureManager().bindTexture(sprite.getAtlas().getId());
-                DrawableHelper.drawSprite(matrices, pos.getX() + 1, pos.getY() + lastY, 0, 18, 18, sprite);
-                client.textRenderer.drawWithShadow(matrices, StatusEffectUtil.durationToString(effect, 1), pos.getX() + 20, pos.getY() + 6 + lastY, Colors.WHITE.color().color());
-                lastY = lastY + 20;
 
+                Sprite sprite = statusEffectSpriteManager.getSprite(type);
+                RenderSystem.setShaderTexture(0, sprite.getAtlas().getId());
+                RenderSystem.setShaderColor(1, 1, 1, 1);
+                DrawableHelper.drawSprite(matrices, pos.x(), pos.y() + 1 + lastY, 0, 18, 18, sprite);
+                drawString(matrices, client.textRenderer, StatusEffectUtil.durationToString(effect, 1),
+                        pos.x() + 20, pos.y() + 6 + lastY, textColor.getColor().color(), shadow.getBooleanValue());
+
+                lastY += 20;
             }
         }
         matrices.pop();
@@ -65,60 +63,37 @@ public class PotionsHud extends AbstractHudEntry {
     @Override
     public void renderPlaceholder(MatrixStack matrices) {
         matrices.push();
-        matrices.scale(getStorage().scale, getStorage().scale, 1);
-        DrawPosition pos = getScaledPos();
-        if (hovered) {
-            DrawUtil.rect(matrices, pos.getX(), pos.getY(), width, height, Colors.SELECTOR_BLUE.color().withAlpha(100).color());
-        } else {
-            rect(matrices, pos.getX(), pos.getY(), width, height, Colors.WHITE.color().withAlpha(50).color());
-        }
-        outlineRect(matrices, pos.getX(), pos.getY(), width, height, Colors.BLACK.color().color());
+        renderPlaceholderBackground(matrices);
+        scale(matrices);
+        DrawPosition pos = getPos();
         StatusEffectSpriteManager statusEffectSpriteManager = this.client.getStatusEffectSpriteManager();
         StatusEffectInstance effect = new StatusEffectInstance(StatusEffects.SPEED);
         StatusEffect type = effect.getEffectType();
         Sprite sprite = statusEffectSpriteManager.getSprite(type);
-        this.client.getTextureManager().bindTexture(sprite.getAtlas().getId());
-        DrawableHelper.drawSprite(matrices, pos.getX() + 1, pos.getY() + 1, 0, 18, 18, sprite);
-        client.textRenderer.drawWithShadow(matrices, StatusEffectUtil.durationToString(effect, 1), pos.getX() + 20, pos.getY() + 7, Colors.WHITE.color().color());
+        RenderSystem.setShaderTexture(0, sprite.getAtlas().getId());
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+        DrawableHelper.drawSprite(matrices, pos.x() + 1, pos.y() + 1, 0, 18, 18, sprite);
+        drawString(matrices, client.textRenderer, StatusEffectUtil.durationToString(effect, 1), pos.x() + 20,
+                pos.y() + 7, Color.WHITE.color(), shadow.getBooleanValue());
         hovered = false;
         matrices.pop();
     }
 
     @Override
-    public boolean moveable() {
+    public void addConfigOptions(List<IConfigBase> options) {
+        super.addConfigOptions(options);
+        options.add(textColor);
+        options.add(shadow);
+    }
+
+    @Override
+    public boolean movable() {
         return true;
     }
 
     @Override
-    public Identifier getID() {
+    public Identifier getId() {
         return ID;
     }
 
-    @Override
-    public Storage getStorage() {
-        return KronHUD.storage.potionsHudStorage;
-    }
-
-    @Override
-    public Screen getConfigScreen() {
-        EntryBuilder builder = EntryBuilder.create();
-        EntryButtonList list = new EntryButtonList((client.getWindow().getScaledWidth() / 2) - 290, (client.getWindow().getScaledHeight() / 2) - 70, 580, 150, 1, false);
-        list.addEntry(builder.startToggleEntry(new TranslatableText("option.kronhud.enabled"), getStorage().enabled).setDimensions(20, 10).setSavable(val -> getStorage().enabled = val).build(list));
-        list.addEntry(builder.startFloatSliderEntry(new TranslatableText("option.kronhud.scale"), getStorage().scale, 0.2F, 1.5F).setWidth(80).setSavable(val -> getStorage().scale = val).build(list));
-        return new BasicConfigScreen(getName(), list, () -> KronHUD.storageHandler.saveDefaultHandling());
-
-    }
-
-    @Override
-    public Text getName() {
-        return new TranslatableText("hud.kronhud.potionshud");
-    }
-
-    public static class Storage extends AbstractStorage {
-        public Storage() {
-            x = 0;
-            y = 0.5F;
-            scale = 1;
-        }
-    }
 }

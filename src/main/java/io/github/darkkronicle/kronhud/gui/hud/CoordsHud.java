@@ -1,25 +1,26 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
-import io.github.darkkronicle.kronhud.KronHUD;
+import fi.dy.masa.malilib.config.IConfigBase;
+import io.github.darkkronicle.kronhud.config.KronColor;
+import io.github.darkkronicle.kronhud.config.KronInteger;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
-import io.github.darkkronicle.polish.api.EntryBuilder;
-import io.github.darkkronicle.polish.gui.complexwidgets.EntryButtonList;
-import io.github.darkkronicle.polish.gui.screens.BasicConfigScreen;
-import io.github.darkkronicle.polish.util.Colors;
-import io.github.darkkronicle.polish.util.DrawPosition;
-import io.github.darkkronicle.polish.util.DrawUtil;
-import io.github.darkkronicle.polish.util.SimpleColor;
+import io.github.darkkronicle.kronhud.util.Color;
+import io.github.darkkronicle.kronhud.util.DrawPosition;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.List;
 
 public class CoordsHud extends AbstractHudEntry {
+
+    public static final Identifier ID = new Identifier("kronhud", "coordshud");
+
+    private KronColor firstColor = new KronColor("firsttextcolor", ID.getPath(), Color.SELECTOR_BLUE.toString());
+    private KronColor secondColor = new KronColor("secondtextcolor", ID.getPath(), "#FFFFFFFF");
+    private KronInteger decimalPlaces = new KronInteger("decimalplaces", ID.getPath(), 0, 0, 15);
 
     public CoordsHud() {
         super(79, 31);
@@ -94,20 +95,17 @@ public class CoordsHud extends AbstractHudEntry {
 
     @Override
     public void render(MatrixStack matrices) {
-        if (width <= 70) {
-            width = 79;
-        }
         matrices.push();
-        matrices.scale(getStorage().scale, getStorage().scale, 1);
-        DrawPosition pos = getScaledPos();
-        if (getStorage().background) {
-            rect(matrices, pos.getX(), pos.getY(), width, height, getStorage().backgroundColor.color());
+        scale(matrices);
+        DrawPosition pos = getPos();
+        if (background.getBooleanValue()) {
+            fillRect(matrices, getBounds(), backgroundColor.getColor());
         }
         StringBuilder format = new StringBuilder("#");
-        if (getStorage().decimalNum > 0) {
+        if (decimalPlaces.getIntegerValue() > 0) {
             format.append(".");
-            for (int i = 0; i < getStorage().decimalNum; i++) {
-                format.append("#");
+            for (int i = 0; i < decimalPlaces.getIntegerValue(); i++) {
+                format.append("0");
             }
         }
         DecimalFormat df = new DecimalFormat(format.toString());
@@ -119,33 +117,42 @@ public class CoordsHud extends AbstractHudEntry {
         int dir = getDirection(yaw);
         String direction = getWordedDirection(dir);
         TextRenderer textRenderer = client.textRenderer;
-        textRenderer.drawWithShadow(matrices, "X", pos.getX() + 1, pos.getY() + 2, getStorage().firstTextColor.color());
-        textRenderer.drawWithShadow(matrices, String.valueOf(df.format(x)), pos.getX() + 11, pos.getY() + 2, getStorage().secondTextColor.color());
-        textRenderer.drawWithShadow(matrices, "Y", pos.getX() + 1, pos.getY() + 12, getStorage().firstTextColor.color());
-        textRenderer.drawWithShadow(matrices, String.valueOf(df.format(y)), pos.getX() + 11, pos.getY() + 12, getStorage().secondTextColor.color());
-        textRenderer.drawWithShadow(matrices, "Z", pos.getX() + 1, pos.getY() + 22, getStorage().firstTextColor.color());
-        textRenderer.drawWithShadow(matrices, String.valueOf(df.format(z)), pos.getX() + 11, pos.getY() + 22, getStorage().secondTextColor.color());
-        textRenderer.drawWithShadow(matrices, direction, pos.getX() + 60, pos.getY() + 12, getStorage().firstTextColor.color());
-        textRenderer.drawWithShadow(matrices, getXDir(dir), pos.getX() + 60, pos.getY() + 2, getStorage().secondTextColor.color());
-        textRenderer.drawWithShadow(matrices, getZDir(dir), pos.getX() + 60, pos.getY() + 22, getStorage().secondTextColor.color());
+        drawString(matrices, textRenderer, "X", pos.x() + 1, pos.y() + 2, firstColor.getColor().color(),
+                shadow.getBooleanValue());
+        drawString(matrices, textRenderer, String.valueOf(df.format(x)), pos.x() + 11, pos.y() + 2,
+                secondColor.getColor().color(), shadow.getBooleanValue());
+
+        drawString(matrices, textRenderer, "Y", pos.x() + 1, pos.y() + 12, firstColor.getColor().color(),
+                shadow.getBooleanValue());
+        drawString(matrices, textRenderer, String.valueOf(df.format(y)), pos.x() + 11, pos.y() + 12,
+                secondColor.getColor().color(), shadow.getBooleanValue());
+
+        drawString(matrices, textRenderer, "Z", pos.x() + 1, pos.y() + 22, firstColor.getColor().color(),
+                shadow.getBooleanValue());
+        drawString(matrices, textRenderer, String.valueOf(df.format(z)), pos.x() + 11, pos.y() + 22,
+                secondColor.getColor().color(), shadow.getBooleanValue());
+
+        drawString(matrices, textRenderer, direction, pos.x() + 60, pos.y() + 12,
+                firstColor.getColor().color(), shadow.getBooleanValue());
+
+        drawString(matrices, textRenderer, getXDir(dir), pos.x() + 60, pos.y() + 2,
+                secondColor.getColor().color(), shadow.getBooleanValue());
+        textRenderer.drawWithShadow(matrices, getZDir(dir), pos.x() + 60, pos.y() + 22,
+                secondColor.getColor().color(), shadow.getBooleanValue());
+
         matrices.pop();
     }
 
     @Override
     public void renderPlaceholder(MatrixStack matrices) {
         matrices.push();
-        matrices.scale(getStorage().scale, getStorage().scale, 1);
-        DrawPosition pos = getScaledPos();
-        if (hovered) {
-            DrawUtil.rect(matrices, pos.getX(), pos.getY(), width, height, Colors.SELECTOR_BLUE.color().withAlpha(100).color());
-        } else {
-            DrawUtil.rect(matrices, pos.getX(), pos.getY(), width, height, Colors.WHITE.color().withAlpha(50).color());
-        }
-        DrawUtil.outlineRect(matrices, pos.getX(), pos.getY(), width, height, Colors.BLACK.color().color());
+        renderPlaceholderBackground(matrices);
+        scale(matrices);
+        DrawPosition pos = getPos();
         StringBuilder format = new StringBuilder("#");
-        if (getStorage().decimalNum > 0) {
+        if (decimalPlaces.getIntegerValue() > 0) {
             format.append(".");
-            for (int i = 0; i < getStorage().decimalNum; i++) {
+            for (int i = 0; i < decimalPlaces.getIntegerValue(); i++) {
                 format.append("#");
             }
         }
@@ -159,15 +166,21 @@ public class CoordsHud extends AbstractHudEntry {
         int dir = getDirection(yaw);
         String direction = getWordedDirection(dir);
         TextRenderer textRenderer = client.textRenderer;
-        textRenderer.drawWithShadow(matrices, "X", pos.getX() + 1, pos.getY() + 2, getStorage().firstTextColor.color());
-        textRenderer.drawWithShadow(matrices, String.valueOf(df.format(x)), pos.getX() + 11, pos.getY() + 2, getStorage().secondTextColor.color());
-        textRenderer.drawWithShadow(matrices, "Y", pos.getX() + 1, pos.getY() + 12, getStorage().firstTextColor.color());
-        textRenderer.drawWithShadow(matrices, String.valueOf(df.format(y)), pos.getX() + 11, pos.getY() + 12, getStorage().secondTextColor.color());
-        textRenderer.drawWithShadow(matrices, "Z", pos.getX() + 1, pos.getY() + 22, getStorage().firstTextColor.color());
-        textRenderer.drawWithShadow(matrices, String.valueOf(df.format(z)), pos.getX() + 11, pos.getY() + 22, getStorage().secondTextColor.color());
-        textRenderer.drawWithShadow(matrices, direction, pos.getX() + 60, pos.getY() + 12, getStorage().firstTextColor.color());
-        textRenderer.drawWithShadow(matrices, getXDir(dir), pos.getX() + 60, pos.getY() + 2, getStorage().secondTextColor.color());
-        textRenderer.drawWithShadow(matrices, getZDir(dir), pos.getX() + 60, pos.getY() + 22, getStorage().secondTextColor.color());
+        textRenderer.drawWithShadow(matrices, "X", pos.x() + 1, pos.y() + 2, firstColor.getColor().color());
+        textRenderer.drawWithShadow(matrices, String.valueOf(df.format(x)), pos.x() + 11, pos.y() + 2,
+                secondColor.getColor().color());
+        textRenderer.drawWithShadow(matrices, "Y", pos.x() + 1, pos.y() + 12, firstColor.getColor().color());
+        textRenderer.drawWithShadow(matrices, String.valueOf(df.format(y)), pos.x() + 11, pos.y() + 12,
+                secondColor.getColor().color());
+        textRenderer.drawWithShadow(matrices, "Z", pos.x() + 1, pos.y() + 22, firstColor.getColor().color());
+        textRenderer.drawWithShadow(matrices, String.valueOf(df.format(z)), pos.x() + 11, pos.y() + 22,
+                secondColor.getColor().color());
+        textRenderer.drawWithShadow(matrices, direction, pos.x() + 60, pos.y() + 12,
+                firstColor.getColor().color());
+        textRenderer.drawWithShadow(matrices, getXDir(dir), pos.x() + 60, pos.y() + 2,
+                secondColor.getColor().color());
+        textRenderer.drawWithShadow(matrices, getZDir(dir), pos.x() + 60, pos.y() + 22,
+                secondColor.getColor().color());
 
         matrices.pop();
         hovered = false;
@@ -208,57 +221,23 @@ public class CoordsHud extends AbstractHudEntry {
     }
 
     @Override
-    public boolean moveable() {
+    public void addConfigOptions(List<IConfigBase> options) {
+    	super.addConfigOptions(options);
+    	options.add(background);
+    	options.add(backgroundColor);
+    	options.add(firstColor);
+    	options.add(secondColor);
+    	options.add(decimalPlaces);
+    }
+
+    @Override
+    public boolean movable() {
         return true;
     }
 
     @Override
-    public Storage getStorage() {
-        return KronHUD.storage.coordsHudStorage;
-    }
-
-    @Override
-    public Identifier getID() {
-        return new Identifier("kronhud", "coordshud");
-    }
-
-    @Override
-    public Screen getConfigScreen() {
-        EntryBuilder builder = EntryBuilder.create();
-        EntryButtonList list = new EntryButtonList((client.getWindow().getScaledWidth() / 2) - 290, (client.getWindow().getScaledHeight() / 2) - 70, 580, 150, 1, false);
-        list.addEntry(builder.startToggleEntry(new TranslatableText("option.kronhud.enabled"), getStorage().enabled).setDimensions(20, 10).setSavable(val -> getStorage().enabled = val).build(list));
-        list.addEntry(builder.startFloatSliderEntry(new TranslatableText("option.kronhud.scale"), getStorage().scale, 0.2F, 1.5F).setWidth(80).setSavable(val -> getStorage().scale = val).build(list));
-        list.addEntry(builder.startToggleEntry(new TranslatableText("option.kronhud.background"), getStorage().background).setSavable(val -> getStorage().background = val).build(list));
-        list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.backgroundcolor"), getStorage().backgroundColor).setSavable(val -> getStorage().backgroundColor = val).build(list));
-        list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.coordshud.firstcolor"), getStorage().firstTextColor).setSavable(val -> getStorage().firstTextColor = val).build(list));
-        list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.coordshud.secondcolor"), getStorage().secondTextColor).setSavable(val -> getStorage().secondTextColor = val).build(list));
-        list.addEntry(builder.startIntSliderEntry(new TranslatableText("option.kronhud.coordshud.decimals"), getStorage().decimalNum, 0, 3).setSavable(val -> getStorage().decimalNum = val).setWidth(60).build(list));
-        return new BasicConfigScreen(getName(), list, () -> KronHUD.storageHandler.saveDefaultHandling());
-
-    }
-
-    @Override
-    public Text getName() {
-        return new TranslatableText("hud.kronhud.coordshud");
-    }
-
-    public static class Storage extends AbstractStorage {
-        public SimpleColor backgroundColor;
-        public SimpleColor firstTextColor;
-        public SimpleColor secondTextColor;
-        public int decimalNum;
-        private boolean background;
-
-        public Storage() {
-            x = 0.8F;
-            y = 0;
-            decimalNum = 1;
-            backgroundColor = Colors.BLACK.color().withAlpha(100);
-            firstTextColor = Colors.SELECTOR_BLUE.color();
-            secondTextColor = Colors.WHITE.color();
-            background = true;
-        }
-
+    public Identifier getId() {
+        return ID;
     }
 
 }

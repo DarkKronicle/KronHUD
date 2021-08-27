@@ -1,6 +1,6 @@
 package io.github.darkkronicle.kronhud.hooks;
 
-import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 
 public final class KeyBindingCallback {

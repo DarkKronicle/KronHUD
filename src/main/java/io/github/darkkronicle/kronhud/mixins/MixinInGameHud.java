@@ -1,7 +1,8 @@
 package io.github.darkkronicle.kronhud.mixins;
 
 import io.github.darkkronicle.kronhud.KronHUD;
-import io.github.darkkronicle.kronhud.gui.hud.CrossHairHud;
+import io.github.darkkronicle.kronhud.gui.hud.CrosshairHud;
+import io.github.darkkronicle.kronhud.gui.hud.PotionsHud;
 import io.github.darkkronicle.kronhud.gui.hud.ScoreboardHud;
 import io.github.darkkronicle.kronhud.hooks.KronHudHooks;
 import net.fabricmc.api.EnvType;
@@ -18,28 +19,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Environment(EnvType.CLIENT)
 @Mixin(InGameHud.class)
 public class MixinInGameHud {
-    @Inject(method = "render", at = @At("HEAD"))
-    public void render(MatrixStack matrices, float delta, CallbackInfo ci) {
-        KronHudHooks.HUD_RENDER_PRE.invoker().render(matrices, delta);
-    }
 
     @Inject(method = "renderStatusEffectOverlay", at = @At("HEAD"), cancellable = true)
     public void renderStatusEffect(MatrixStack matrices, CallbackInfo ci) {
-        if (KronHUD.storage.disableVanillaPotionHud) {
-            ci.cancel();
-        }
-    }
-
-    @Inject(method = "renderVignetteOverlay", at = @At("HEAD"), cancellable = true)
-    public void renderVignette(Entity entity, CallbackInfo ci) {
-        if (KronHUD.storage.disableVanillaVignette) {
+    	PotionsHud hud = (PotionsHud) KronHUD.hudManager.get(PotionsHud.ID);
+        if (hud != null && hud.isEnabled()) {
             ci.cancel();
         }
     }
 
     @Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
     public void renderCrosshair(MatrixStack matrices, CallbackInfo ci) {
-        CrossHairHud hud = (CrossHairHud) KronHUD.hudManager.get(CrossHairHud.ID);
+        CrosshairHud hud = (CrosshairHud) KronHUD.hudManager.get(CrosshairHud.ID);
         if (hud != null && hud.isEnabled()) {
             ci.cancel();
         }

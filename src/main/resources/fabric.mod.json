@@ -3,9 +3,17 @@
   "id": "kronhud",
   "version": "${version}",
   "name": "KronHUD",
-  "description": "Add new features into the Minecraft HUD",
+  "description": "Add new features to the Minecraft HUD.",
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/kronhud",
+    "sources": "https://github.com/DarkKronicle/KronHUD",
+    "issues": "https://github.com/DarkKronicle/KronHUD/issues"
+  },
   "authors": [
-    "DarkKronicle"
+    "DarkKronicle",
+    "Chronos22",
+    "qsefthuopq",
+    "TheKodeToad"
   ],
   "entrypoints": {
     "client": [
@@ -15,7 +23,7 @@
       "io.github.darkkronicle.kronhud.gui.screen.ModMenuImpl"
     ]
   },
-  "license": "GNUGPL v3",
+  "license": "GPL-3.0-only",
   "icon": "assets/kronhud/icon.png",
   "environment": "client",
   "mixins": [
@@ -24,9 +32,13 @@
   "depends": {
     "fabricloader": ">=0.9.0",
     "fabric": "*",
-    "minecraft": "1.16.x"
+    "minecraft": "1.17.x"
   },
   "custom": {
-    "modmenu:clientsideOnly": true
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.com/invite/WnaE3uZxDA"
+      }
+    }
   }
 }
