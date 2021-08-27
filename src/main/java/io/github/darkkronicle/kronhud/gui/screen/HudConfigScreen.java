@@ -31,9 +31,9 @@ public class HudConfigScreen extends GuiConfigsBase {
     }
 
     @Override
-	protected int getBrowserHeight() {
-		return this.height - 37;
-	}
+    protected int getBrowserHeight() {
+        return this.height - 37;
+    }
 
     @Override
     public List<ConfigOptionWrapper> getConfigs() {

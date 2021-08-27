@@ -156,8 +156,8 @@ public class ScoreboardHud extends AbstractHudEntry {
                         scoreColor.getColor().color(), shadow.getBooleanValue());
             }
             if (num == scoresSize) {
-            	if(background.getBooleanValue()) {
-            		fillRect(matrices, new Rectangle(textOffset, relativeY - 10, maxWidth, 9), topColor.getColor());
+                if(background.getBooleanValue()) {
+                    fillRect(matrices, new Rectangle(textOffset, relativeY - 10, maxWidth, 9), topColor.getColor());
                     fillRect(matrices, new Rectangle(scoreX - 2, relativeY - 1, maxWidth, 1),
                             backgroundColor.getColor());
                 }

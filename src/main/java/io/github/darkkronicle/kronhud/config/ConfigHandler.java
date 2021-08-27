@@ -24,7 +24,7 @@ public class ConfigHandler {
     // https://github.com/shedaniel/i-need-keybinds/blob/master/src/main/java/me/shedaniel/ink/ConfigManager.java
     // http://www.apache.org/licenses/LICENSE-2.0
 
-	private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
     private File config = new File(FabricLoader.getInstance().getConfigDir() + "/kronhud.json");
 
     public ConfigHandler() {
@@ -38,7 +38,7 @@ public class ConfigHandler {
         try {
             load();
         } catch (IOException | IllegalStateException e) {
-        	LOGGER.error("Failed to load config", e);
+            LOGGER.error("Failed to load config", e);
         }
         saveDefaultHandling();
     }
@@ -48,7 +48,7 @@ public class ConfigHandler {
         try {
             save();
         } catch (IOException e) {
-        	LOGGER.error("Failed to save config", e);
+            LOGGER.error("Failed to save config", e);
             success = false;
         }
         return success;
@@ -63,14 +63,14 @@ public class ConfigHandler {
         JsonObject object = new JsonObject();
         object.addProperty("configVersion", "2");
         for(AbstractHudEntry hud : KronHUD.hudManager.getEntries()) {
-        	JsonObject section = new JsonObject();
-        	for(IConfigBase config : hud.getAllOptions()) {
-        		section.add(((KronConfig) config).getId(), config.getAsJsonElement());
-        	}
-        	object.add(hud.getId().toString(), section);
+            JsonObject section = new JsonObject();
+            for(IConfigBase config : hud.getAllOptions()) {
+                section.add(((KronConfig) config).getId(), config.getAsJsonElement());
+            }
+            object.add(hud.getId().toString(), section);
         }
         if (!config.exists()) {
-        	config.createNewFile();
+            config.createNewFile();
         }
         String result = object.toString();
         FileOutputStream out = new FileOutputStream(config, false);

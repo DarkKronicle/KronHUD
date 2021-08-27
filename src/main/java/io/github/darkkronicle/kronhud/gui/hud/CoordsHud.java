@@ -222,12 +222,12 @@ public class CoordsHud extends AbstractHudEntry {
 
     @Override
     public void addConfigOptions(List<IConfigBase> options) {
-    	super.addConfigOptions(options);
-    	options.add(background);
-    	options.add(backgroundColor);
-    	options.add(firstColor);
-    	options.add(secondColor);
-    	options.add(decimalPlaces);
+        super.addConfigOptions(options);
+        options.add(background);
+        options.add(backgroundColor);
+        options.add(firstColor);
+        options.add(secondColor);
+        options.add(decimalPlaces);
     }
 
     @Override

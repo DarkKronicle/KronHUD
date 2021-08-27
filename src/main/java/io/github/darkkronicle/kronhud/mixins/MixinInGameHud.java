@@ -22,7 +22,7 @@ public class MixinInGameHud {
 
     @Inject(method = "renderStatusEffectOverlay", at = @At("HEAD"), cancellable = true)
     public void renderStatusEffect(MatrixStack matrices, CallbackInfo ci) {
-    	PotionsHud hud = (PotionsHud) KronHUD.hudManager.get(PotionsHud.ID);
+        PotionsHud hud = (PotionsHud) KronHUD.hudManager.get(PotionsHud.ID);
         if (hud != null && hud.isEnabled()) {
             ci.cancel();
         }

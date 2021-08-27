@@ -27,27 +27,27 @@ public class ConfigScreen extends GuiListBase<AbstractHudEntry, HudEntryWidget, 
 
     @Override
     public boolean onKeyTyped(int keyCode, int scanCode, int modifiers) {
-		if (this.getListWidget().onKeyTyped(keyCode, scanCode, modifiers)) {
-			return true;
-		}
+        if (this.getListWidget().onKeyTyped(keyCode, scanCode, modifiers)) {
+            return true;
+        }
 
-		if (keyCode == KeyCodes.KEY_ESCAPE) {
-			GuiBase.openGui(getParent());
-			return true;
-		}
+        if (keyCode == KeyCodes.KEY_ESCAPE) {
+            GuiBase.openGui(getParent());
+            return true;
+        }
 
-		return false;
+        return false;
     }
 
-	@Override
-	protected int getBrowserWidth() {
-		return this.width - 20;
-	}
+    @Override
+    protected int getBrowserWidth() {
+        return this.width - 20;
+    }
 
-	@Override
-	protected int getBrowserHeight() {
-		return this.height - 37;
-	}
+    @Override
+    protected int getBrowserHeight() {
+        return this.height - 37;
+    }
 
     @Override
     public void onSelectionChange(AbstractHudEntry hud) {

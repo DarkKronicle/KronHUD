@@ -31,10 +31,10 @@ public class HudListWidget extends WidgetListBase<AbstractHudEntry, HudEntryWidg
         return KronHUD.hudManager.getEntries();
     }
 
-	@Override
-	protected boolean entryMatchesFilter(AbstractHudEntry entry, String filterText) {
-		return entry.getName().toLowerCase().contains(filterText.toLowerCase());
-	}
+    @Override
+    protected boolean entryMatchesFilter(AbstractHudEntry entry, String filterText) {
+        return entry.getName().toLowerCase().contains(filterText.toLowerCase());
+    }
 
     @Override
     protected HudEntryWidget createListEntryWidget(int x, int y, int listIndex, boolean isOdd, AbstractHudEntry entry) {
