@@ -1,9 +1,9 @@
 package io.github.darkkronicle.kronhud;
 
+import com.google.gson.JsonObject;
 import io.github.darkkronicle.kronhud.config.ConfigHandler;
-import io.github.darkkronicle.kronhud.config.ConfigStorage;
 import io.github.darkkronicle.kronhud.gui.hud.*;
-import io.github.darkkronicle.kronhud.gui.screen.SetScreen;
+import io.github.darkkronicle.kronhud.gui.screen.HudEditScreen;
 import lombok.Getter;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -11,43 +11,41 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
-import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
 @Environment(EnvType.CLIENT)
 public class KronHUD implements ClientModInitializer {
     public static HudManager hudManager;
-    public static ConfigStorage storage;
+    public static JsonObject storage;
     public static ConfigHandler storageHandler;
-    public static int fps = 0;
-    private boolean rendered = false;
     @Getter
     private boolean setupComplete;
 
 
     @Override
     public void onInitializeClient() {
-        KeyBinding key = new KeyBinding("keys.kronhud.edithud", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_Y, "keys.category.kronhud.keys");
+        KeyBinding key = new KeyBinding("keys.kronhud.edithud", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_RIGHT_SHIFT,
+                "keys.category.kronhud.keys");
         KeyBindingHelper.registerKeyBinding(key);
-        ClientTickEvents.START_CLIENT_TICK.register(s -> {
+        ClientTickEvents.START_CLIENT_TICK.register(client -> {
             if (key.wasPressed()) {
-                s.openScreen(SetScreen.getScreen());
+                client.setScreen(new HudEditScreen(client.currentScreen));
             }
-            if (!rendered) {
-                setHud();
-                rendered = true;
+            if (!setupComplete) {
+                initHuds();
+                setupComplete = true;
             }
         });
     }
 
-    public void setHud() {
-        storageHandler = new ConfigHandler();
+    public void initHuds() {
         hudManager = new HudManager();
         hudManager.add(new ArmorHud());
         hudManager.add(new ArrowHud());
         hudManager.add(new CPSHud());
-        hudManager.add(new CrossHairHud());
+        hudManager.add(new CrosshairHud());
         hudManager.add(new FPSHud());
         hudManager.add(new ItemUpdateHud());
         hudManager.add(new KeystrokeHud());
@@ -57,6 +55,7 @@ public class KronHUD implements ClientModInitializer {
         hudManager.add(new BossBarHud());
         hudManager.add(new ScoreboardHud());
         HudRenderCallback.EVENT.register((matrixStack, v) -> hudManager.render(matrixStack));
+        storageHandler = new ConfigHandler();
         setupComplete = true;
     }
 

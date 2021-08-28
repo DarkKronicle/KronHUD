@@ -1,9 +1,6 @@
 package io.github.darkkronicle.kronhud.util;
 
-import io.github.darkkronicle.polish.util.Colors;
-import io.github.darkkronicle.polish.util.DrawUtil;
-import io.github.darkkronicle.polish.util.SimpleColor;
-import io.github.darkkronicle.polish.util.SimpleRectangle;
+import fi.dy.masa.malilib.util.Color4f;
 import lombok.Setter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
@@ -16,12 +13,12 @@ public class SnappingHelper {
     private final int distance = 4;
     private final HashSet<Integer> x = new HashSet<>();
     private final HashSet<Integer> y = new HashSet<>();
-    private final SimpleColor lineColor = Colors.SELECTOR_BLUE.color();
+    private static final Color LINE_COLOR = Color.SELECTOR_BLUE;
     @Setter
-    private SimpleRectangle current;
+    private Rectangle current;
     private final MinecraftClient client;
 
-    public SnappingHelper(List<SimpleRectangle> rects, SimpleRectangle current) {
+    public SnappingHelper(List<Rectangle> rects, Rectangle current) {
         addAllRects(rects);
         this.current = current;
         this.client = MinecraftClient.getInstance();
@@ -36,13 +33,13 @@ public class SnappingHelper {
         return Optional.empty();
     }
 
-    public void addAllRects(List<SimpleRectangle> rects) {
-        for (SimpleRectangle rect : rects) {
+    public void addAllRects(List<Rectangle> rects) {
+        for (Rectangle rect : rects) {
             addRect(rect);
         }
     }
 
-    public void addRect(SimpleRectangle rect) {
+    public void addRect(Rectangle rect) {
         x.add(rect.x());
         x.add(rect.x() + rect.width());
         y.add(rect.y());
@@ -52,10 +49,12 @@ public class SnappingHelper {
     public void renderSnaps(MatrixStack matrices) {
         Integer curx, cury;
         if ((curx = getRawXSnap()) != null) {
-            DrawUtil.rect(matrices, curx, 0, 1, client.getWindow().getScaledHeight(), lineColor.color());
+            DrawUtil.fillRect(matrices, new Rectangle(curx, 0, 1, client.getWindow().getScaledHeight()),
+                    LINE_COLOR);
         }
         if ((cury = getRawYSnap()) != null) {
-            DrawUtil.rect(matrices, 0, cury, client.getWindow().getScaledWidth(), 1, lineColor.color());
+            DrawUtil.fillRect(matrices, new Rectangle(0, cury, client.getWindow().getScaledWidth(), 1),
+                    LINE_COLOR);
         }
         // renderAll(matrices);
 
@@ -63,10 +62,11 @@ public class SnappingHelper {
 
     public void renderAll(MatrixStack matrices) {
         for (Integer xval : x) {
-            DrawUtil.rect(matrices, xval, 0, 1, client.getWindow().getScaledHeight(), Colors.WHITE.color().color());
+            DrawUtil.fillRect(matrices, new Rectangle(xval, 0, 1, client.getWindow().getScaledHeight()),
+                    Color.WHITE);
         }
         for (Integer yval : y) {
-            DrawUtil.rect(matrices, 0, yval, client.getWindow().getScaledWidth(), 1, Colors.WHITE.color().color());
+            DrawUtil.fillRect(matrices, new Rectangle(0, yval, client.getWindow().getScaledWidth(), 1), Color.WHITE);
         }
     }
 

@@ -3,19 +3,13 @@ package io.github.darkkronicle.kronhud.gui.hud;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
-import io.github.darkkronicle.kronhud.KronHUD;
+import fi.dy.masa.malilib.config.IConfigBase;
+import fi.dy.masa.malilib.config.options.ConfigBoolean;
+import io.github.darkkronicle.kronhud.config.KronBoolean;
+import io.github.darkkronicle.kronhud.config.KronColor;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
-import io.github.darkkronicle.polish.api.EntryBuilder;
-import io.github.darkkronicle.polish.gui.complexwidgets.EntryButtonList;
-import io.github.darkkronicle.polish.gui.screens.BasicConfigScreen;
-import io.github.darkkronicle.polish.impl.builders.DropdownSelectorEntryBuilder;
-import io.github.darkkronicle.polish.util.Colors;
-import io.github.darkkronicle.polish.util.DrawPosition;
-import io.github.darkkronicle.polish.util.DrawUtil;
-import io.github.darkkronicle.polish.util.Place;
-import io.github.darkkronicle.polish.util.SimpleColor;
-import io.github.darkkronicle.polish.util.SimpleRectangle;
-import net.minecraft.client.gui.screen.Screen;
+import io.github.darkkronicle.kronhud.util.DrawPosition;
+import io.github.darkkronicle.kronhud.util.Rectangle;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.ScoreboardCriterion;
@@ -25,7 +19,6 @@ import net.minecraft.scoreboard.Team;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 
@@ -36,17 +29,27 @@ import java.util.stream.Collectors;
 
 public class ScoreboardHud extends AbstractHudEntry {
     public static final Identifier ID = new Identifier("kronhud", "scoreboardhud");
-    public static final Scoreboard placeholder = Util.make(() -> {
+    public static final ScoreboardObjective placeholder = Util.make(() -> {
         Scoreboard placeScore = new Scoreboard();
-        placeScore.addObjective("placeholder", ScoreboardCriterion.DUMMY, new LiteralText("Placeholder!"), ScoreboardCriterion.RenderType.INTEGER);
-        ScoreboardObjective objective = placeScore.getObjective("Placeholder");
+        ScoreboardObjective objective = placeScore.addObjective("placeholder", ScoreboardCriterion.DUMMY,
+                new LiteralText("Cool Players"),
+                ScoreboardCriterion.RenderType.INTEGER);
         ScoreboardPlayerScore score = new ScoreboardPlayerScore(placeScore, objective, "DarkKronicle");
-        score.setScore(15);
+        score.setScore(2);
         placeScore.updateScore(score);
         placeScore.updatePlayerScore("DarkKronicle", objective);
+        score.setScore(1);
+        placeScore.updateScore(score);
+        placeScore.updatePlayerScore("Dinnerbone", objective);
+
         placeScore.setObjectiveSlot(1, objective);
-        return placeScore;
+        return objective;
     });
+
+    private KronColor backgroundColor = new KronColor("backgroundcolor", ID.getPath(), "#4C000000");
+    private KronColor topColor = new KronColor("topbackgroundcolor", ID.getPath(), "#66000000");
+    private ConfigBoolean scores = new KronBoolean("scores", ID.getPath(), true);
+    private KronColor scoreColor = new KronColor("scorecolor", ID.getPath(), "#FFFF5555");
 
     public ScoreboardHud() {
         super(300, 146);
@@ -55,7 +58,7 @@ public class ScoreboardHud extends AbstractHudEntry {
     @Override
     public void render(MatrixStack matrices) {
         matrices.push();
-        matrices.scale(getStorage().scale, getStorage().scale, 1);
+        scale(matrices);
         Scoreboard scoreboard = this.client.world.getScoreboard();
         ScoreboardObjective scoreboardObjective = null;
         Team team = scoreboard.getPlayerTeam(this.client.player.getEntityName());
@@ -76,29 +79,20 @@ public class ScoreboardHud extends AbstractHudEntry {
     @Override
     public void renderPlaceholder(MatrixStack matrices) {
         matrices.push();
-        matrices.scale(getStorage().scale, getStorage().scale, 1);
-        DrawPosition pos = getScaledPos();
-        if (hovered) {
-            DrawUtil.rect(matrices, pos.getX(), pos.getY(), width, height, Colors.SELECTOR_BLUE.color().withAlpha(100).color());
-        } else {
-            DrawUtil.rect(matrices, pos.getX(), pos.getY(), width, height, Colors.WHITE.color().withAlpha(50).color());
-        }
-        DrawUtil.outlineRect(matrices, pos.getX(), pos.getY(), width, height, Colors.BLACK.color().color());
-
-        ScoreboardObjective objective = placeholder.getObjective("placeholder");
-        placeholder.setObjectiveSlot(1, objective);
-        renderScoreboardSidebar(matrices, objective);
+        renderPlaceholderBackground(matrices);
+        scale(matrices);
+        renderScoreboardSidebar(matrices, placeholder);
         hovered = false;
         matrices.pop();
     }
 
-    // Abusing this could break some stuff/could allow for unfair advantages. The goal is not to do this, so it won't show any
-    // more information than it would have in vanilla.
+    // Abusing this could break some stuff/could allow for unfair advantages. The goal is not to do this, so it won't
+    // show any more information than it would have in vanilla.
     private void renderScoreboardSidebar(MatrixStack matrices, ScoreboardObjective objective) {
         Scoreboard scoreboard = objective.getScoreboard();
         Collection<ScoreboardPlayerScore> scores = scoreboard.getAllPlayerScores(objective);
-        List<ScoreboardPlayerScore> filteredScores = scores.stream().filter((scoreboardPlayerScorex) ->
-                scoreboardPlayerScorex.getPlayerName() != null && !scoreboardPlayerScorex.getPlayerName().startsWith("#")
+        List<ScoreboardPlayerScore> filteredScores = scores.stream().filter((testScore) ->
+                testScore.getPlayerName() != null && !testScore.getPlayerName().startsWith("#")
         ).collect(Collectors.toList());
 
         if (filteredScores.size() > 15) {
@@ -118,7 +112,7 @@ public class ScoreboardHud extends AbstractHudEntry {
         for(Iterator<ScoreboardPlayerScore> scoresIterator = scores.iterator(); scoresIterator.hasNext(); maxWidth = Math.max(maxWidth, client.textRenderer.getWidth(formattedText) + spacerWidth + client.textRenderer.getWidth(Integer.toString(scoreboardPlayerScore.getScore())))) {
             scoreboardPlayerScore = scoresIterator.next();
             Team team = scoreboard.getPlayerTeam(scoreboardPlayerScore.getPlayerName());
-            formattedText = Team.modifyText(team, new LiteralText(scoreboardPlayerScore.getPlayerName()));
+            formattedText = Team.decorateName(team, new LiteralText(scoreboardPlayerScore.getPlayerName()));
             scoresWText.add(Pair.of(scoreboardPlayerScore, formattedText));
         }
         maxWidth = maxWidth + 2;
@@ -129,10 +123,11 @@ public class ScoreboardHud extends AbstractHudEntry {
 
         int scoresSize = scores.size();
         int scoreHeight = scoresSize * 9;
-        DrawPosition pos = getScaledPos();
-        SimpleRectangle bounds = new SimpleRectangle(pos.getX(), pos.getY(), width, height);
-        SimpleRectangle inside = new SimpleRectangle(pos.getX(), pos.getY(), maxWidth, scoreHeight + 9);
-        SimpleRectangle calculated = getStorage().place.calculate(bounds, inside);
+        DrawPosition pos = getPos();
+        Rectangle bounds = getBounds();
+        Rectangle inside = new Rectangle(pos.x(), pos.y(), maxWidth, scoreHeight + 9);
+        Rectangle calculated = new Rectangle(bounds.x() + bounds.width() - inside.width(),
+                bounds.y() + (bounds.height() / 2 - inside.height() / 2), inside.width(), inside.height());
         int scoreY = calculated.y() + scoreHeight + 9;
         int scoreX = calculated.x() + 2;
         int num = 0;
@@ -144,79 +139,57 @@ public class ScoreboardHud extends AbstractHudEntry {
             Text scoreText = scoreboardPlayerScoreTextPair.getSecond();
             String score = "" + scoreboardPlayerScore2.getScore();
             int relativeY = scoreY - num * 9;
-            rect(matrices, textOffset, relativeY, maxWidth, 9, getStorage().background.color());
-            client.textRenderer.draw(matrices, scoreText, (float) scoreX, (float) relativeY, Colors.WHITE.color().color());
-            client.textRenderer.draw(matrices, score, (float) (scoreX + maxWidth - client.textRenderer.getWidth(score) - 2), (float) relativeY, getStorage().score.color());
+            if (background.getBooleanValue()) {
+                fillRect(matrices, new Rectangle(textOffset, relativeY, maxWidth, 9), backgroundColor.getColor());
+            }
+            if (shadow.getBooleanValue()) {
+                client.textRenderer.drawWithShadow(matrices, scoreText, (float) scoreX, (float) relativeY,
+                        -1);
+            } else {
+                client.textRenderer.draw(matrices, scoreText, (float) scoreX, (float) relativeY,
+                        -1);
+            }
+            if (this.scores.getBooleanValue()) {
+                drawString(matrices, client.textRenderer, score,
+                        (float) (scoreX + maxWidth - client.textRenderer.getWidth(score) - 2), (float) relativeY,
+                        scoreColor.getColor().color(), shadow.getBooleanValue());
+            }
             if (num == scoresSize) {
-                rect(matrices, textOffset, relativeY - 10, maxWidth, 9, getStorage().top.color());
-                rect(matrices, scoreX - 2, relativeY - 1, maxWidth, 1, getStorage().background.color());
+                if (background.getBooleanValue()) {
+                    fillRect(matrices, new Rectangle(textOffset, relativeY - 10, maxWidth, 9), topColor.getColor());
+                    fillRect(matrices, new Rectangle(scoreX - 2, relativeY - 1, maxWidth, 1),
+                            backgroundColor.getColor());
+                }
                 float title = (float) (scoreX + maxWidth / 2 - displayNameWidth / 2 - 1);
-                client.textRenderer.draw(matrices, text, title, (float) (relativeY - 9), Colors.WHITE.color().color());
+                if (shadow.getBooleanValue()) {
+                    client.textRenderer.drawWithShadow(matrices, text, title, (float) (relativeY - 9), -1);
+                }
+                else {
+                    client.textRenderer.draw(matrices, text, title, (float) (relativeY - 9), -1);
+                }
             }
         }
-
     }
 
     @Override
-    public Identifier getID() {
+    public void addConfigOptions(List<IConfigBase> options) {
+        super.addConfigOptions(options);
+        options.add(background);
+        options.add(topColor);
+        options.add(backgroundColor);
+        options.add(shadow);
+        options.add(scores);
+        options.add(scoreColor);
+    }
+
+    @Override
+    public Identifier getId() {
         return ID;
     }
 
     @Override
-    public boolean moveable() {
+    public boolean movable() {
         return true;
-    }
-
-    @Override
-    public Storage getStorage() {
-        return KronHUD.storage.scoreboardHudStorage;
-    }
-
-    @Override
-    public Text getName() {
-        return new TranslatableText("hud.kronhud.scoreboardhud");
-    }
-
-    public static class Storage extends AbstractStorage {
-        public SimpleColor score;
-        public SimpleColor background;
-        public SimpleColor outline;
-        public SimpleColor top;
-        public Place.Type place;
-
-        public Storage() {
-            x = 1F;
-            y = 0.5F;
-            scale = 1F;
-            enabled = true;
-            outline = Colors.WHITE.color().withAlpha(0);
-            background = Colors.BLACK.color().withAlpha(100);
-            score = Colors.SELECTOR_GREEN.color();
-            top = Colors.BLACK.color().withAlpha(150);
-            place = Place.Type.MIDDLE_RIGHT;
-        }
-    }
-
-    @Override
-    public Screen getConfigScreen() {
-        EntryBuilder builder = EntryBuilder.create();
-        EntryButtonList list = new EntryButtonList((client.getWindow().getScaledWidth() / 2) - 290, (client.getWindow().getScaledHeight() / 2) - 70, 580, 150, 1, false);
-        list.addEntry(builder.startToggleEntry(new TranslatableText("option.kronhud.enabled"), getStorage().enabled).setDimensions(20, 10).setSavable(val -> getStorage().enabled = val).build(list));
-        list.addEntry(builder.startFloatSliderEntry(new TranslatableText("option.kronhud.scale"), getStorage().scale, 0.2F, 1.5F).setWidth(80).setSavable(val -> getStorage().scale = val).build(list));
-        DropdownSelectorEntryBuilder<Place.Type> places = builder.startDropdownEntry(new TranslatableText("option.kronhud.scoreboardhud.layout"), getStorage().place);
-        for (Place.Type type : Place.Type.values()) {
-            places.add(type, type.toString());
-        }
-        list.addEntry(places.setSavable(val -> getStorage().place = val).build(list));
-        list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.scoreboardhud.scorecolor"), getStorage().score).setSavable(val -> getStorage().score = val).build(list));
-        list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.backgroundcolor"), getStorage().background).setSavable(val -> getStorage().background = val).build(list));
-        list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.scoreboardhud.bordercolor"), getStorage().outline).setSavable(val -> getStorage().outline = val).build(list));
-
-        list.addEntry(builder.startColorButtonEntry(new TranslatableText("option.kronhud.scoreboardhud.topcolor"), getStorage().top).setSavable(val -> getStorage().top = val).build(list));
-
-
-        return new BasicConfigScreen(getName(), list, () -> KronHUD.storageHandler.saveDefaultHandling());
-
     }
 
 }

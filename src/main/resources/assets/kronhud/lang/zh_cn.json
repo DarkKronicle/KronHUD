@@ -16,7 +16,7 @@
   "option.kronhud.backgroundcolor": "背景颜色",
   "option.kronhud.textcolor": "文本颜色",
   "option.kronhud.keystrokehud.unselectedcolor": "未选取颜色",
-  "option.kronhud.keystrokehud.selectedcolor": "已选取颜色",
+  "option.kronhud.keystrokehud.heldbackgroundcolor": "已选取颜色",
   "option.kronhud.crosshairhud.defaultcolor": "默认颜色",
   "option.kronhud.crosshairhud.entitycolor": "实体颜色",
   "option.kronhud.crosshairhud.blockcolor": "方块颜色",

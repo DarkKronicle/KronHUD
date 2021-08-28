@@ -1,8 +1,8 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
-import io.github.darkkronicle.kronhud.gui.screen.SetScreen;
-import io.github.darkkronicle.polish.util.SimpleRectangle;
+import io.github.darkkronicle.kronhud.gui.screen.HudEditScreen;
+import io.github.darkkronicle.kronhud.util.Rectangle;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -19,14 +19,12 @@ import java.util.Optional;
 public class HudManager {
     private final HashMap<Identifier, AbstractHudEntry> entries;
     private final MinecraftClient client;
-    private boolean placeholder = false;
 
     public HudManager() {
         this.entries = new HashMap<>();
         client = MinecraftClient.getInstance();
         ClientTickEvents.END_CLIENT_TICK.register(minecraftClient -> {
             for (AbstractHudEntry entry : getEntries()) {
-                placeholder = client.currentScreen instanceof SetScreen;
                 if (entry.tickable() && entry.isEnabled()) {
                     entry.tick();
                 }
@@ -35,7 +33,7 @@ public class HudManager {
     }
 
     public HudManager add(AbstractHudEntry entry) {
-        entries.put(entry.getID(), entry);
+        entries.put(entry.getId(), entry);
         return this;
     }
 
@@ -48,9 +46,7 @@ public class HudManager {
 
     public List<AbstractHudEntry> getMoveableEntries() {
         if (entries.size() > 0) {
-            ArrayList<AbstractHudEntry> moves = new ArrayList<>(entries.values());
-            moves.removeIf(hud -> !hud.moveable());
-            return moves;
+            return entries.values().stream().filter((entry) -> entry.isEnabled() && entry.movable()).toList();
         }
         return new ArrayList<>();
     }
@@ -60,7 +56,7 @@ public class HudManager {
     }
 
     public void render(MatrixStack matrices) {
-        if (!placeholder && !client.options.debugEnabled) {
+        if (!(client.currentScreen instanceof HudEditScreen) && !client.options.debugEnabled) {
             for (AbstractHudEntry hud : getEntries()) {
                 if (hud.isEnabled()) {
                     hud.renderHud(matrices);
@@ -79,17 +75,18 @@ public class HudManager {
 
     public Optional<AbstractHudEntry> getEntryXY(int x, int y) {
         for (AbstractHudEntry entry : getMoveableEntries()) {
-            if (entry.getX() <= x && entry.getX() + entry.width * entry.getStorage().scale >= x && entry.getY() <= y && entry.getY() + entry.height * entry.getStorage().scale >= y) {
+            Rectangle bounds = entry.getScaledBounds();
+            if (bounds.x() <= x && bounds.x() + bounds.width() >= x && bounds.y() <= y && bounds.y() + bounds.height() >= y) {
                 return Optional.of(entry);
             }
         }
         return Optional.empty();
     }
 
-    public List<SimpleRectangle> getAllBounds() {
-        ArrayList<SimpleRectangle> bounds = new ArrayList<>();
+    public List<Rectangle> getAllBounds() {
+        ArrayList<Rectangle> bounds = new ArrayList<>();
         for (AbstractHudEntry entry : getMoveableEntries()) {
-            bounds.add(entry.getBounds());
+            bounds.add(entry.getScaledBounds());
         }
         return bounds;
     }

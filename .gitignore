@@ -9,3 +9,10 @@ build/
 classes/
 lombok.config
 libs/
+/.classpath
+/bin/.gitignore
+/.project
+/KronHUD_client.launch
+/KronHUD_server.launch
+/.settings/org.eclipse.buildship.core.prefs
+/.settings/org.eclipse.jdt.core.prefs

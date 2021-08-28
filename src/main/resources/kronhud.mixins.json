@@ -8,7 +8,7 @@
     "AccessorBossBarHud",
     "MixinInGameHud",
     "MixinKeybind",
-    "MixinMinecraftClient",
+    "AccessorMinecraftClient",
     "MixinMouse",
     "MixinBossBarHud"
   ],

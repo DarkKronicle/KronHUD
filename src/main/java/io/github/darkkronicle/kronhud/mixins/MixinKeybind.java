@@ -3,7 +3,7 @@ package io.github.darkkronicle.kronhud.mixins;
 import io.github.darkkronicle.kronhud.hooks.KronHudHooks;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

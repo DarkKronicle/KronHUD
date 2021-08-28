@@ -9,11 +9,6 @@ https://github.com/shedaniel/cloth-api/blob/1.16/cloth-client-events-v0/src/main
  */
 
 public class KronHudHooks {
-    public static final Event<HudRenderCallback.Pre> HUD_RENDER_PRE = EventFactory.createArrayBacked(HudRenderCallback.Pre.class, listeners -> ((matrices, delta) -> {
-        for (HudRenderCallback.Pre listener : listeners) {
-            listener.render(matrices, delta);
-        }
-    }));
 
     public static final Event<MouseInputCallback> MOUSE_INPUT = EventFactory.createArrayBacked(MouseInputCallback.class, listeners -> ((window, button, action, mods) -> {
         for (MouseInputCallback listener : listeners) {

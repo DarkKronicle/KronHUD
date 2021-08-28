@@ -6,20 +6,23 @@ A mod to add clean and useful HUD widgets.
 
 ***This mod is currently in early beta, things may n/ot look/work correctly.***
 
-[CurseForge](https://www.curseforge.com/minecraft/mc-mods/kronhud)
+Download this mod on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/kronhud).
+
+Requires [MaLiLib](https://www.curseforge.com/minecraft/mc-mods/malilib) and Minecraft 1.17.
+
 
 ## Widgets
 
 Currenty KronHUD has: 
 
 - Keystrokes
-- ItemUpdates
-- Crosshairs
+- Item Updates
+- Crosshair
 - Ping
 - FPS
 - CPS
 - Potions
-- Arrows
+- Arrow Counter
 - Coordinates
 - Scoreboard
 - Bossbar
@@ -44,10 +47,11 @@ More modules are planned to be added. Make sure you add a feature request if you
 
 ## To compile
 
-Currently, I am using [PolishAPI](https://github.com/DarkKronicle/Polish) for the UI of this mod. If you want to build this mod you'll have to first build polish and put it into a `./libs/` folder.
+Open a terminal and run `./gradlew build`.
 
 ## Credits
 
 - DarkKronicle - Developer for KronHUD
-- Chronos22 - Created logo 
-- qsefthuopq - Chinese translation
+- Chronos22 - Created logo
+- qsefthuopq - Created Chinese translations
+- TheKodeToad - Contributor
