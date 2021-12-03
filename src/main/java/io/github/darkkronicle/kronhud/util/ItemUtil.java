@@ -139,7 +139,7 @@ public class ItemUtil {
 
     public void renderGuiItemModel(MatrixStack matrices, ItemStack stack, float x, float y) {
         MinecraftClient client = MinecraftClient.getInstance();
-        BakedModel model = client.getItemRenderer().getHeldItemModel(stack, null, null, 0);
+        BakedModel model = client.getItemRenderer().getModel(stack, null, null, 0);
         client.getTextureManager().getTexture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE).setFilter(false, false);
         RenderSystem.setShaderTexture(0, SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
         RenderSystem.enableBlend();

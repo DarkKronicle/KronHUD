@@ -70,9 +70,9 @@ public class CrosshairHud extends AbstractHudEntry {
         if (this.client.options.attackIndicator == AttackIndicator.CROSSHAIR) {
             float progress = this.client.player.getAttackCooldownProgress(0.0F);
             if (progress != 1.0F) {
-                fill(matrices.peek().getModel(), pos.x() + (width / 2) - 6, pos.y() + (height / 2) + 9, 11, 1,
+                fill(matrices.peek().getPositionMatrix(), pos.x() + (width / 2) - 6, pos.y() + (height / 2) + 9, 11, 1,
                         attackIndicatorBackgroundColor.getColor().color());
-                fill(matrices.peek().getModel(), pos.x() + (width / 2) - 6, pos.y() + (height / 2) + 9,
+                fill(matrices.peek().getPositionMatrix(), pos.x() + (width / 2) - 6, pos.y() + (height / 2) + 9,
                         progress * 11, 1, attackIndicatorForegroundColor.getColor().color());
             }
         }
