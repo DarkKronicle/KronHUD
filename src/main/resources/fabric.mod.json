@@ -13,7 +13,8 @@
     "DarkKronicle",
     "Chronos22",
     "qsefthuopq",
-    "TheKodeToad"
+    "TheKodeToad",
+    "moehreag"
   ],
   "entrypoints": {
     "client": [
@@ -32,7 +33,7 @@
   "depends": {
     "fabricloader": ">=0.9.0",
     "fabric": "*",
-    "minecraft": "1.17.x"
+    "minecraft": "1.18"
   },
   "custom": {
     "modmenu": {
