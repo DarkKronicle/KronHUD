@@ -34,7 +34,7 @@
     "fabricloader": ">=0.9.0",
     "malilib": ">=0.10.0-dev.26",
     "fabric": "*",
-    "minecraft": "1.18"
+    "minecraft": ">=1.18"
   },
   "custom": {
     "modmenu": {
