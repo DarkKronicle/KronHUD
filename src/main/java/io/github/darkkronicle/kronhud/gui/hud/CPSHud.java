@@ -1,11 +1,8 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
 import fi.dy.masa.malilib.config.IConfigBase;
-import fi.dy.masa.malilib.config.options.ConfigBoolean;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.hooks.KronHudHooks;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 
@@ -19,7 +16,6 @@ public class CPSHud extends CleanHudEntry {
     private KronBoolean rmb = new KronBoolean("rightcps", ID.getPath(), false);
 
     public CPSHud() {
-        //  super(x, y, scale);
         super();
         KronHudHooks.MOUSE_INPUT.register((window, button, action, mods) -> {
             if (!fromKeybindings.getBooleanValue()) {
@@ -59,8 +55,6 @@ public class CPSHud extends CleanHudEntry {
         } else {
             return ClickList.LEFT.clicks() + " CPS";
         }
-
-
     }
 
     @Override

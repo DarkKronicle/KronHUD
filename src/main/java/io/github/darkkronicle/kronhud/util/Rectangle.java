@@ -13,10 +13,10 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public class Rectangle {
 
-    private int x;
-    private int y;
-    private int width;
-    private int height;
+    int x;
+    int y;
+    int width;
+    int height;
 
     public Rectangle offset(DrawPosition offset) {
         return new Rectangle(x + offset.x, y + offset.y, width, height);

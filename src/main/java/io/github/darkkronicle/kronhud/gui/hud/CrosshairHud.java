@@ -1,8 +1,10 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.IConfigOptionListEntry;
+import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.StringUtils;
 import io.github.darkkronicle.kronhud.config.KronColor;
 import io.github.darkkronicle.kronhud.config.KronOptionList;
@@ -11,9 +13,12 @@ import io.github.darkkronicle.kronhud.util.Color;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import io.github.darkkronicle.kronhud.util.Rectangle;
 import lombok.AllArgsConstructor;
+import net.minecraft.block.AbstractChestBlock;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.option.AttackIndicator;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BufferRenderer;
+import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat.DrawMode;
 import net.minecraft.client.render.VertexFormats;
@@ -23,12 +28,14 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Matrix4f;
+import net.minecraft.util.math.Vec3f;
 import net.minecraft.world.World;
 
 import java.util.List;
 
 public class CrosshairHud extends AbstractHudEntry {
     public static final Identifier ID = new Identifier("kronhud", "crosshairhud");
+    private static final Identifier CROSSHAIR_TEXTURE = new Identifier("kronhud", "textures/gui/crosshair.png");
 
     private KronOptionList type = new KronOptionList("type", ID.getPath(), Crosshair.CROSS);
     private KronColor defaultColor = new KronColor("defaultcolor", ID.getPath(), "#FFFFFFFF");
@@ -66,6 +73,23 @@ public class CrosshairHud extends AbstractHudEntry {
             fillRect(matrices, new Rectangle(pos.x() + (width / 2), pos.y() + (height / 2) - 1, 5, 1), color);
             fillRect(matrices, new Rectangle(pos.x() + (width / 2) - 1, pos.y() + (height / 2) - 6, 1, 6), color);
             fillRect(matrices, new Rectangle(pos.x() + (width / 2) - 1, pos.y() + (height / 2), 1, 5), color);
+        } else if (type.getOptionListValue() == Crosshair.DIRECTION) {
+            Camera camera = this.client.gameRenderer.getCamera();
+            MatrixStack matrixStack = RenderSystem.getModelViewStack();
+            matrixStack.push();
+            matrixStack.translate(getX() + ((float) width / 2), getY() + ((float) height / 2), 0);
+            matrixStack.multiply(Vec3f.NEGATIVE_X.getDegreesQuaternion(camera.getPitch()));
+            matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(camera.getYaw()));
+            matrixStack.scale(-getScale(), -getScale(), getScale());
+            RenderSystem.applyModelViewMatrix();
+            RenderSystem.renderCrosshair(10);
+            matrixStack.pop();
+            RenderSystem.applyModelViewMatrix();
+        } else if (type.getOptionListValue() == Crosshair.TEXTURE) {
+            RenderUtils.bindTexture(CROSSHAIR_TEXTURE);
+            RenderUtils.color((float) color.red() / 255, (float) color.green() / 255, (float) color.blue() / 255, (float) color.alpha() / 255);
+            DrawableHelper.drawTexture(matrices, pos.x(), pos.y(), 0, 0, 15, 15, 15, 15);
+            RenderUtils.color(1, 1, 1, 1);
         }
         if (this.client.options.attackIndicator == AttackIndicator.CROSSHAIR) {
             float progress = this.client.player.getAttackCooldownProgress(0.0F);
@@ -104,10 +128,10 @@ public class CrosshairHud extends AbstractHudEntry {
         RenderSystem.disableTexture();
         RenderSystem.defaultBlendFunc();
         bufferBuilder.begin(DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-        bufferBuilder.vertex(matrix, (float) x, (float) y2, 0.0F).color(r, g, b, alpha).next();
-        bufferBuilder.vertex(matrix, (float) x2, (float) y2, 0.0F).color(r, g, b, alpha).next();
-        bufferBuilder.vertex(matrix, (float) x2, (float) y, 0.0F).color(r, g, b, alpha).next();
-        bufferBuilder.vertex(matrix, (float) x, (float) y, 0.0F).color(r, g, b, alpha).next();
+        bufferBuilder.vertex(matrix, x, y2, 0.0F).color(r, g, b, alpha).next();
+        bufferBuilder.vertex(matrix, x2, y2, 0.0F).color(r, g, b, alpha).next();
+        bufferBuilder.vertex(matrix, x2, y, 0.0F).color(r, g, b, alpha).next();
+        bufferBuilder.vertex(matrix, x, y, 0.0F).color(r, g, b, alpha).next();
         bufferBuilder.end();
         BufferRenderer.draw(bufferBuilder);
         RenderSystem.enableTexture();
@@ -123,7 +147,7 @@ public class CrosshairHud extends AbstractHudEntry {
         } else if (hit.getType() == HitResult.Type.BLOCK) {
             BlockPos blockPos = ((BlockHitResult) hit).getBlockPos();
             World world = this.client.world;
-            if (world.getBlockState(blockPos).createScreenHandlerFactory(world, blockPos) != null) {
+            if (world.getBlockState(blockPos).createScreenHandlerFactory(world, blockPos) != null || world.getBlockState(blockPos).getBlock() instanceof AbstractChestBlock<?>) {
                 return containerColor.getColor();
             }
         }
@@ -159,7 +183,9 @@ public class CrosshairHud extends AbstractHudEntry {
     @AllArgsConstructor
     public enum Crosshair implements IConfigOptionListEntry {
         CROSS("cross"),
-        DOT("dot");
+        DOT("dot"),
+        DIRECTION("direction"),
+        TEXTURE("texture");
 
         private String value;
 

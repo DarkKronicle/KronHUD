@@ -139,7 +139,7 @@ public class ItemUtil {
 
     public void renderGuiItemModel(MatrixStack matrices, ItemStack stack, float x, float y) {
         MinecraftClient client = MinecraftClient.getInstance();
-        BakedModel model = client.getItemRenderer().getModel(stack, null, null, 0);
+        BakedModel model = client.getItemRenderer().getModel(stack, null, client.player, (int) (x * y));
         client.getTextureManager().getTexture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE).setFilter(false, false);
         RenderSystem.setShaderTexture(0, SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
         RenderSystem.enableBlend();
@@ -150,6 +150,7 @@ public class ItemUtil {
         matrices.translate(8.0D, 8.0D, 0.0D);
         matrices.scale(1.0F, -1.0F, 1.0F);
         matrices.scale(16.0F, 16.0F, 16.0F);
+        RenderSystem.applyModelViewMatrix();
         VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
         boolean bl = !model.isSideLit();
         if (bl) {
@@ -171,47 +172,47 @@ public class ItemUtil {
     public void renderGuiItemOverlay(MatrixStack matrices, TextRenderer renderer, ItemStack stack, int x, int y,
                                      String countLabel, int textColor, boolean shadow) {
         MinecraftClient client = MinecraftClient.getInstance();
-        if (!stack.isEmpty()) {
-            if (stack.getCount() != 1 || countLabel != null) {
-                String string = countLabel == null ? String.valueOf(stack.getCount()) :
-                        countLabel;
-                matrices.translate(0.0, 0.0, client.getItemRenderer().zOffset + 200.0F);
-                DrawUtil.drawString(matrices, renderer, string, (float)(x + 19 - 2 - renderer.getWidth(string)),
-                        (float)(y + 6 + 3),
-                        textColor, shadow);
-            }
-
-            if (stack.isItemBarVisible()) {
-                RenderSystem.disableDepthTest();
-                RenderSystem.disableTexture();
-                RenderSystem.disableBlend();
-                int i = stack.getItemBarStep();
-                int j = stack.getItemBarColor();
-                DrawUtil.fillRect(matrices, new Rectangle(x + 2, y + 13, 13, 2), Color.BLACK);
-                DrawUtil.fillRect(matrices, new Rectangle(x + 2, y + 13, i, 1), new Color(j >> 16 & 255, j >> 8 & 255,
-                        j & 255,
-                        255));
-                RenderSystem.enableBlend();
-                RenderSystem.enableTexture();
-                RenderSystem.enableDepthTest();
-            }
-
-            ClientPlayerEntity clientPlayerEntity = MinecraftClient.getInstance().player;
-            float f = clientPlayerEntity == null ? 0.0F : clientPlayerEntity.getItemCooldownManager().getCooldownProgress(stack.getItem(), MinecraftClient.getInstance().getTickDelta());
-            if (f > 0.0F) {
-                RenderSystem.disableDepthTest();
-                RenderSystem.disableTexture();
-                RenderSystem.enableBlend();
-                RenderSystem.defaultBlendFunc();
-                Tessellator tessellator2 = Tessellator.getInstance();
-                BufferBuilder bufferBuilder2 = tessellator2.getBuffer();
-                DrawUtil.fillRect(matrices, new Rectangle(x, y + MathHelper.floor(16.0F * (1.0F - f)), 16,
-                    MathHelper.ceil(16.0F * f)), Color.WHITE.withAlpha(127));
-                RenderSystem.enableTexture();
-                RenderSystem.enableDepthTest();
-            }
-
+        if (stack.isEmpty()) {
+            return;
         }
+
+        if (stack.getCount() != 1 || countLabel != null) {
+            String string = countLabel == null ? String.valueOf(stack.getCount()) :
+                    countLabel;
+            matrices.translate(0.0, 0.0, client.getItemRenderer().zOffset + 200.0F);
+            DrawUtil.drawString(matrices, renderer, string, (float)(x + 19 - 2 - renderer.getWidth(string)),
+                    (float)(y + 6 + 3),
+                    textColor, shadow);
+        }
+
+        if (stack.isItemBarVisible()) {
+            RenderSystem.disableDepthTest();
+            RenderSystem.disableTexture();
+            RenderSystem.disableBlend();
+            int i = stack.getItemBarStep();
+            int j = stack.getItemBarColor();
+            DrawUtil.fillRect(matrices, new Rectangle(x + 2, y + 13, 13, 2), Color.BLACK);
+            DrawUtil.fillRect(matrices, new Rectangle(x + 2, y + 13, i, 1), new Color(j >> 16 & 255, j >> 8 & 255,
+                    j & 255,
+                    255));
+            RenderSystem.enableBlend();
+            RenderSystem.enableTexture();
+            RenderSystem.enableDepthTest();
+        }
+
+        ClientPlayerEntity clientPlayerEntity = MinecraftClient.getInstance().player;
+        float f = clientPlayerEntity == null ? 0.0F : clientPlayerEntity.getItemCooldownManager().getCooldownProgress(stack.getItem(), MinecraftClient.getInstance().getTickDelta());
+        if (f > 0.0F) {
+            RenderSystem.disableDepthTest();
+            RenderSystem.disableTexture();
+            RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
+            DrawUtil.fillRect(matrices, new Rectangle(x, y + MathHelper.floor(16.0F * (1.0F - f)), 16,
+                MathHelper.ceil(16.0F * f)), Color.WHITE.withAlpha(127));
+            RenderSystem.enableTexture();
+            RenderSystem.enableDepthTest();
+        }
+
     }
 
     // Minecraft has decided to not use matrixstack's in their itemrender class. So this is implementing itemRenderer stuff with matrices.
