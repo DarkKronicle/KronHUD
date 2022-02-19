@@ -1,6 +1,5 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.IConfigOptionListEntry;
@@ -23,6 +22,7 @@ import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat.DrawMode;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -35,7 +35,6 @@ import java.util.List;
 
 public class CrosshairHud extends AbstractHudEntry {
     public static final Identifier ID = new Identifier("kronhud", "crosshairhud");
-    private static final Identifier CROSSHAIR_TEXTURE = new Identifier("kronhud", "textures/gui/crosshair.png");
 
     private KronOptionList type = new KronOptionList("type", ID.getPath(), Crosshair.CROSS);
     private KronColor defaultColor = new KronColor("defaultcolor", ID.getPath(), "#FFFFFFFF");
@@ -86,10 +85,36 @@ public class CrosshairHud extends AbstractHudEntry {
             matrixStack.pop();
             RenderSystem.applyModelViewMatrix();
         } else if (type.getOptionListValue() == Crosshair.TEXTURE) {
-            RenderUtils.bindTexture(CROSSHAIR_TEXTURE);
+            RenderUtils.bindTexture(DrawableHelper.GUI_ICONS_TEXTURE);
+
+            // Draw crosshair
             RenderUtils.color((float) color.red() / 255, (float) color.green() / 255, (float) color.blue() / 255, (float) color.alpha() / 255);
-            DrawableHelper.drawTexture(matrices, pos.x(), pos.y(), 0, 0, 15, 15, 15, 15);
+            client.inGameHud.drawTexture(matrices, (int) (((client.getWindow().getScaledWidth() / getScale()) - 15) / 2), (int) (((client.getWindow().getScaledHeight() / getScale()) - 15) / 2), 0, 0, 15, 15);
             RenderUtils.color(1, 1, 1, 1);
+
+            // Draw attack indicator
+            if (this.client.options.attackIndicator == AttackIndicator.CROSSHAIR) {
+                float progress = this.client.player.getAttackCooldownProgress(0.0F);
+
+                // Whether a cross should be displayed under the indicator
+                boolean targetingEntity = false;
+                if (this.client.targetedEntity != null && this.client.targetedEntity instanceof LivingEntity
+                        && progress >= 1.0F) {
+                    targetingEntity = this.client.player.getAttackCooldownProgressPerTick() > 5.0F;
+                    targetingEntity &= this.client.targetedEntity.isAlive();
+                }
+
+                int x = (int) ((client.getWindow().getScaledWidth() / getScale()) / 2 - 8);
+                int y = (int) ((client.getWindow().getScaledHeight() / getScale()) / 2 - 7 + 16);
+
+                if (targetingEntity) {
+                    client.inGameHud.drawTexture(matrices, x, y, 68, 94, 16, 16);
+                } else if (progress < 1.0F) {
+                    int k = (int)(progress * 17.0F);
+                    client.inGameHud.drawTexture(matrices, x, y, 36, 94, 16, 4);
+                    client.inGameHud.drawTexture(matrices, x, y, 52, 94, k, 4);
+                }
+            }
         }
         if (this.client.options.attackIndicator == AttackIndicator.CROSSHAIR) {
             float progress = this.client.player.getAttackCooldownProgress(0.0F);
