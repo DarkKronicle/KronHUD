@@ -47,6 +47,8 @@ public class KronHUD implements ClientModInitializer {
         hudManager.add(new CPSHud());
         hudManager.add(new CrosshairHud());
         hudManager.add(new FPSHud());
+        hudManager.add(new IPHud());
+        hudManager.add(new SpeedHud());
         hudManager.add(new ItemUpdateHud());
         hudManager.add(new KeystrokeHud());
         hudManager.add(new PingHud());

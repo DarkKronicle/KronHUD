@@ -20,6 +20,8 @@ public class ArrowHud extends AbstractHudEntry {
     public static final Identifier ID = new Identifier("kronhud", "arrowhud");
     private int arrows = 0;
     private KronBoolean dynamic = new KronBoolean("dynamic", ID.getPath(), false);
+    private KronBoolean allArrowTypes = new KronBoolean("allArrowTypes", ID.getPath(), false);
+    private ItemStack currentArrow = new ItemStack(Items.ARROW);
 
     public ArrowHud() {
         super(20, 30);
@@ -36,13 +38,14 @@ public class ArrowHud extends AbstractHudEntry {
         }
         matrices.push();
         scale(matrices);
+
         DrawPosition pos = getPos();
         if (background.getBooleanValue()) {
             fillRect(matrices, getBounds(), backgroundColor.getColor());
         }
         drawCenteredString(matrices, client.textRenderer, String.valueOf(arrows), new DrawPosition(pos.x() + width / 2,
                 pos.y() + height - 10), textColor.getColor(), shadow.getBooleanValue());
-        ItemUtil.renderGuiItemModel(matrices, new ItemStack(Items.ARROW), pos.x() + 2, pos.y() + 2);
+        ItemUtil.renderGuiItemModel(matrices, currentArrow, pos.x() + 2, pos.y() + 2);
         matrices.pop();
     }
 
@@ -53,7 +56,19 @@ public class ArrowHud extends AbstractHudEntry {
 
     @Override
     public void tick() {
-        arrows = ItemUtil.getTotal(client, new ItemStack(Items.ARROW)) + ItemUtil.getTotal(client, new ItemStack(Items.TIPPED_ARROW));
+        if (allArrowTypes.getBooleanValue()) {
+            arrows = ItemUtil.getTotal(client, new ItemStack(Items.ARROW)) + ItemUtil.getTotal(client, new ItemStack(Items.TIPPED_ARROW)) + ItemUtil.getTotal(client, new ItemStack(Items.SPECTRAL_ARROW));
+        } else {
+            arrows = ItemUtil.getTotal(client, currentArrow);
+        }
+        if (client.player == null) {
+            return;
+        }
+        if (!allArrowTypes.getBooleanValue()) {
+            currentArrow = client.player.getArrowType(Items.BOW.getDefaultStack());
+        } else {
+            currentArrow = new ItemStack(Items.ARROW);
+        }
     }
 
     @Override
@@ -77,6 +92,7 @@ public class ArrowHud extends AbstractHudEntry {
         options.add(background);
         options.add(backgroundColor);
         options.add(dynamic);
+        options.add(allArrowTypes);
     }
 
     @Override
