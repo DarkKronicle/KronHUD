@@ -5,6 +5,7 @@ import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.IConfigOptionListEntry;
 import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.StringUtils;
+import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.config.KronColor;
 import io.github.darkkronicle.kronhud.config.KronOptionList;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
@@ -37,6 +38,7 @@ public class CrosshairHud extends AbstractHudEntry {
     public static final Identifier ID = new Identifier("kronhud", "crosshairhud");
 
     private KronOptionList type = new KronOptionList("type", ID.getPath(), Crosshair.CROSS);
+    private KronBoolean showInF5 = new KronBoolean("showInF5", ID.getPath(), false);
     private KronColor defaultColor = new KronColor("defaultcolor", ID.getPath(), "#FFFFFFFF");
     private KronColor entityColor = new KronColor("entitycolor", ID.getPath(), Color.SELECTOR_RED.toString());
     private KronColor containerColor = new KronColor("blockcolor", ID.getPath(), Color.SELECTOR_BLUE.toString());
@@ -61,6 +63,8 @@ public class CrosshairHud extends AbstractHudEntry {
 
     @Override
     public void render(MatrixStack matrices) {
+        if(!client.options.getPerspective().isFirstPerson() && !showInF5.getBooleanValue())return;
+
         matrices.push();
         scale(matrices);
         DrawPosition pos = getPos().subtract(0, -1);
@@ -198,6 +202,7 @@ public class CrosshairHud extends AbstractHudEntry {
     public void addConfigOptions(List<IConfigBase> options) {
         super.addConfigOptions(options);
         options.add(type);
+        options.add(showInF5);
         options.add(defaultColor);
         options.add(entityColor);
         options.add(containerColor);
