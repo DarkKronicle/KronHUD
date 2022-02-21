@@ -39,6 +39,8 @@
   "option.kronhud.crosshairhud.attackindicatorbg.comment": "Die Hintergrundfarbe der Angriffsanzeige.",
   "option.kronhud.crosshairhud.type": "Typ",
   "option.kronhud.crosshairhud.type.comment": "Der Stil des Fadenkreuzes.",
+  "option.kronhud.crosshairhud.showInF5": "In F5 anzeigen",
+  "option.kronhud.crosshairhud.showInF5.comment": "Ob das Fadenkreuz in F5 angezeigt wird oder nicht.",
   "option.kronhud.crosshairhud.dot": "Punkt",
   "option.kronhud.crosshairhud.cross": "Kreuz",
   "option.kronhud.cpshud.cpskeybind": "CPS aus Tastenbelegungen",
