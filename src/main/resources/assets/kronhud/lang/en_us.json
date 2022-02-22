@@ -41,6 +41,8 @@
   "option.kronhud.crosshairhud.attackindicatorbg.comment": "The attack indicator's background color.",
   "option.kronhud.crosshairhud.type": "Type",
   "option.kronhud.crosshairhud.type.comment": "The style of crosshair.",
+  "option.kronhud.crosshairhud.showInF5": "Show in F5",
+  "option.kronhud.crosshairhud.showInF5.comment": "Whether to show the crosshair in F5 or not.",
   "option.kronhud.crosshairhud.dot": "Dot",
   "option.kronhud.crosshairhud.cross": "Cross",
   "option.kronhud.crosshairhud.direction": "Direction",
