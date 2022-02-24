@@ -18,7 +18,7 @@
   "option.kronhud.background": "Hintergrund",
   "option.kronhud.background.comment": "Ob der Hintergrund angezeigt werden soll.",
   "option.kronhud.shadow": "Textschatten",
-  "option.kronhud.shadow.comment": "Ob ein SChatten unter jedem Text angezeigt werden soll.",
+  "option.kronhud.shadow.comment": "Ob ein Schatten unter jedem Text angezeigt werden soll.",
   "option.kronhud.backgroundcolor": "Hintergrundfarbe",
   "option.kronhud.backgroundcolor.comment": "Die Farbe im Hintergrund.",
   "option.kronhud.textcolor": "Textfarbe",
@@ -90,6 +90,9 @@
   "option.kronhud.speedhud.horizontal": "Nur horizontale Geschwindigkeit",
   "option.kronhud.speedhud.horizontal.comment": "Zeigt nur die horizontale Geschwindigkeit an.",
   "option.kronhud.arrowhud.allArrowTypes": "Alle Pfeiltypen",
-  "option.kronhud.arrowhud.allArrowTypes.comment": "Zeige die Summe aller Pfeilarten im Inventar. Sonst wird nur die \n Pfeilart angezeigt, die gerade geschossen wird."
+  "option.kronhud.arrowhud.allArrowTypes.comment": "Zeige die Summe aller Pfeilarten im Inventar. \nSonst wird nur die Pfeilart angezeigt, die gerade geschossen wird.",
+  "hud.kronhud.actionbarhud": "Aktionsleiste",
+  "option.kronhud.actionbarhud.timeshown": "Zeitdauer der Anzeige",
+  "option.kronhud.actionbarhud.timeshown.comment": "Die Zeitdauer, für die der Text angezeigt wird."
 }
 
