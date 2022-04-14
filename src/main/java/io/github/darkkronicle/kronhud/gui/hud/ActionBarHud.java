@@ -56,7 +56,7 @@ public class ActionBarHud extends AbstractHudEntry {
         matrices.push();
         renderPlaceholderBackground(matrices);
         scale(matrices);
-        client.textRenderer.draw(matrices, placeholder,  (float)getPos().x() + Math.round((float) width /2) - (float) client.textRenderer.getWidth(placeholder) /2, (float)getPos().y() + 3, textColor.getColor().color());
+        client.textRenderer.draw(matrices, placeholder,  (float)getPos().x() + Math.round((float) width /2) - (float) client.textRenderer.getWidth(placeholder) /2, (float)getPos().y() + 3, -1);
         matrices.pop();
         hovered = false;
     }
