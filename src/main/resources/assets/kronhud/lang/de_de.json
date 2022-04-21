@@ -18,7 +18,7 @@
   "option.kronhud.background": "Hintergrund",
   "option.kronhud.background.comment": "Ob der Hintergrund angezeigt werden soll.",
   "option.kronhud.shadow": "Textschatten",
-  "option.kronhud.shadow.comment": "Ob ein SChatten unter jedem Text angezeigt werden soll.",
+  "option.kronhud.shadow.comment": "Ob ein Schatten unter jedem Text angezeigt werden soll.",
   "option.kronhud.backgroundcolor": "Hintergrundfarbe",
   "option.kronhud.backgroundcolor.comment": "Die Farbe im Hintergrund.",
   "option.kronhud.textcolor": "Textfarbe",
@@ -39,8 +39,12 @@
   "option.kronhud.crosshairhud.attackindicatorbg.comment": "Die Hintergrundfarbe der Angriffsanzeige.",
   "option.kronhud.crosshairhud.type": "Typ",
   "option.kronhud.crosshairhud.type.comment": "Der Stil des Fadenkreuzes.",
+  "option.kronhud.crosshairhud.showInF5": "In F5 anzeigen",
+  "option.kronhud.crosshairhud.showInF5.comment": "Ob das Fadenkreuz in F5 angezeigt wird oder nicht.",
   "option.kronhud.crosshairhud.dot": "Punkt",
   "option.kronhud.crosshairhud.cross": "Kreuz",
+  "option.kronhud.crosshairhud.direction": "Richtung",
+  "option.kronhud.crosshairhud.texture": "Resource Pack",
   "option.kronhud.cpshud.cpskeybind": "CPS aus Tastenbelegungen",
   "option.kronhud.cpshud.cpskeybind.comment": "Errechne die CPS aus Angriffs- und Nutzen-Tastenbelegungen.",
   "option.kronhud.cpshud.rightcps": "Rechtsklick CPS",
@@ -80,6 +84,15 @@
   "button.kronhud.snapping.off": "Snapping: OFF",
   "button.kronhud.snapping.on": "Snapping: ON",
   "button.kronhud.enabled": "§2Aktiviert",
-  "button.kronhud.disabled": "§4Deaktiviert"
+  "button.kronhud.disabled": "§4Deaktiviert",
+  "hud.kronhud.iphud": "Server IP",
+  "hud.kronhud.speedhud": "Geschwindigkeit",
+  "option.kronhud.speedhud.horizontal": "Nur horizontale Geschwindigkeit",
+  "option.kronhud.speedhud.horizontal.comment": "Zeigt nur die horizontale Geschwindigkeit an.",
+  "option.kronhud.arrowhud.allArrowTypes": "Alle Pfeiltypen",
+  "option.kronhud.arrowhud.allArrowTypes.comment": "Zeige die Summe aller Pfeilarten im Inventar. \nSonst wird nur die Pfeilart angezeigt, die gerade geschossen wird.",
+  "hud.kronhud.actionbarhud": "Aktionsleiste",
+  "option.kronhud.actionbarhud.timeshown": "Zeitdauer der Anzeige",
+  "option.kronhud.actionbarhud.timeshown.comment": "Die Zeitdauer, für die der Text angezeigt wird."
 }
 

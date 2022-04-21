@@ -30,7 +30,7 @@ public class SpeedHud extends CleanHudEntry {
         } else {
             speed = vec.length();
         }
-        return FORMATTER.format(speed) + "BPT";
+        return FORMATTER.format(speed) + " BPT";
     }
 
     @Override
