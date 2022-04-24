@@ -1,10 +1,7 @@
 package io.github.darkkronicle.kronhud.mixins;
 
 import io.github.darkkronicle.kronhud.KronHUD;
-import io.github.darkkronicle.kronhud.gui.hud.ActionBarHud;
-import io.github.darkkronicle.kronhud.gui.hud.CrosshairHud;
-import io.github.darkkronicle.kronhud.gui.hud.PotionsHud;
-import io.github.darkkronicle.kronhud.gui.hud.ScoreboardHud;
+import io.github.darkkronicle.kronhud.gui.hud.*;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -52,15 +49,19 @@ public class MixinInGameHud {
 
     @ModifyArgs(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;draw(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/text/Text;FFI)I"))
     public void getActionBar(Args args){
-
-        Text message = args.get(1);
-        int color = args.get(4);
-
         ActionBarHud hud = (ActionBarHud) KronHUD.hudManager.get(ActionBarHud.ID);
-        if (hud != null && hud.isEnabled()){
-            args.set(1, new LiteralText(""));// Set the arguments to undefined values to inhibit
-            args.set(4, 0);//                           the vanilla action bar rendering
-            hud.setActionBar(message, color);// give us selves the correct values
+        if (hud != null && hud.isEnabled()) {
+            try {
+                Text message = args.get(1);
+                int color = args.get(4);
+
+
+                args.set(1, new LiteralText(""));// Set the arguments to undefined values to inhibit
+                args.set(4, 0);//                           the vanilla action bar rendering
+                hud.setActionBar(message, color);// give us selves the correct values
+            } catch (ClassCastException ignored) {
+                hud.setActionBar(new LiteralText("Something went wrong...(Probaly you've run this mod on Quilt)"), -1);
+            }
         }
     }
 

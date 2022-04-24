@@ -93,6 +93,8 @@
   "option.kronhud.arrowhud.allArrowTypes.comment": "Zeige die Summe aller Pfeilarten im Inventar. \nSonst wird nur die Pfeilart angezeigt, die gerade geschossen wird.",
   "hud.kronhud.actionbarhud": "Aktionsleiste",
   "option.kronhud.actionbarhud.timeshown": "Zeitdauer der Anzeige",
-  "option.kronhud.actionbarhud.timeshown.comment": "Die Zeitdauer, für die der Text angezeigt wird."
+  "option.kronhud.actionbarhud.timeshown.comment": "Die Zeitdauer, für die der Text angezeigt wird.",
+  "option.kronhud.actionbarhud.customtextcolor": "Eigene Textfarbe",
+  "option.kronhud.actionbarhud.customtextcolor.comment": "Ob die eigene Textfarbe genutzt werden soll. \nNutzt die Transparenz der vanilla Farbe, wenn der Alpha-Wert 255 beträgt."
 }
 
