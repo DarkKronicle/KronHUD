@@ -4,6 +4,7 @@ import io.github.darkkronicle.kronhud.KronHUD;
 import io.github.darkkronicle.kronhud.gui.hud.*;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.scoreboard.ScoreboardObjective;
@@ -13,7 +14,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
@@ -47,22 +48,15 @@ public class MixinInGameHud {
         }
     }
 
-    @ModifyArgs(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;draw(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/text/Text;FFI)I"))
-    public void getActionBar(Args args){
+    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;draw(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/text/Text;FFI)I"))
+    public int getActionBar(TextRenderer instance, MatrixStack matrices, Text text, float x, float y, int color){
         ActionBarHud hud = (ActionBarHud) KronHUD.hudManager.get(ActionBarHud.ID);
         if (hud != null && hud.isEnabled()) {
-            try {
-                Text message = args.get(1);
-                int color = args.get(4);
-
-
-                args.set(1, new LiteralText(""));// Set the arguments to undefined values to inhibit
-                args.set(4, 0);//                           the vanilla action bar rendering
-                hud.setActionBar(message, color);// give us selves the correct values
-            } catch (ClassCastException ignored) {
-                hud.setActionBar(new LiteralText("Something went wrong...(Probaly you've run this mod on Quilt)"), -1);
-            }
+                hud.setActionBar(text, color);// give us selves the correct values
+        } else {
+            instance.draw(matrices, text, x, y, color);
         }
+        return 0;
     }
 
     @Inject(method = "setOverlayMessage", at = @At("TAIL"))
