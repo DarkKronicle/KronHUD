@@ -7,18 +7,17 @@ import io.github.darkkronicle.kronhud.gui.hud.PotionsHud;
 import io.github.darkkronicle.kronhud.gui.hud.ScoreboardHud;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.scoreboard.ScoreboardObjective;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Environment(EnvType.CLIENT)
 @Mixin(InGameHud.class)
@@ -50,17 +49,14 @@ public class MixinInGameHud {
         }
     }
 
-    @ModifyArgs(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;draw(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/text/Text;FFI)I"))
-    public void getActionBar(Args args){
-
-        Text message = args.get(1);
-        int color = args.get(4);
-
+    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;draw(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/text/Text;FFI)I"))
+    public int getActionBar(TextRenderer instance, MatrixStack matrices, Text message, float x, float y, int color){
         ActionBarHud hud = (ActionBarHud) KronHUD.hudManager.get(ActionBarHud.ID);
         if (hud != null && hud.isEnabled()){
-            args.set(1, new LiteralText(""));// Set the arguments to undefined values to inhibit
-            args.set(4, 0);//                           the vanilla action bar rendering
             hud.setActionBar(message, color);// give us selves the correct values
+            return 0; // Doesn't matter since return value is not used
+        } else {
+            return instance.draw(matrices, message, x, y, color);
         }
     }
 
