@@ -16,7 +16,6 @@ import net.minecraft.scoreboard.ScoreboardCriterion;
 import net.minecraft.scoreboard.ScoreboardObjective;
 import net.minecraft.scoreboard.ScoreboardPlayerScore;
 import net.minecraft.scoreboard.Team;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -32,7 +31,7 @@ public class ScoreboardHud extends AbstractHudEntry {
     public static final ScoreboardObjective placeholder = Util.make(() -> {
         Scoreboard placeScore = new Scoreboard();
         ScoreboardObjective objective = placeScore.addObjective("placeholder", ScoreboardCriterion.DUMMY,
-                new LiteralText("Cool Players"),
+                Text.literal("Scoreboard"),
                 ScoreboardCriterion.RenderType.INTEGER);
         ScoreboardPlayerScore score = new ScoreboardPlayerScore(placeScore, objective, "DarkKronicle");
         score.setScore(2);
@@ -112,7 +111,7 @@ public class ScoreboardHud extends AbstractHudEntry {
         for(Iterator<ScoreboardPlayerScore> scoresIterator = scores.iterator(); scoresIterator.hasNext(); maxWidth = Math.max(maxWidth, client.textRenderer.getWidth(formattedText) + spacerWidth + client.textRenderer.getWidth(Integer.toString(scoreboardPlayerScore.getScore())))) {
             scoreboardPlayerScore = scoresIterator.next();
             Team team = scoreboard.getPlayerTeam(scoreboardPlayerScore.getPlayerName());
-            formattedText = Team.decorateName(team, new LiteralText(scoreboardPlayerScore.getPlayerName()));
+            formattedText = Team.decorateName(team, Text.literal(scoreboardPlayerScore.getPlayerName()));
             scoresWText.add(Pair.of(scoreboardPlayerScore, formattedText));
         }
         maxWidth = maxWidth + 2;

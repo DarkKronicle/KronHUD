@@ -1,11 +1,7 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
-
-import io.github.darkkronicle.kronhud.KronHUD;
 import io.github.darkkronicle.kronhud.mixins.AccessorMinecraftClient;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 public class FPSHud extends CleanHudEntry {

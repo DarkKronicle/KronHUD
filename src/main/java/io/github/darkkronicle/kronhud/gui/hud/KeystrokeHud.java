@@ -49,20 +49,20 @@ public class KeystrokeHud extends AbstractHudEntry {
         keystrokes = new ArrayList<>();
         DrawPosition pos = getPos();
         // LMB
-        keystrokes.add(createFromKey(new Rectangle(0, 36, 26, 17), pos, client.options.keyAttack));
+        keystrokes.add(createFromKey(new Rectangle(0, 36, 26, 17), pos, client.options.attackKey));
         // RMB
-        keystrokes.add(createFromKey(new Rectangle(27, 36, 26, 17), pos, client.options.keyUse));
+        keystrokes.add(createFromKey(new Rectangle(27, 36, 26, 17), pos, client.options.useKey));
         // W
-        keystrokes.add(createFromKey(new Rectangle(18, 0, 17, 17), pos, client.options.keyForward));
+        keystrokes.add(createFromKey(new Rectangle(18, 0, 17, 17), pos, client.options.forwardKey));
         // A
-        keystrokes.add(createFromKey(new Rectangle(0, 18, 17, 17), pos, client.options.keyLeft));
+        keystrokes.add(createFromKey(new Rectangle(0, 18, 17, 17), pos, client.options.leftKey));
         // S
-        keystrokes.add(createFromKey(new Rectangle(18, 18, 17, 17), pos, client.options.keyBack));
+        keystrokes.add(createFromKey(new Rectangle(18, 18, 17, 17), pos, client.options.backKey));
         // D
-        keystrokes.add(createFromKey(new Rectangle(36, 18, 17, 17), pos, client.options.keyRight));
+        keystrokes.add(createFromKey(new Rectangle(36, 18, 17, 17), pos, client.options.rightKey));
 
         // Space
-        keystrokes.add(new Keystroke(new Rectangle(0, 54, 53, 7), pos, client.options.keyJump, (stroke, matrices) -> {
+        keystrokes.add(new Keystroke(new Rectangle(0, 54, 53, 7), pos, client.options.jumpKey, (stroke, matrices) -> {
             Rectangle bounds = stroke.bounds;
             Rectangle spaceBounds = new Rectangle(bounds.x() + stroke.offset.x() + 4,
                     bounds.y() + stroke.offset.y() + 2,
@@ -121,7 +121,7 @@ public class KeystrokeHud extends AbstractHudEntry {
     }
 
     public Keystroke createFromKey(Rectangle bounds, DrawPosition offset, KeyBinding key) {
-        String name = getMouseKeyBindName(key).orElse(key.getBoundKeyLocalizedText().asString().toUpperCase());
+        String name = getMouseKeyBindName(key).orElse(key.getBoundKeyLocalizedText().getString().toUpperCase());
         if (name.length() > 4) {
             name = name.substring(0, 2);
         }

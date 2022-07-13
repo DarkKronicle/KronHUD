@@ -1,6 +1,8 @@
 package io.github.darkkronicle.kronhud.util;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.platform.GlStateManager.DstFactor;
+import com.mojang.blaze3d.platform.GlStateManager.SrcFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import fi.dy.masa.malilib.render.RenderUtils;
 import lombok.experimental.UtilityClass;
@@ -14,6 +16,7 @@ import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.VertexConsumerProvider.Immediate;
 import net.minecraft.client.render.VertexFormat.DrawMode;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.item.ItemRenderer;
@@ -23,7 +26,10 @@ import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Util;
+import net.minecraft.util.crash.CrashReport;
+import net.minecraft.util.crash.CrashReportSection;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -137,6 +143,9 @@ public class ItemUtil {
         return list;
     }
 
+    // Minecraft has decided to not use matrixstack's in their itemrender class. So this is implementing itemRenderer stuff with matrices.
+
+    @SuppressWarnings("deprecation")
     public void renderGuiItemModel(MatrixStack matrices, ItemStack stack, float x, float y) {
         MinecraftClient client = MinecraftClient.getInstance();
         BakedModel model = client.getItemRenderer().getModel(stack, null, client.player, (int) (x * y));
@@ -214,8 +223,6 @@ public class ItemUtil {
         }
 
     }
-
-    // Minecraft has decided to not use matrixstack's in their itemrender class. So this is implementing itemRenderer stuff with matrices.
 
     public void renderGuiQuad(BufferBuilder buffer, int x, int y, int width, int height, int red, int green, int blue, int alpha) {
         buffer.begin(DrawMode.QUADS, VertexFormats.POSITION_COLOR);

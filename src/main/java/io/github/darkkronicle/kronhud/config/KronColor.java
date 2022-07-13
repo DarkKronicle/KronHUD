@@ -12,7 +12,6 @@ import fi.dy.masa.malilib.util.Color4f;
 import fi.dy.masa.malilib.util.StringUtils;
 import io.github.darkkronicle.kronhud.util.Color;
 
-
 public class KronColor extends ConfigInteger implements KronConfig {
 
     private String entryId;
@@ -73,6 +72,7 @@ public class KronColor extends ConfigInteger implements KronConfig {
         return new JsonPrimitive(getStringValue());
     }
 
+    @Override
     public String getEntryId() {
         return entryId;
     }

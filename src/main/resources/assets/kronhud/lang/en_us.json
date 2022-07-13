@@ -80,6 +80,8 @@
   "option.kronhud.bossbarhud.bar.comment": "Show bar value.",
   "option.kronhud.actionbarhud.timeshown": "Time to display",
   "option.kronhud.actionbarhud.timeshown.comment": "The time to render the text for.",
+  "option.kronhud.actionbarhud.customtextcolor": "Custom text color",
+  "option.kronhud.actionbarhud.customtextcolor.comment": "Whether to override the text color with a custom one.",
   "option.kronhud.itemupdatehud.timeout": "Timeout",
   "option.kronhud.itemupdatehud.timeout.comment": "How long each entry is displayed for.",
   "screen.kronhud.set": "Edit HUD",

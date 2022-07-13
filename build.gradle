@@ -1,5 +1,5 @@
 plugins {
-    id "fabric-loom" version "0.10.+"
+    id "fabric-loom" version "0.12-SNAPSHOT"
     id "maven-publish"
     id "io.freefair.lombok" version "6.1.0-m2"
 }
@@ -27,7 +27,7 @@ dependencies {
 
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
     // You may need to force-disable transitiveness on them.
-    modImplementation "fi.dy.masa.malilib:malilib-fabric-1.18.0:${project.malilib_version}"
+    modImplementation "fi.dy.masa.malilib:malilib-fabric-1.19.0:${project.malilib_version}"
 
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
     
