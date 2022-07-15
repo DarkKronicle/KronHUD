@@ -11,17 +11,20 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Environment(EnvType.CLIENT)
 public class HudManager {
-    private final HashMap<Identifier, AbstractHudEntry> entries;
+    private final Map<Identifier, AbstractHudEntry> entries;
     private final MinecraftClient client;
 
     public HudManager() {
-        this.entries = new HashMap<>();
+        this.entries = new LinkedHashMap<>();
         client = MinecraftClient.getInstance();
         ClientTickEvents.END_CLIENT_TICK.register(minecraftClient -> {
             for (AbstractHudEntry entry : getEntries()) {
@@ -41,7 +44,7 @@ public class HudManager {
         if (entries.size() > 0) {
             return new ArrayList<>(entries.values());
         }
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
     public List<AbstractHudEntry> getMoveableEntries() {
