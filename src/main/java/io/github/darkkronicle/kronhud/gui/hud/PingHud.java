@@ -4,7 +4,6 @@ import fi.dy.masa.malilib.config.IConfigBase;
 import io.github.darkkronicle.kronhud.KronHUD;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 import java.util.List;

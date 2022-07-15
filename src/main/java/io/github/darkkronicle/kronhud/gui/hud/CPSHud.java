@@ -28,9 +28,9 @@ public class CPSHud extends CleanHudEntry {
         });
         KronHudHooks.KEYBIND_PRESS.register((key) -> {
             if (fromKeybindings.getBooleanValue()) {
-                if (key.equals(client.options.keyAttack)) {
+                if (key.equals(client.options.attackKey)) {
                     ClickList.LEFT.click();
-                } else if (key.equals(client.options.keyUse)) {
+                } else if (key.equals(client.options.useKey)) {
                     ClickList.RIGHT.click();
                 }
             }

@@ -8,9 +8,9 @@ import net.minecraft.client.util.TextCollector;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -105,10 +105,10 @@ public class ItemUpdateHud extends AbstractHudEntry {
                 return;
             }
             TextCollector message = new TextCollector();
-            message.add(new LiteralText("+ "));
-            message.add(new LiteralText("[").setStyle(Style.EMPTY.withColor(TextColor.fromRgb(Color.DARK_GRAY.color()))));
-            message.add(new LiteralText(item.times + "").setStyle(Style.EMPTY.withColor(Formatting.WHITE)));
-            message.add(new LiteralText("] ").setStyle(Style.EMPTY.withColor(TextColor.fromRgb(Color.DARK_GRAY.color()))));
+            message.add(Text.literal("+ "));
+            message.add(Text.literal("[").setStyle(Style.EMPTY.withColor(TextColor.fromRgb(Color.DARK_GRAY.color()))));
+            message.add(Text.literal(item.times + "").setStyle(Style.EMPTY.withColor(Formatting.WHITE)));
+            message.add(Text.literal("] ").setStyle(Style.EMPTY.withColor(TextColor.fromRgb(Color.DARK_GRAY.color()))));
             message.add(item.stack.getName());
             OrderedText text = Language.getInstance().reorder(message.getCombined());
             if (shadow.getBooleanValue()) {
@@ -127,10 +127,10 @@ public class ItemUpdateHud extends AbstractHudEntry {
                 return;
             }
             TextCollector message = new TextCollector();
-            message.add(new LiteralText("- "));
-            message.add(new LiteralText("[").setStyle(Style.EMPTY.withColor(TextColor.fromRgb(Color.DARK_GRAY.color()))));
-            message.add(new LiteralText(item.times + "").setStyle(Style.EMPTY.withColor(Formatting.WHITE)));
-            message.add(new LiteralText("] ").setStyle(Style.EMPTY.withColor(TextColor.fromRgb(Color.DARK_GRAY.color()))));
+            message.add(Text.literal("- "));
+            message.add(Text.literal("[").setStyle(Style.EMPTY.withColor(TextColor.fromRgb(Color.DARK_GRAY.color()))));
+            message.add(Text.literal(item.times + "").setStyle(Style.EMPTY.withColor(Formatting.WHITE)));
+            message.add(Text.literal("] ").setStyle(Style.EMPTY.withColor(TextColor.fromRgb(Color.DARK_GRAY.color()))));
             message.add(item.stack.getName());
             OrderedText text = Language.getInstance().reorder(message.getCombined());
             if (shadow.getBooleanValue()) {
@@ -153,10 +153,10 @@ public class ItemUpdateHud extends AbstractHudEntry {
         scale(matrices);
         DrawPosition pos = getPos();
         TextCollector addM = new TextCollector();
-        addM.add(new LiteralText("+ "));
-        addM.add(new LiteralText("[").setStyle(Style.EMPTY.withColor(TextColor.fromRgb(Color.DARK_GRAY.color()))));
-        addM.add(new LiteralText("2").setStyle(Style.EMPTY.withColor(Formatting.WHITE)));
-        addM.add(new LiteralText("] ").setStyle(Style.EMPTY.withColor(TextColor.fromRgb(Color.DARK_GRAY.color()))));
+        addM.add(Text.literal("+ "));
+        addM.add(Text.literal("[").setStyle(Style.EMPTY.withColor(TextColor.fromRgb(Color.DARK_GRAY.color()))));
+        addM.add(Text.literal("2").setStyle(Style.EMPTY.withColor(Formatting.WHITE)));
+        addM.add(Text.literal("] ").setStyle(Style.EMPTY.withColor(TextColor.fromRgb(Color.DARK_GRAY.color()))));
         addM.add(new ItemStack(Items.DIRT).getName());
         OrderedText addText = Language.getInstance().reorder(addM.getCombined());
         if (shadow.getBooleanValue()) {
@@ -167,10 +167,10 @@ public class ItemUpdateHud extends AbstractHudEntry {
                     Formatting.RED.getColorValue());
         }
         TextCollector removeM = new TextCollector();
-        removeM.add(new LiteralText("- "));
-        removeM.add(new LiteralText("[").setStyle(Style.EMPTY.withColor(TextColor.fromRgb(Color.DARK_GRAY.color()))));
-        removeM.add(new LiteralText("4").setStyle(Style.EMPTY.withColor(Formatting.WHITE)));
-        removeM.add(new LiteralText("] ").setStyle(Style.EMPTY.withColor(TextColor.fromRgb(Color.DARK_GRAY.color()))));
+        removeM.add(Text.literal("- "));
+        removeM.add(Text.literal("[").setStyle(Style.EMPTY.withColor(TextColor.fromRgb(Color.DARK_GRAY.color()))));
+        removeM.add(Text.literal("4").setStyle(Style.EMPTY.withColor(Formatting.WHITE)));
+        removeM.add(Text.literal("] ").setStyle(Style.EMPTY.withColor(TextColor.fromRgb(Color.DARK_GRAY.color()))));
         removeM.add(new ItemStack(Items.GRASS).getName());
         OrderedText removeText = Language.getInstance().reorder(removeM.getCombined());
         if (shadow.getBooleanValue()) {

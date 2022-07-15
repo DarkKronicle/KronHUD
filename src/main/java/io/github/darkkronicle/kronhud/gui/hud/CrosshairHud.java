@@ -69,6 +69,8 @@ public class CrosshairHud extends AbstractHudEntry {
         scale(matrices);
         DrawPosition pos = getPos().subtract(0, -1);
         Color color = getColor();
+        AttackIndicator indicator = this.client.options.getAttackIndicator().getValue();
+
         if (type.getOptionListValue() == Crosshair.DOT) {
             fillRect(matrices, new Rectangle(pos.x() + (width / 2) - 2, pos.y() + (height / 2) - 2, 3, 3), color);
         } else if (type.getOptionListValue() == Crosshair.CROSS) {
@@ -97,7 +99,7 @@ public class CrosshairHud extends AbstractHudEntry {
             RenderUtils.color(1, 1, 1, 1);
 
             // Draw attack indicator
-            if (this.client.options.attackIndicator == AttackIndicator.CROSSHAIR) {
+            if (indicator == AttackIndicator.CROSSHAIR) {
                 float progress = this.client.player.getAttackCooldownProgress(0.0F);
 
                 // Whether a cross should be displayed under the indicator
@@ -120,7 +122,7 @@ public class CrosshairHud extends AbstractHudEntry {
                 }
             }
         }
-        if (this.client.options.attackIndicator == AttackIndicator.CROSSHAIR) {
+        if (indicator == AttackIndicator.CROSSHAIR) {
             float progress = this.client.player.getAttackCooldownProgress(0.0F);
             if (progress != 1.0F) {
                 fill(matrices.peek().getPositionMatrix(), pos.x() + (width / 2) - 6, pos.y() + (height / 2) + 9, 11, 1,
@@ -161,8 +163,7 @@ public class CrosshairHud extends AbstractHudEntry {
         bufferBuilder.vertex(matrix, x2, y2, 0.0F).color(r, g, b, alpha).next();
         bufferBuilder.vertex(matrix, x2, y, 0.0F).color(r, g, b, alpha).next();
         bufferBuilder.vertex(matrix, x, y, 0.0F).color(r, g, b, alpha).next();
-        bufferBuilder.end();
-        BufferRenderer.draw(bufferBuilder);
+        BufferRenderer.drawWithShader(bufferBuilder.end());
         RenderSystem.enableTexture();
         RenderSystem.disableBlend();
     }

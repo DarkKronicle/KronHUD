@@ -8,7 +8,7 @@ A mod to add clean and useful HUD widgets.
 
 Download this mod on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/kronhud).
 
-Requires [MaLiLib](https://www.curseforge.com/minecraft/mc-mods/malilib) and Minecraft 1.17.
+Requires [MaLiLib](https://www.curseforge.com/minecraft/mc-mods/malilib) and Minecraft 1.19.
 
 
 ## Widgets
@@ -22,10 +22,14 @@ Currenty KronHUD has:
 - FPS
 - CPS
 - Potions
+- Armor
 - Arrow Counter
 - Coordinates
 - Scoreboard
-- Bossbar
+- Boss bar
+- Action bar
+- Server IP
+- Speedometer
 
 All modules can be moved around freely, and have snapable movement so you can get everything in line!
 
