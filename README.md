@@ -59,3 +59,4 @@ Open a terminal and run `./gradlew build`.
 - Chronos22 - Created logo
 - qsefthuopq - Created Chinese translations
 - TheKodeToad - Contributor
+- moehreag - Contributor
