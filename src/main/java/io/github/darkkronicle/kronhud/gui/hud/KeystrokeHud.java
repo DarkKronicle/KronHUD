@@ -62,7 +62,7 @@ public class KeystrokeHud extends AbstractHudEntry {
         keystrokes.add(createFromKey(new Rectangle(36, 18, 17, 17), pos, client.options.rightKey));
 
         // Space
-        keystrokes.add(new Keystroke(new Rectangle(0, 54, 53, 7), pos, client.options.jumpKey, (stroke, matrices) -> {
+        keystrokes.add(new Keystroke(new Rectangle(18, 54, 35, 7), pos, client.options.jumpKey, (stroke, matrices) -> {
             Rectangle bounds = stroke.bounds;
             Rectangle spaceBounds = new Rectangle(bounds.x() + stroke.offset.x() + 4,
                     bounds.y() + stroke.offset.y() + 2,
@@ -73,6 +73,26 @@ public class KeystrokeHud extends AbstractHudEntry {
                         new Color((stroke.getFGColor().color() & 16579836) >> 2 | stroke.getFGColor().color() & -16777216));
             }
         }));
+        
+        // Shift
+        keystrokes.add(new Keystroke(new Rectangle(0, 54, 17, 7), pos, client.options.sneakKey, (stroke, matrices) -> {
+            Rectangle bounds = stroke.bounds;
+            Rectangle arrowHeadBounds = new Rectangle(bounds.x() + stroke.offset.x() + 1,
+                    bounds.y() + stroke.offset.y() + 2,
+                    3, 1);
+			Rectangle arrowBodyBounds = new Rectangle(bounds.x() + stroke.offset.x() + 2,
+                    bounds.y() + stroke.offset.y() + 1,
+                    1, 4);
+            if (shadow.getBooleanValue()) {
+                fillRect(matrices, arrowHeadBounds.offset(1, 1),
+                        new Color((stroke.getFGColor().color() & 16579836) >> 2 | stroke.getFGColor().color() & -16777216));
+				fillRect(matrices, arrowBodyBounds.offset(1, 1),
+                        new Color((stroke.getFGColor().color() & 16579836) >> 2 | stroke.getFGColor().color() & -16777216));
+            }
+            fillRect(matrices, arrowHeadBounds, stroke.getFGColor());
+            fillRect(matrices, arrowBodyBounds, stroke.getFGColor());
+        }));
+        
         KeyBinding.unpressAll();
         KeyBinding.updatePressedStates();
     }
