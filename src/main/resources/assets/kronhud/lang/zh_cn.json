@@ -72,7 +72,7 @@
   "option.kronhud.speedhud.horizontal.comment": "仅显示水平速度",
   "option.kronhud.arrowhud.dynamic": "动态的",
   "option.kronhud.arrowhud.dynamic.comment": "仅当手持弓时才显示计数器",
-  "option.kronhud.arrowhud.allArrowTypes": "所有箭头类型",
+  "option.kronhud.arrowhud.allArrowTypes": "所有箭矢类型",
   "option.kronhud.arrowhud.allArrowTypes.comment": "显示所有箭矢类型的总和\n禁用后，将选择被发射的箭矢类型",
   "option.kronhud.bossbarhud.text": "名称",
   "option.kronhud.bossbarhud.text.comment": "显示 Boss 栏名称",
