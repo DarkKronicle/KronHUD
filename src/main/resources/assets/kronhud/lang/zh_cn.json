@@ -92,8 +92,8 @@
   "option.kronhud.general.vanillavignette": "禁用晕影",
   "keys.category.kronhud.keys": "KronHUD",
   "keys.kronhud.edithud": "编辑 HUD",
-  "button.kronhud.snapping.off": "捕获: OFF",
-  "button.kronhud.snapping.on": "捕获: ON",
+  "button.kronhud.snapping.off": "对齐吸附: OFF",
+  "button.kronhud.snapping.on": "对齐吸附: ON",
   "button.kronhud.enabled": "§2启用",
   "button.kronhud.disabled": "§4禁用"
 }
