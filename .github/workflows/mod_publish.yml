@@ -1,0 +1,19 @@
+on:
+  release:
+    types: [published]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - name: Set up JDK 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      - name: Upload to websites
+        run: ./gradlew publishThirdParty --stacktrace
+        if: |
+          !contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.pull_request.title, '[ci skip]')
+        env:
+          modrinth_token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge_token: ${{ secrets.CURSEFORGE_TOKEN }}

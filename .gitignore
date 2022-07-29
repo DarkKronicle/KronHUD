@@ -16,3 +16,4 @@ libs/
 /KronHUD_server.launch
 /.settings/org.eclipse.buildship.core.prefs
 /.settings/org.eclipse.jdt.core.prefs
+extra.properties

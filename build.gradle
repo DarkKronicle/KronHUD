@@ -2,14 +2,22 @@ plugins {
     id "fabric-loom" version "0.12-SNAPSHOT"
     id "maven-publish"
     id "io.freefair.lombok" version "6.1.0-m2"
+    id "com.modrinth.minotaur" version "2.+"
+    id 'net.darkhax.curseforgegradle' version '1.0.11'
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = project.archives_base_name
-version = project.mod_version
+version = "${project.minecraft_version}-${project.mod_version}"
 group = project.maven_group
+
+Properties additionalProperties = new Properties()
+if (file("extra.properties").exists()) {
+    additionalProperties.load(file("extra.properties").newReader())
+}
+
 
 repositories {
     maven { url "https://masa.dy.fi/maven" }
@@ -78,12 +86,52 @@ publishing {
             }
         }
     }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
     repositories {
-        // Add repositories to publish to here.
-        // Notice: This block does NOT have the same function as the block in the top level.
-        // The repositories here will be used for publishing your artifact, not for
-        // retrieving dependencies.
+
     }
+}
+
+modrinth {
+    if (additionalProperties["modrinth_token"] != null) {
+        token = additionalProperties["modrinth_token"]
+    } else if (System.getenv("modrinth_token") != null) {
+        token = System.getenv("modrinth_token")
+    } else {
+        System.out.println("No token found...")
+        return
+    }
+    projectId = "kronhud"
+    versionNumber = version
+    versionName = "KronHUD-${version}"
+    versionType = "release"
+    uploadFile = remapJar
+    gameVersions = [project.minecraft_version]
+    loaders = ["fabric", "quilt"]
+}
+
+task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
+    if (additionalProperties["curseforge_token"] != null) {
+        apiToken = additionalProperties["curseforge_token"]
+    } else if (System.getenv("curseforge_token") != null) {
+        apiToken = System.getenv("curseforge_token")
+    } else {
+        System.out.println("No token found...")
+        return
+    }
+
+    def mainFile = upload(project.curseforge_id, remapJar)
+    mainFile.releaseType = 'release'
+    mainFile.displayName = "${archivesBaseName}-${project.version}"
+    mainFile.changelog = ""
+    mainFile.addRequirement('MaLiLib')
+    mainFile.addGameVersion(project.minecraft_version)
+    mainFile.addModLoader('Fabric')
+    mainFile.addModLoader('Quilt')
+    mainFile.addJavaVersion('Java 17')
+    mainFile.addJavaVersion('Java 18')
+}
+
+task publishThirdParty {
+    dependsOn 'publishCurseForge'
+    dependsOn 'modrinth'
 }
