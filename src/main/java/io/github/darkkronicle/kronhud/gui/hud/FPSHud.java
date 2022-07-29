@@ -19,7 +19,7 @@ public class FPSHud extends CleanHudEntry {
 
     @Override
     public String getValue() {
-        return ((AccessorMinecraftClient) MinecraftClient.getInstance()).getCurrentFps() + " FPS";
+        return AccessorMinecraftClient.getCurrentFps() + " FPS";
     }
 
     @Override
