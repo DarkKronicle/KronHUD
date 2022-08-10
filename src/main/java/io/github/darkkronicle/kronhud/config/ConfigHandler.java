@@ -4,7 +4,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fi.dy.masa.malilib.config.IConfigBase;
-import fi.dy.masa.malilib.util.Color4f;
 import io.github.darkkronicle.kronhud.KronHUD;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.gui.hud.CoordsHud;
@@ -82,7 +81,7 @@ public class ConfigHandler {
     public void load() throws IOException {
         config.getParentFile().mkdirs();
         try {
-            KronHUD.storage = new JsonParser().parse(new FileReader(config)).getAsJsonObject();
+            KronHUD.storage = JsonParser.parseReader(new FileReader(config)).getAsJsonObject();
         } catch (FileNotFoundException e) {
             KronHUD.storage = new JsonObject();
         }
@@ -205,7 +204,7 @@ public class ConfigHandler {
                 current = next;
                 next = values()[i + 1];
                 if (current.getFile().exists() && !next.getFile().exists()) {
-                    JsonObject content = new JsonParser().parse(new FileReader(current.getFile())).getAsJsonObject();
+                    JsonObject content = JsonParser.parseReader(new FileReader(current.getFile())).getAsJsonObject();
                     if (current.test(content)) {
                         JsonObject result = current.convert(content);
                         FileWriter writer = new FileWriter(next.getFile());

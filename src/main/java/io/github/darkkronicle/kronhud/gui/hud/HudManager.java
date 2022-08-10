@@ -10,13 +10,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Environment(EnvType.CLIENT)
 public class HudManager {
@@ -49,7 +44,7 @@ public class HudManager {
 
     public List<AbstractHudEntry> getMoveableEntries() {
         if (entries.size() > 0) {
-            return entries.values().stream().filter((entry) -> entry.isEnabled() && entry.movable()).toList();
+            return entries.values().stream().filter((entry) -> entry.isEnabled() && entry.movable()).collect(Collectors.toList());
         }
         return new ArrayList<>();
     }
