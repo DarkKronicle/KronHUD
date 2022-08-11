@@ -27,8 +27,8 @@ public class ToggleSprintHud extends CleanHudEntry {
     private final KronBoolean randomPlaceholder = new KronBoolean("randomPlaceholder", ID.getPath(),false);
     private final KronString placeholder = new KronString("placeholder", ID.getPath(),"No keys pressed");
 
-    KeyBinding sprintToggle = new KeyBinding("key.toggleSprint", GLFW.GLFW_KEY_K, "category.axolotlclient");
-    KeyBinding sneakToggle = new KeyBinding("key.toggleSneak", GLFW.GLFW_KEY_I, "category.axolotlclient");
+    KeyBinding sprintToggle = new KeyBinding("keys.kronhud.toggleSprint", GLFW.GLFW_KEY_K, "keys.category.kronhud.keys");
+    KeyBinding sneakToggle = new KeyBinding("keys.kronhud.toggleSneak", GLFW.GLFW_KEY_I, "keys.category.kronhud.keys");
 
     public KronBoolean sprintToggled = new KronBoolean("sprintToggled", ID.getPath(),false);
     private boolean sprintWasPressed = false;
@@ -40,6 +40,10 @@ public class ToggleSprintHud extends CleanHudEntry {
 
     public ToggleSprintHud(){
         super(100, 20);
+    }
+
+    @Override
+    public void init() {
         KeyBindingHelper.registerKeyBinding(sprintToggle);
         KeyBindingHelper.registerKeyBinding(sneakToggle);
     }

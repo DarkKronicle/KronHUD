@@ -101,6 +101,8 @@
   "option.kronhud.general.vanillavignette": "Disable Vignette",
   "keys.category.kronhud.keys": "KronHUD",
   "keys.kronhud.edithud": "Edit HUD",
+  "keys.kronhud.toggleSprint": "Toggle Sprint",
+  "keys.kronhud.toggleSneak": "Toggle Sneak",
   "button.kronhud.snapping.off": "Snapping: OFF",
   "button.kronhud.snapping.on": "Snapping: ON",
   "button.kronhud.enabled": "§2Enabled",

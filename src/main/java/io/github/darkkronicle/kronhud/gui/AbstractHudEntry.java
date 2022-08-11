@@ -192,4 +192,5 @@ public abstract class AbstractHudEntry extends DrawUtil {
         enabled.toggleBooleanValue();
     }
 
+    public void init(){}
 }

@@ -12,7 +12,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(KeyboardInput.class)
 public abstract class MixinKeyboardInput {
 
-
     /**
      * @author moehreag
      * @param instance The sneak key
