@@ -53,10 +53,10 @@ public class MixinInGameHud {
     public int getActionBar(TextRenderer instance, MatrixStack matrices, Text message, float x, float y, int color){
         ActionBarHud hud = (ActionBarHud) KronHUD.hudManager.get(ActionBarHud.ID);
         if (hud != null && hud.isEnabled()){
-            hud.setActionBar(message, color);// give us selves the correct values
+            hud.setActionBar(message, color);
             return 0; // Doesn't matter since return value is not used
         } else {
-            return instance.draw(matrices, message, x, y, color);
+            return instance.drawWithShadow(matrices, message, x, y, color);
         }
     }
 
