@@ -2,8 +2,6 @@ plugins {
     id "fabric-loom" version "0.12-SNAPSHOT"
     id "maven-publish"
     id "io.freefair.lombok" version "6.1.0-m2"
-    id "com.modrinth.minotaur" version "2.+"
-    id 'net.darkhax.curseforgegradle' version '1.0.11'
 }
 
 apply from: 'https://raw.githubusercontent.com/DarkKronicle/GradleScripts/main/gradle/publish.gradle'
