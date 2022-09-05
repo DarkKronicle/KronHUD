@@ -6,6 +6,8 @@ plugins {
     id 'net.darkhax.curseforgegradle' version '1.0.11'
 }
 
+apply from: 'https://raw.githubusercontent.com/DarkKronicle/GradleScripts/main/gradle/publish.gradle'
+
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
@@ -89,49 +91,4 @@ publishing {
     repositories {
 
     }
-}
-
-modrinth {
-    if (additionalProperties["modrinth_token"] != null) {
-        token = additionalProperties["modrinth_token"]
-    } else if (System.getenv("modrinth_token") != null) {
-        token = System.getenv("modrinth_token")
-    } else {
-        System.out.println("No token found...")
-        return
-    }
-    projectId = "kronhud"
-    versionNumber = version
-    versionName = "KronHUD-${version}"
-    versionType = "release"
-    uploadFile = remapJar
-    gameVersions = [project.minecraft_version]
-    loaders = ["fabric", "quilt"]
-}
-
-task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
-    if (additionalProperties["curseforge_token"] != null) {
-        apiToken = additionalProperties["curseforge_token"]
-    } else if (System.getenv("curseforge_token") != null) {
-        apiToken = System.getenv("curseforge_token")
-    } else {
-        System.out.println("No token found...")
-        return
-    }
-
-    def mainFile = upload(project.curseforge_id, remapJar)
-    mainFile.releaseType = 'release'
-    mainFile.displayName = "${archivesBaseName}-${project.version}"
-    mainFile.changelog = ""
-    mainFile.addRequirement('MaLiLib')
-    mainFile.addGameVersion(project.minecraft_version)
-    mainFile.addModLoader('Fabric')
-    mainFile.addModLoader('Quilt')
-    mainFile.addJavaVersion('Java 17')
-    mainFile.addJavaVersion('Java 18')
-}
-
-task publishThirdParty {
-    dependsOn 'publishCurseForge'
-    dependsOn 'modrinth'
 }

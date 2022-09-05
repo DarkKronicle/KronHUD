@@ -1,6 +1,7 @@
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - main
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -10,10 +11,9 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 17
-      - name: Upload to websites
-        run: ./gradlew publishThirdParty --stacktrace
+      - name: Upload to Discord
+        run: ./gradlew discord --stacktrace
         if: |
           !contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.pull_request.title, '[ci skip]')
         env:
-          modrinth_token: ${{ secrets.MODRINTH_TOKEN }}
-          curseforge_token: ${{ secrets.CURSEFORGE_TOKEN }}
+          discord_webhook: ${{ secrets.DISCORD_WEBHOOK }}
