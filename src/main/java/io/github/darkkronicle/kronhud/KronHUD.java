@@ -2,6 +2,7 @@ package io.github.darkkronicle.kronhud;
 
 import com.google.gson.JsonObject;
 import io.github.darkkronicle.kronhud.config.ConfigHandler;
+import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.gui.hud.*;
 import io.github.darkkronicle.kronhud.gui.screen.HudEditScreen;
 import lombok.Getter;
@@ -29,13 +30,13 @@ public class KronHUD implements ClientModInitializer {
         KeyBinding key = new KeyBinding("keys.kronhud.edithud", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_RIGHT_SHIFT,
                 "keys.category.kronhud.keys");
         KeyBindingHelper.registerKeyBinding(key);
+
+        initHuds();
+        hudManager.getEntries().forEach(AbstractHudEntry::init);
+
         ClientTickEvents.START_CLIENT_TICK.register(client -> {
             if (key.wasPressed()) {
                 client.setScreen(new HudEditScreen(client.currentScreen));
-            }
-            if (!setupComplete) {
-                initHuds();
-                setupComplete = true;
             }
         });
     }
@@ -57,6 +58,7 @@ public class KronHUD implements ClientModInitializer {
         hudManager.add(new BossBarHud());
         hudManager.add(new ScoreboardHud());
         hudManager.add(new ActionBarHud());
+        hudManager.add(new ToggleSprintHud());
         HudRenderCallback.EVENT.register((matrixStack, v) -> hudManager.render(matrixStack));
         storageHandler = new ConfigHandler();
         setupComplete = true;

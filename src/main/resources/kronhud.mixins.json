@@ -10,7 +10,9 @@
     "MixinKeybind",
     "AccessorMinecraftClient",
     "MixinMouse",
-    "MixinBossBarHud"
+    "MixinBossBarHud",
+    "MixinKeyboardInput",
+    "MixinClientPlayerEntity"
   ],
   "injectors": {
     "defaultRequire": 1
