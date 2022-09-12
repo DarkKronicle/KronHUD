@@ -24,7 +24,7 @@
       "io.github.darkkronicle.kronhud.gui.screen.ModMenuImpl"
     ]
   },
-  "license": "GPL-3.0-only",
+  "license": "OSL-3.0",
   "icon": "assets/kronhud/icon.png",
   "environment": "client",
   "mixins": [
