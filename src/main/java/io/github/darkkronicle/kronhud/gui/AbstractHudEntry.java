@@ -145,6 +145,9 @@ public abstract class AbstractHudEntry extends DrawUtil {
     }
 
     public DrawPosition getScaledPos(float scale) {
+        if (client.getWindow() == null) {
+            return new DrawPosition(0, 0);
+        }
         int scaledX = floatToInt((float) x.getDoubleValue(), client.getWindow().getScaledWidth(),
                 Math.round(width * scale));
         int scaledY = floatToInt((float) y.getDoubleValue(), client.getWindow().getScaledHeight(),

@@ -46,6 +46,11 @@ public class KeystrokeHud extends AbstractHudEntry {
     }
 
     public void setKeystrokes() {
+        if (client.getWindow() == null) {
+            keystrokes = null;
+            return;
+            // Wait until render is called
+        }
         keystrokes = new ArrayList<>();
         DrawPosition pos = getPos();
         // LMB
