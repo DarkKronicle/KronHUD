@@ -88,6 +88,4 @@ public class HudManager {
         }
         return bounds;
     }
-
-
 }

@@ -1,8 +1,7 @@
 package io.github.darkkronicle.kronhud.gui;
 
-import fi.dy.masa.malilib.config.IConfigBase;
-import fi.dy.masa.malilib.gui.GuiConfigsBase;
-import fi.dy.masa.malilib.util.StringUtils;
+import io.github.darkkronicle.darkkore.config.options.Option;
+import io.github.darkkronicle.darkkore.gui.Tab;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.config.KronColor;
 import io.github.darkkronicle.kronhud.config.KronDouble;
@@ -13,6 +12,7 @@ import io.github.darkkronicle.kronhud.util.Rectangle;
 import lombok.Setter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
@@ -27,10 +27,10 @@ public abstract class AbstractHudEntry extends DrawUtil {
     protected KronBoolean shadow = new KronBoolean("shadow", null, getShadowDefault());
     protected KronBoolean background = new KronBoolean("background", null, true);
     protected KronColor backgroundColor = new KronColor("backgroundcolor", null, "#64000000");
-    private KronDouble x = new KronDouble("x", null, getDefaultX(), 0, 1);
-    private KronDouble y = new KronDouble("y", null, getDefaultY(), 0, 1);
+    private final KronDouble x = new KronDouble("x", null, getDefaultX(), 0, 1);
+    private final KronDouble y = new KronDouble("y", null, getDefaultY(), 0, 1);
 
-    private List<IConfigBase> options;
+    private List<Option<?>> options;
 
     public int width;
     public int height;
@@ -90,7 +90,7 @@ public abstract class AbstractHudEntry extends DrawUtil {
     }
 
     public void setX(int x) {
-        this.x.setDoubleValue(intToFloat(x, client.getWindow().getScaledWidth(),
+        this.x.setValue((double)intToFloat(x, client.getWindow().getScaledWidth(),
                 Math.round(width * getScale())));
     }
 
@@ -99,7 +99,7 @@ public abstract class AbstractHudEntry extends DrawUtil {
     }
 
     public void setY(int y) {
-        this.y.setDoubleValue(intToFloat(y, client.getWindow().getScaledHeight(),
+        this.y.setValue((double)intToFloat(y, client.getWindow().getScaledHeight(),
                 Math.round(height * getScale())));
     }
 
@@ -116,8 +116,8 @@ public abstract class AbstractHudEntry extends DrawUtil {
     }
 
     public Rectangle getScaledBounds() {
-        return new Rectangle(getX(), getY(), Math.round(width * (float) scale.getDoubleValue()),
-                Math.round(height * (float) scale.getDoubleValue()));
+        return new Rectangle(getX(), getY(), (int) Math.round(width * scale.getValue()),
+                (int) Math.round(height * scale.getValue()));
     }
 
     /**
@@ -129,7 +129,7 @@ public abstract class AbstractHudEntry extends DrawUtil {
     }
 
     public float getScale() {
-        return (float) scale.getDoubleValue();
+        return scale.getValue().floatValue();
     }
 
     public void scale(MatrixStack matrices) {
@@ -150,16 +150,16 @@ public abstract class AbstractHudEntry extends DrawUtil {
         }
         int scaledX = floatToInt((float) x.getDoubleValue(), client.getWindow().getScaledWidth(),
                 Math.round(width * scale));
-        int scaledY = floatToInt((float) y.getDoubleValue(), client.getWindow().getScaledHeight(),
+        int scaledY = floatToInt(y.getValue().floatValue(), client.getWindow().getScaledHeight(),
                 Math.round(height * scale));
         return new DrawPosition(scaledX, scaledY);
     }
 
-    public List<GuiConfigsBase.ConfigOptionWrapper> getOptionWrappers() {
-        return GuiConfigsBase.ConfigOptionWrapper.createFor(getOptions());
+    public Tab getOptionWrapper() {
+        return Tab.ofOptions(getId(), getNameKey(), getOptions());
     }
 
-    public List<IConfigBase> getOptions() {
+    public List<Option<?>> getOptions() {
         if (options == null) {
             options = new ArrayList<>();
             addConfigOptions(options);
@@ -167,20 +167,20 @@ public abstract class AbstractHudEntry extends DrawUtil {
         return options;
     }
 
-    public List<IConfigBase> getAllOptions() {
-        List<IConfigBase> options = new ArrayList<>(getOptions());
+    public List<Option<?>> getAllOptions() {
+        List<Option<?>> options = getOptions();
         options.add(x);
         options.add(y);
         return options;
     }
 
-    public void addConfigOptions(List<IConfigBase> options) {
+    public void addConfigOptions(List<Option<?>> options) {
         options.add(enabled);
         options.add(scale);
     }
 
     public boolean isEnabled() {
-        return enabled.getBooleanValue();
+        return enabled.getValue();
     }
 
     public String getNameKey() {
@@ -188,11 +188,11 @@ public abstract class AbstractHudEntry extends DrawUtil {
     }
 
     public String getName() {
-        return StringUtils.translate(getNameKey());
+        return Text.translatable(getNameKey()).getString();
     }
 
     public void toggle() {
-        enabled.toggleBooleanValue();
+        enabled.setValue(!enabled.getValue());
     }
 
     public void init(){}

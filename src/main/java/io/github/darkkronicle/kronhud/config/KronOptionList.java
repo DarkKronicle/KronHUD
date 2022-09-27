@@ -3,14 +3,15 @@ package io.github.darkkronicle.kronhud.config;
 import fi.dy.masa.malilib.config.IConfigOptionListEntry;
 import fi.dy.masa.malilib.config.options.ConfigDouble;
 import fi.dy.masa.malilib.config.options.ConfigOptionList;
+import io.github.darkkronicle.darkkore.config.options.SimpleListOption;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 
-public class KronOptionList extends ConfigOptionList implements KronConfig {
+public class KronOptionList extends SimpleListOption implements KronConfig {
 
     private String entryId;
 
-    public KronOptionList(String id, String entryId, IConfigOptionListEntry defaultValue) {
-        super(id, defaultValue, null);
+    public KronOptionList(String id, String entryId, SimpleListEntry defaultValue) {
+        super(id, entryId, "", defaultValue.getDisplayKey(), defaultValue.getDisplayKey() , );
         this.entryId = entryId;
     }
 

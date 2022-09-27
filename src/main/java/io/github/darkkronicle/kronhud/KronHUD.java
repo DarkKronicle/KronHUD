@@ -15,12 +15,15 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Environment(EnvType.CLIENT)
 public class KronHUD implements ClientModInitializer {
     public static HudManager hudManager;
     public static JsonObject storage;
     public static ConfigHandler storageHandler;
+    public static Logger logger = LoggerFactory.getLogger("kronhud");
     @Getter
     private boolean setupComplete;
 
