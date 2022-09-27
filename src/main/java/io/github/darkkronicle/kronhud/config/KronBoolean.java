@@ -1,17 +1,14 @@
 package io.github.darkkronicle.kronhud.config;
 
-import fi.dy.masa.malilib.config.ConfigUtils;
-import fi.dy.masa.malilib.config.options.ConfigBoolean;
-import fi.dy.masa.malilib.config.options.ConfigBooleanHotkeyed;
-import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
-import net.minecraft.util.Identifier;
 
-public class KronBoolean extends ConfigBoolean implements KronConfig {
+import io.github.darkkronicle.darkkore.config.options.BooleanOption;
 
-    private String entryId;
+public class KronBoolean extends BooleanOption implements KronConfig {
+
+    private final String entryId;
 
     public KronBoolean(String id, String entryId, boolean defaultValue) {
-        super(id, defaultValue, null);
+        super(id, entryId, "", defaultValue);
         this.entryId = entryId;
     }
 
@@ -21,12 +18,17 @@ public class KronBoolean extends ConfigBoolean implements KronConfig {
 
     @Override
     public String getId() {
-        return super.getName();
+        return super.getNameKey();
     }
 
     @Override
     public String getName() {
         return KronConfig.super.getName();
+    }
+
+    @Override
+    public String getInfoKey() {
+        return getComment();
     }
 
     @Override

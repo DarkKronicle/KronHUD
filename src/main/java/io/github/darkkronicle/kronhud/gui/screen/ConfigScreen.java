@@ -5,16 +5,19 @@ import fi.dy.masa.malilib.gui.GuiListBase;
 import fi.dy.masa.malilib.gui.interfaces.ISelectionListener;
 import fi.dy.masa.malilib.util.KeyCodes;
 import fi.dy.masa.malilib.util.StringUtils;
+import io.github.darkkronicle.darkkore.gui.Tab;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.util.InputUtil;
+
+import java.util.List;
 
 // Based around https://github.com/maruohon/minihud/blob/fabric_1.16_snapshots_temp/src/main/java/fi/dy/masa/minihud/gui/GuiShapeManager.java
 // Licensed under GNU LGPL
-public class ConfigScreen extends GuiListBase<AbstractHudEntry, HudEntryWidget, HudListWidget>
-        implements ISelectionListener<AbstractHudEntry> {
+public class ConfigScreen extends io.github.darkkronicle.darkkore.gui.ConfigScreen {
 
-    public ConfigScreen(Screen parent) {
-        super(10, 20);
+    public ConfigScreen(Screen parent, List<Tab> tabs) {
+        super(tabs);
         setParent(parent);
         useTitleHierarchy = false;
         title = StringUtils.translate("button.kronhud.configuration");
@@ -31,7 +34,7 @@ public class ConfigScreen extends GuiListBase<AbstractHudEntry, HudEntryWidget, 
             return true;
         }
 
-        if (keyCode == KeyCodes.KEY_ESCAPE) {
+        if (keyCode == InputUtil.GLFW_KEY_ESCAPE) {
             GuiBase.openGui(getParent());
             return true;
         }

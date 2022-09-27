@@ -5,6 +5,9 @@ import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.IConfigOptionListEntry;
 import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.StringUtils;
+import io.github.darkkronicle.darkkore.config.options.Option;
+import io.github.darkkronicle.darkkore.config.options.OptionListEntry;
+import io.github.darkkronicle.darkkore.config.options.SimpleListOption;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.config.KronColor;
 import io.github.darkkronicle.kronhud.config.KronOptionList;
@@ -200,7 +203,7 @@ public class CrosshairHud extends AbstractHudEntry {
     }
 
     @Override
-    public void addConfigOptions(List<IConfigBase> options) {
+    public void addConfigOptions(List<Option<?>> options) {
         super.addConfigOptions(options);
         options.add(type);
         options.add(showInF5);
@@ -212,48 +215,32 @@ public class CrosshairHud extends AbstractHudEntry {
     }
 
     @AllArgsConstructor
-    public enum Crosshair implements IConfigOptionListEntry {
+    public enum Crosshair implements OptionListEntry<Crosshair> {
         CROSS("cross"),
         DOT("dot"),
         DIRECTION("direction"),
         TEXTURE("texture");
 
-        private String value;
+        private final String value;
 
         @Override
-        public String getStringValue() {
+        public String getDisplayKey() {
+            return "option.kronhud." + ID.getPath() + "." + value;
+        }
+
+        @Override
+        public String getInfoKey() {
+            return "option.kronhud." + ID.getPath() + ".info." + value;
+        }
+
+        @Override
+        public List<Crosshair> getAll() {
+            return List.of(values());
+        }
+
+        @Override
+        public String getSaveKey() {
             return value;
-        }
-
-        @Override
-        public String getDisplayName() {
-            return StringUtils.translate("option.kronhud." + ID.getPath() + "." + value);
-        }
-
-        @Override
-        public IConfigOptionListEntry cycle(boolean forwards) {
-            int id = this.ordinal();
-            if (forwards) {
-                id++;
-            } else {
-                id--;
-            }
-            if (id >= values().length) {
-                id = 0;
-            } else if (id < 0) {
-                id = values().length - 1;
-            }
-            return values()[id % values().length];
-        }
-
-        @Override
-        public IConfigOptionListEntry fromString(String str) {
-            for (Crosshair crosshair : values()) {
-                if (crosshair.value.equals(str)) {
-                    return crosshair;
-                }
-            }
-            return CROSS;
         }
 
     }

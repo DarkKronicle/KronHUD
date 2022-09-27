@@ -1,8 +1,6 @@
 package io.github.darkkronicle.kronhud.config;
 
-import fi.dy.masa.malilib.util.StringUtils;
-import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.resource.language.I18n;
 
 public interface KronConfig {
 
@@ -19,11 +17,11 @@ public interface KronConfig {
     }
 
     default String getName() {
-        return StringUtils.translate(getTranslationKeyBase());
+        return I18n.translate(getTranslationKeyBase());
     }
 
     default String getComment() {
-        return StringUtils.translate(getTranslationKeyBase() + ".comment");
+        return I18n.translate(getTranslationKeyBase() + ".comment");
     }
 
 

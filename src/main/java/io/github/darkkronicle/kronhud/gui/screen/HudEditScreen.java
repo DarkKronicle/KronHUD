@@ -1,54 +1,55 @@
 
 package io.github.darkkronicle.kronhud.gui.screen;
 
-import fi.dy.masa.malilib.gui.GuiBase;
-import fi.dy.masa.malilib.gui.button.ButtonGeneric;
-import fi.dy.masa.malilib.util.StringUtils;
+import io.github.darkkronicle.darkkore.gui.Tab;
 import io.github.darkkronicle.kronhud.KronHUD;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
-import io.github.darkkronicle.kronhud.util.*;
+import io.github.darkkronicle.kronhud.gui.hud.HudManager;
+import io.github.darkkronicle.kronhud.util.DrawPosition;
+import io.github.darkkronicle.kronhud.util.Rectangle;
+import io.github.darkkronicle.kronhud.util.SnappingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.Window;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.Text;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class HudEditScreen extends GuiBase {
+public class HudEditScreen extends Screen {
     private boolean mouseDown = false;
     private AbstractHudEntry current = null;
     private DrawPosition offset = null;
     private SnappingHelper snap;
     private boolean snapEnabled;
-    private MinecraftClient client;
-    private Screen parent;
+    private final MinecraftClient client;
+    private final Screen parent;
 
     public HudEditScreen(Screen parent) {
+        super(Text.translatable("screen.kronhud.set"));
         this.parent = parent;
-        this.title = StringUtils.translate("screen.kronhud.set");
         client = MinecraftClient.getInstance();
-        Window window = client.getWindow();
         snapEnabled = true;
     }
 
     @Override
     public void init() {
         super.init();
-        addButton(new ButtonGeneric(width / 2 - 50, height - 50 - 22, 100, 20,
-                getSnappingButtonText()), (button, mouseButton) -> {
+        addDrawableChild(new ButtonWidget(width / 2 - 50, height - 50 - 22, 100, 20,
+                getSnappingButtonText(), (button) -> {
             snapEnabled = !snapEnabled;
             updateSnapState();
-            button.setDisplayString(getSnappingButtonText());
-        });
-        addButton(new ButtonGeneric(width / 2 - 50, height - 50 , 100, 20,
-                StringUtils.translate("button.kronhud.configuration")), (button, mouseButton) -> {
-            client.setScreen(new ConfigScreen(this));
-        });
+            button.setMessage(getSnappingButtonText());
+        }));
+        addDrawableChild(new ButtonWidget(width / 2 - 50, height - 50 , 100, 20,
+                Text.translatable("button.kronhud.configuration"),
+                (button) -> client.setScreen(new ConfigScreen(this, getTabs()))));
     }
 
-    private String getSnappingButtonText() {
-        return StringUtils.translate(snapEnabled ? "button.kronhud.snapping.on" : "button.kronhud.snapping.off");
+    private Text getSnappingButtonText() {
+        return Text.translatable(snapEnabled ? "button.kronhud.snapping.on" : "button.kronhud.snapping.off");
     }
 
     @Override
@@ -101,9 +102,9 @@ public class HudEditScreen extends GuiBase {
     }
 
     @Override
-    protected void closeGui(boolean showParent) {
+    public void removed() {
         KronHUD.storageHandler.saveDefaultHandling();
-        if (showParent) {
+        if (parent != null) {
             client.setScreen(parent);
         }
     }
@@ -130,4 +131,13 @@ public class HudEditScreen extends GuiBase {
         return false;
     }
 
+    private List<Tab> getTabs(){
+        List<Tab> tabs = new ArrayList<>();
+
+        KronHUD.hudManager.getEntries().forEach(abstractHudEntry -> {
+            tabs.add(Tab.ofOptions(abstractHudEntry.getId(), abstractHudEntry.getName(), abstractHudEntry.getOptions()));
+        });
+
+        return tabs;
+    }
 }
