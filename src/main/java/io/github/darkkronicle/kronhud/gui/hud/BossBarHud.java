@@ -123,12 +123,13 @@ public class BossBarHud extends AbstractHudEntry {
     }
 
     @Override
-    public void addConfigOptions(List<KronConfig<?>> options) {
-        super.addConfigOptions(options);
+    public List<KronConfig<?>> getOptions() {
+        List<KronConfig<?>> options = super.getOptions();
         options.add(text);
         options.add(textColor);
         options.add(shadow);
         options.add(bar);
+        return options;
     }
 
     public static class CustomBossBar extends BossBar {

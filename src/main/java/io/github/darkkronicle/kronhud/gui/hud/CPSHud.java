@@ -73,10 +73,11 @@ public class CPSHud extends CleanHudEntry {
     }
 
     @Override
-    public void addConfigOptions(List<KronConfig<?>> options) {
-        super.addConfigOptions(options);
+    public List<KronConfig<?>> getOptions() {
+        List<KronConfig<?>> options = super.getOptions();
         options.add(fromKeybindings);
         options.add(rmb);
+        return options;
     }
 
     public static class ClickList {

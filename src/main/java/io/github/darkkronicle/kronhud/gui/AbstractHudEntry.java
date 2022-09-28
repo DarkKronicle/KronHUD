@@ -33,8 +33,6 @@ public abstract class AbstractHudEntry extends DrawUtil {
     private final KronDouble x = new KronDouble("x", null, getDefaultX(), 0, 1);
     private final KronDouble y = new KronDouble("y", null, getDefaultY(), 0, 1);
 
-    private List<KronConfig<?>> options;
-
     public int width;
     public int height;
     @Setter
@@ -170,10 +168,9 @@ public abstract class AbstractHudEntry extends DrawUtil {
     }
 
     public List<KronConfig<?>> getOptions() {
-        if (options == null) {
-            options = new ArrayList<>();
-            addConfigOptions(options);
-        }
+        List<KronConfig<?>> options = new ArrayList<>();
+        options.add(enabled);
+        options.add(scale);
         return options;
     }
 
@@ -182,11 +179,6 @@ public abstract class AbstractHudEntry extends DrawUtil {
         options.add(x);
         options.add(y);
         return options;
-    }
-
-    public void addConfigOptions(List<KronConfig<?>> options) {
-        options.add(enabled);
-        options.add(scale);
     }
 
     public boolean isEnabled() {

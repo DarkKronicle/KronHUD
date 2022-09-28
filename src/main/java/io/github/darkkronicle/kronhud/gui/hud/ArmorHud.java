@@ -77,12 +77,13 @@ public class ArmorHud extends AbstractHudEntry {
     }
 
     @Override
-    public void addConfigOptions(List<KronConfig<?>> options) {
-        super.addConfigOptions(options);
+    public List<KronConfig<?>> getOptions() {
+        List<KronConfig<?>> options = super.getOptions();
         options.add(textColor);
         options.add(shadow);
         options.add(background);
         options.add(backgroundColor);
+        return options;
     }
 
 }

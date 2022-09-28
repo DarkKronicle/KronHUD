@@ -194,10 +194,11 @@ public class ItemUpdateHud extends AbstractHudEntry {
     }
 
     @Override
-    public void addConfigOptions(List<KronConfig<?>> options) {
-        super.addConfigOptions(options);
+    public List<KronConfig<?>> getOptions() {
+        List<KronConfig<?>> options = super.getOptions();
         options.add(shadow);
         options.add(timeout);
+        return options;
     }
 
     @Override

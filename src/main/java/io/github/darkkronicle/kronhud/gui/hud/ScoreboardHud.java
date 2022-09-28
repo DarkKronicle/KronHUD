@@ -173,14 +173,15 @@ public class ScoreboardHud extends AbstractHudEntry {
     }
 
     @Override
-    public void addConfigOptions(List<KronConfig<?>> options) {
-        super.addConfigOptions(options);
+    public List<KronConfig<?>> getOptions() {
+        List<KronConfig<?>> options = super.getOptions();;
         options.add(background);
         options.add(topColor);
         options.add(backgroundColor);
         options.add(shadow);
         options.add(scores);
         options.add(scoreColor);
+        return options;
     }
 
     @Override

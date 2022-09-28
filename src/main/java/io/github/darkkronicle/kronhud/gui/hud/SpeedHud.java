@@ -35,9 +35,10 @@ public class SpeedHud extends CleanHudEntry {
     }
 
     @Override
-    public void addConfigOptions(List<KronConfig<?>> options) {
-        super.addConfigOptions(options);
+    public List<KronConfig<?>> getOptions() {
+        List<KronConfig<?>> options = super.getOptions();
         options.add(horizontal);
+        return options;
     }
 
     @Override

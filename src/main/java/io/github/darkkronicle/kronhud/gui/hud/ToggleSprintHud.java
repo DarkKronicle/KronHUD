@@ -137,12 +137,13 @@ public class ToggleSprintHud extends CleanHudEntry {
     }
 
     @Override
-    public void addConfigOptions(List<KronConfig<?>> options) {
-        super.addConfigOptions(options);
+    public List<KronConfig<?>> getOptions() {
+        List<KronConfig<?>> options = super.getOptions();
         options.add(toggleSprint);
         options.add(toggleSneak);
         options.add(randomPlaceholder);
         options.add(placeholder);
+        return options;
     }
 
     @Override

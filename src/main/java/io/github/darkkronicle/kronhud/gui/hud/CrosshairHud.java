@@ -209,8 +209,8 @@ public class CrosshairHud extends AbstractHudEntry {
     }
 
     @Override
-    public void addConfigOptions(List<KronConfig<?>> options) {
-        super.addConfigOptions(options);
+    public List<KronConfig<?>> getOptions() {
+        List<KronConfig<?>> options = super.getOptions();
         options.add(type);
         options.add(showInF5);
         options.add(defaultColor);
@@ -218,6 +218,7 @@ public class CrosshairHud extends AbstractHudEntry {
         options.add(containerColor);
         options.add(attackIndicatorBackgroundColor);
         options.add(attackIndicatorForegroundColor);
+        return options;
     }
 
     @AllArgsConstructor

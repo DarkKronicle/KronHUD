@@ -162,14 +162,15 @@ public class KeystrokeHud extends AbstractHudEntry {
     }
 
     @Override
-    public void addConfigOptions(List<KronConfig<?>> options) {
-        super.addConfigOptions(options);
+    public List<KronConfig<?>> getOptions() {
+        List<KronConfig<?>> options = super.getOptions();
         options.add(textColor);
         options.add(pressedTextColor);
         options.add(shadow);
         options.add(background);
         options.add(backgroundColor);
         options.add(pressedBackgroundColor);
+        return options;
     }
 
     public class Keystroke {
