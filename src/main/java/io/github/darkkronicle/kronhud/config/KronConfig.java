@@ -4,6 +4,14 @@ import net.minecraft.client.resource.language.I18n;
 
 public interface KronConfig {
 
+    static String getTranslationBase(String id, String entry) {
+        if (entry == null) {
+            return "option.kronhud." + id;
+        } else {
+            return "option.kronhud." + entry + "." + id;
+        }
+    }
+
     String getEntryId();
 
     String getId();
@@ -17,11 +25,11 @@ public interface KronConfig {
     }
 
     default String getName() {
-        return I18n.translate(getTranslationKeyBase());
+        return getTranslationKeyBase();
     }
 
     default String getComment() {
-        return I18n.translate(getTranslationKeyBase() + ".comment");
+        return getTranslationKeyBase() + ".comment";
     }
 
 

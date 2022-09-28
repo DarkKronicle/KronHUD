@@ -1,6 +1,6 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
-import fi.dy.masa.malilib.config.IConfigBase;
+import io.github.darkkronicle.darkkore.config.options.Option;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import net.minecraft.client.util.math.MatrixStack;
@@ -22,11 +22,13 @@ public abstract class CleanHudEntry extends AbstractHudEntry {
         matrices.push();
         scale(matrices);
         DrawPosition pos = getPos();
-        if (background.getBooleanValue()) {
-            fillRect(matrices, getBounds(), backgroundColor.getColor());
+        if (background.getValue()) {
+            fillRect(matrices, getBounds(), backgroundColor.getValue());
         }
-        drawCenteredString(matrices, client.textRenderer, getValue(), new DrawPosition(pos.x() + (Math.round(width) / 2),
-                pos.y() + (Math.round((float) height / 2)) - 4), textColor.getColor(), shadow.getBooleanValue());
+        drawCenteredString(matrices, client.textRenderer, getValue(), new DrawPosition(
+                pos.x() + (Math.round(width) / 2),
+                pos.y() + (Math.round((float) height / 2)) - 4
+        ), textColor.getValue(), shadow.getValue());
         matrices.pop();
     }
 
@@ -37,14 +39,17 @@ public abstract class CleanHudEntry extends AbstractHudEntry {
         scale(matrices);
         DrawPosition pos = getPos();
         drawCenteredString(matrices, client.textRenderer, getPlaceholder(),
-                new DrawPosition(pos.x() + (Math.round(width) / 2),
-                pos.y() + (Math.round((float) height / 2)) - 4), textColor.getColor(), shadow.getBooleanValue());
+                new DrawPosition(
+                        pos.x() + (Math.round(width) / 2),
+                        pos.y() + (Math.round((float) height / 2)) - 4
+                ), textColor.getValue(), shadow.getValue()
+        );
         matrices.pop();
         hovered = false;
     }
 
     @Override
-    public void addConfigOptions(List<IConfigBase> options) {
+    public void addConfigOptions(List<Option<?>> options) {
         super.addConfigOptions(options);
         options.add(textColor);
         options.add(shadow);

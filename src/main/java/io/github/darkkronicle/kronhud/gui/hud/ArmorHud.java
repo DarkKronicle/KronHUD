@@ -1,6 +1,6 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
-import fi.dy.masa.malilib.config.IConfigBase;
+import io.github.darkkronicle.darkkore.config.options.Option;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import io.github.darkkronicle.kronhud.util.ItemUtil;
@@ -23,9 +23,8 @@ public class ArmorHud extends AbstractHudEntry {
         matrices.push();
         scale(matrices);
         DrawPosition pos = getPos();
-        if (background.getBooleanValue()) {
-            fillRect(matrices, getBounds(),
-                    backgroundColor.getColor());
+        if (background.getValue()) {
+            fillRect(matrices, getBounds(), backgroundColor.getValue());
         }
         int lastY = 2 + (4 * 20);
         renderMainItem(matrices, client.player.getInventory().getMainHandStack(), pos.x() + 2, pos.y() + lastY);
@@ -40,8 +39,7 @@ public class ArmorHud extends AbstractHudEntry {
 
     public void renderItem(MatrixStack matrices, ItemStack stack, int x, int y) {
         ItemUtil.renderGuiItemModel(matrices, stack, x, y);
-        ItemUtil.renderGuiItemOverlay(matrices, client.textRenderer, stack, x, y, null, textColor.getColor().color(),
-                shadow.getBooleanValue());
+        ItemUtil.renderGuiItemOverlay(matrices, client.textRenderer, stack, x, y, null, textColor.getValue().color(), shadow.getValue());
     }
 
     public void renderMainItem(MatrixStack matrices, ItemStack stack, int x, int y) {
@@ -50,9 +48,7 @@ public class ArmorHud extends AbstractHudEntry {
         if (total.equals("1")) {
             total = null;
         }
-        ItemUtil.renderGuiItemOverlay(matrices, client.textRenderer, stack, x, y,
-                total, textColor.getColor().color(),
-                shadow.getBooleanValue());
+        ItemUtil.renderGuiItemOverlay(matrices, client.textRenderer, stack, x, y, total, textColor.getValue().color(), shadow.getValue());
     }
 
     @Override
@@ -63,8 +59,9 @@ public class ArmorHud extends AbstractHudEntry {
         DrawPosition pos = getPos();
         int lastY = 2 + (4 * 20);
         ItemUtil.renderGuiItemModel(matrices, new ItemStack(Items.GRASS_BLOCK), pos.x() + 2, pos.y() + lastY);
-        ItemUtil.renderGuiItemOverlay(matrices, client.textRenderer, new ItemStack(Items.GRASS_BLOCK), pos.x() + 2,
-                pos.y() + lastY, "90", textColor.getColor().color(), shadow.getBooleanValue());
+        ItemUtil.renderGuiItemOverlay(matrices, client.textRenderer, new ItemStack(Items.GRASS_BLOCK), pos.x() + 2, pos.y() + lastY, "90",
+                textColor.getValue().color(), shadow.getValue()
+        );
         hovered = false;
         matrices.pop();
     }
@@ -80,7 +77,7 @@ public class ArmorHud extends AbstractHudEntry {
     }
 
     @Override
-    public void addConfigOptions(List<IConfigBase> options) {
+    public void addConfigOptions(List<Option<?>> options) {
         super.addConfigOptions(options);
         options.add(textColor);
         options.add(shadow);

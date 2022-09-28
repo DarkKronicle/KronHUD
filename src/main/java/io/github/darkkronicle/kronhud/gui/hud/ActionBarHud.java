@@ -1,10 +1,10 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
-import fi.dy.masa.malilib.config.IConfigBase;
+import io.github.darkkronicle.darkkore.config.options.Option;
+import io.github.darkkronicle.darkkore.util.Color;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.config.KronInteger;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
-import io.github.darkkronicle.kronhud.util.Color;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -29,43 +29,53 @@ public class ActionBarHud extends AbstractHudEntry {
         client = MinecraftClient.getInstance();
     }
 
-    public void setActionBar(Text bar, int color){this.actionBar = bar; this.color = color;}
+    public void setActionBar(Text bar, int color) {
+        this.actionBar = bar;
+        this.color = color;
+    }
 
     @Override
     public void render(MatrixStack matrices) {
-        if (ticksShown >= timeShown.getIntegerValue()){
+        if (ticksShown >= timeShown.getValue()) {
             this.actionBar = null;
         }
         Color vanillaColor = new Color(color);
-        if(this.actionBar != null) {
+        if (this.actionBar != null) {
 
             matrices.push();
             scale(matrices);
-            if (shadow.getBooleanValue()){
+            if (shadow.getValue()) {
                 client.textRenderer.drawWithShadow(matrices, actionBar,
-                        (float)getPos().x() + Math.round((float) width /2) -  (float) client.textRenderer.getWidth(actionBar) /2,
-                        (float)getPos().y() + 3,
-                        customTextColor.getBooleanValue() ? (textColor.getColor().alpha()==255 ?
+                        (float) getPos().x() + Math.round((float) width / 2) - (float) client.textRenderer.getWidth(actionBar) / 2,
+                        (float) getPos().y() + 3,
+                        customTextColor.getValue() ? (
+                                textColor.getValue().alpha() == 255 ?
                                 new Color(
-                                        textColor.getColor().red(),
-                                        textColor.getColor().green(),
-                                        textColor.getColor().blue(),
-                                        vanillaColor.alpha()).color():
-                                textColor.getColor().color()) :
-                                color
+                                        textColor.getValue().red(),
+                                        textColor.getValue().green(),
+                                        textColor.getValue().blue(),
+                                        vanillaColor.alpha()
+                                ).color() :
+                                textColor.getValue().color()
+                        ) :
+                        color
                 );
             } else {
 
                 client.textRenderer.draw(matrices, actionBar,
-                        (float)getPos().x() + Math.round((float) width /2) - ((float) client.textRenderer.getWidth(actionBar) /2),
-                        (float)getPos().y() + 3,
-                        customTextColor.getBooleanValue() ? (textColor.getColor().alpha()==255 ?
-                                new Color(textColor.getColor().red(),
-                                        textColor.getColor().green(),
-                                        textColor.getColor().blue(),
-                                        vanillaColor.alpha()).color():
-                                textColor.getColor().color()) :
-                                color
+                        (float) getPos().x() + Math.round((float) width / 2) - ((float) client.textRenderer.getWidth(actionBar) / 2),
+                        (float) getPos().y() + 3,
+                        customTextColor.getValue() ? (
+                                textColor.getValue().alpha() == 255 ?
+                                new Color(
+                                        textColor.getValue().red(),
+                                        textColor.getValue().green(),
+                                        textColor.getValue().blue(),
+                                        vanillaColor.alpha()
+                                ).color() :
+                                textColor.getValue().color()
+                        ) :
+                        color
                 );
             }
             matrices.pop();
@@ -80,7 +90,11 @@ public class ActionBarHud extends AbstractHudEntry {
         matrices.push();
         renderPlaceholderBackground(matrices);
         scale(matrices);
-        client.textRenderer.draw(matrices, placeholder,  (float)getPos().x() + Math.round((float) width /2) - (float) client.textRenderer.getWidth(placeholder) /2, (float)getPos().y() + 3, -1);
+        client.textRenderer.draw(
+                matrices, placeholder,
+                (float) getPos().x() + Math.round((float) width / 2) - (float) client.textRenderer.getWidth(placeholder) / 2,
+                (float) getPos().y() + 3, -1
+        );
         matrices.pop();
         hovered = false;
     }
@@ -96,7 +110,7 @@ public class ActionBarHud extends AbstractHudEntry {
     }
 
     @Override
-    public void addConfigOptions(List<IConfigBase> options){
+    public void addConfigOptions(List<Option<?>> options) {
         super.addConfigOptions(options);
         options.add(shadow);
         options.add(timeShown);

@@ -1,6 +1,6 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
-import fi.dy.masa.malilib.config.IConfigBase;
+import io.github.darkkronicle.darkkore.config.options.Option;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
@@ -29,10 +29,12 @@ public class ArrowHud extends AbstractHudEntry {
 
     @Override
     public void render(MatrixStack matrices) {
-        if (dynamic.getBooleanValue()) {
+        if (dynamic.getValue()) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
-            if (!(player.getStackInHand(Hand.MAIN_HAND).getItem() instanceof RangedWeaponItem
-                    || player.getStackInHand(Hand.OFF_HAND).getItem() instanceof RangedWeaponItem)) {
+            if (!(
+                    player.getStackInHand(Hand.MAIN_HAND).getItem() instanceof RangedWeaponItem
+                            || player.getStackInHand(Hand.OFF_HAND).getItem() instanceof RangedWeaponItem
+            )) {
                 return;
             }
         }
@@ -40,11 +42,13 @@ public class ArrowHud extends AbstractHudEntry {
         scale(matrices);
 
         DrawPosition pos = getPos();
-        if (background.getBooleanValue()) {
-            fillRect(matrices, getBounds(), backgroundColor.getColor());
+        if (background.getValue()) {
+            fillRect(matrices, getBounds(), backgroundColor.getValue());
         }
-        drawCenteredString(matrices, client.textRenderer, String.valueOf(arrows), new DrawPosition(pos.x() + width / 2,
-                pos.y() + height - 10), textColor.getColor(), shadow.getBooleanValue());
+        drawCenteredString(
+                matrices, client.textRenderer, String.valueOf(arrows), new DrawPosition(pos.x() + width / 2, pos.y() + height - 10),
+                textColor.getValue(), shadow.getValue()
+        );
         ItemUtil.renderGuiItemModel(matrices, currentArrow, pos.x() + 2, pos.y() + 2);
         matrices.pop();
     }
@@ -56,15 +60,16 @@ public class ArrowHud extends AbstractHudEntry {
 
     @Override
     public void tick() {
-        if (allArrowTypes.getBooleanValue()) {
-            arrows = ItemUtil.getTotal(client, new ItemStack(Items.ARROW)) + ItemUtil.getTotal(client, new ItemStack(Items.TIPPED_ARROW)) + ItemUtil.getTotal(client, new ItemStack(Items.SPECTRAL_ARROW));
+        if (allArrowTypes.getValue()) {
+            arrows = ItemUtil.getTotal(client, new ItemStack(Items.ARROW)) + ItemUtil.getTotal(client, new ItemStack(Items.TIPPED_ARROW))
+                    + ItemUtil.getTotal(client, new ItemStack(Items.SPECTRAL_ARROW));
         } else {
             arrows = ItemUtil.getTotal(client, currentArrow);
         }
         if (client.player == null) {
             return;
         }
-        if (!allArrowTypes.getBooleanValue()) {
+        if (!allArrowTypes.getValue()) {
             currentArrow = client.player.getArrowType(Items.BOW.getDefaultStack());
         } else {
             currentArrow = new ItemStack(Items.ARROW);
@@ -77,15 +82,17 @@ public class ArrowHud extends AbstractHudEntry {
         renderPlaceholderBackground(matrices);
         scale(matrices);
         DrawPosition pos = getPos();
-        drawCenteredString(matrices, client.textRenderer, "64", new DrawPosition(pos.x() + width / 2,
-                pos.y() + height - 10), textColor.getColor(), shadow.getBooleanValue());
+        drawCenteredString(
+                matrices, client.textRenderer, "64", new DrawPosition(pos.x() + width / 2, pos.y() + height - 10), textColor.getValue(),
+                shadow.getValue()
+        );
         ItemUtil.renderGuiItemModel(matrices, new ItemStack(Items.ARROW), pos.x() + 2, pos.y() + 2);
         hovered = false;
         matrices.pop();
     }
 
     @Override
-    public void addConfigOptions(List<IConfigBase> options) {
+    public void addConfigOptions(List<Option<?>> options) {
         super.addConfigOptions(options);
         options.add(textColor);
         options.add(shadow);

@@ -1,12 +1,6 @@
 package io.github.darkkronicle.kronhud.gui.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import fi.dy.masa.malilib.gui.GuiBase;
-import fi.dy.masa.malilib.gui.button.ButtonBase;
-import fi.dy.masa.malilib.gui.button.ButtonGeneric;
-import fi.dy.masa.malilib.gui.button.IButtonActionListener;
-import fi.dy.masa.malilib.gui.widgets.WidgetListEntryBase;
-import fi.dy.masa.malilib.render.RenderUtils;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

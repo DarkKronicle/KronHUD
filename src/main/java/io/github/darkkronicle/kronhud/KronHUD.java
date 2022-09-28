@@ -27,7 +27,6 @@ public class KronHUD implements ClientModInitializer {
     @Getter
     private boolean setupComplete;
 
-
     @Override
     public void onInitializeClient() {
         KeyBinding key = new KeyBinding("keys.kronhud.edithud", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_RIGHT_SHIFT,

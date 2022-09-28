@@ -1,6 +1,6 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
-import fi.dy.masa.malilib.config.IConfigBase;
+import io.github.darkkronicle.darkkore.config.options.Option;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.hooks.KronHudHooks;
 import net.minecraft.util.Identifier;
@@ -12,13 +12,13 @@ import java.util.List;
 public class CPSHud extends CleanHudEntry {
     public static final Identifier ID = new Identifier("kronhud", "cpshud");
 
-    private KronBoolean fromKeybindings = new KronBoolean("cpskeybind", ID.getPath(), false);
-    private KronBoolean rmb = new KronBoolean("rightcps", ID.getPath(), false);
+    private final KronBoolean fromKeybindings = new KronBoolean("cpskeybind", ID.getPath(), false);
+    private final KronBoolean rmb = new KronBoolean("rightcps", ID.getPath(), false);
 
     public CPSHud() {
         super();
         KronHudHooks.MOUSE_INPUT.register((window, button, action, mods) -> {
-            if (!fromKeybindings.getBooleanValue()) {
+            if (!fromKeybindings.getValue()) {
                 if (button == 0) {
                     ClickList.LEFT.click();
                 } else if (button == 1) {
@@ -27,7 +27,7 @@ public class CPSHud extends CleanHudEntry {
             }
         });
         KronHudHooks.KEYBIND_PRESS.register((key) -> {
-            if (fromKeybindings.getBooleanValue()) {
+            if (fromKeybindings.getValue()) {
                 if (key.equals(client.options.attackKey)) {
                     ClickList.LEFT.click();
                 } else if (key.equals(client.options.useKey)) {
@@ -50,7 +50,7 @@ public class CPSHud extends CleanHudEntry {
 
     @Override
     public String getValue() {
-        if (rmb.getBooleanValue()) {
+        if (rmb.getValue()) {
             return ClickList.LEFT.clicks() + " | " + ClickList.RIGHT.clicks() + " CPS";
         } else {
             return ClickList.LEFT.clicks() + " CPS";
@@ -59,7 +59,7 @@ public class CPSHud extends CleanHudEntry {
 
     @Override
     public String getPlaceholder() {
-        if (rmb.getBooleanValue()) {
+        if (rmb.getValue()) {
             return "0 | 0 CPS";
         } else {
             return "0 CPS";
@@ -72,7 +72,7 @@ public class CPSHud extends CleanHudEntry {
     }
 
     @Override
-    public void addConfigOptions(List<IConfigBase> options) {
+    public void addConfigOptions(List<Option<?>> options) {
         super.addConfigOptions(options);
         options.add(fromKeybindings);
         options.add(rmb);

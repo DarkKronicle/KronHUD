@@ -3,13 +3,11 @@ package io.github.darkkronicle.kronhud.config;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import fi.dy.masa.malilib.config.IConfigBase;
 import io.github.darkkronicle.kronhud.KronHUD;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.gui.hud.CoordsHud;
 import io.github.darkkronicle.kronhud.gui.hud.CrosshairHud;
 import io.github.darkkronicle.kronhud.gui.hud.ScoreboardHud;
-import io.github.darkkronicle.kronhud.util.Color;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.*;

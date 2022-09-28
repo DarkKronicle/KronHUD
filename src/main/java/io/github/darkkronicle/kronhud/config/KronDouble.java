@@ -18,16 +18,16 @@ public class KronDouble extends DoubleOption implements KronConfig {
 
     @Override
     public String getId() {
-        return super.getNameKey();
+        return super.getKey();
     }
 
     @Override
-    public String getName() {
+    public String getNameKey() {
         return KronConfig.super.getName();
     }
 
     @Override
-    public String getComment() {
+    public String getInfoKey() {
         return KronConfig.super.getComment();
     }
 

@@ -1,15 +1,13 @@
 package io.github.darkkronicle.kronhud.config;
 
-import fi.dy.masa.malilib.config.options.ConfigBoolean;
-import fi.dy.masa.malilib.config.options.ConfigInteger;
-import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
+import io.github.darkkronicle.darkkore.config.options.IntegerOption;
 
-public class KronInteger extends ConfigInteger implements KronConfig {
+public class KronInteger extends IntegerOption implements KronConfig {
 
-    private String entryId;
+    private final String entryId;
 
     public KronInteger(String id, String entryId, int defaultValue, int min, int max) {
-        super(id, defaultValue, min, max, null);
+        super(id, entryId, "", defaultValue, min, max);
         this.entryId = entryId;
     }
 
@@ -20,16 +18,16 @@ public class KronInteger extends ConfigInteger implements KronConfig {
 
     @Override
     public String getId() {
-        return super.getName();
+        return super.getKey();
     }
 
     @Override
-    public String getName() {
+    public String getNameKey() {
         return KronConfig.super.getName();
     }
 
     @Override
-    public String getComment() {
+    public String getInfoKey() {
         return KronConfig.super.getComment();
     }
 

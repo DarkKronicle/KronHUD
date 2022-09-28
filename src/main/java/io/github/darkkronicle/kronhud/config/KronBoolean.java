@@ -12,27 +12,23 @@ public class KronBoolean extends BooleanOption implements KronConfig {
         this.entryId = entryId;
     }
 
+    @Override
     public String getEntryId() {
         return entryId;
     }
 
     @Override
     public String getId() {
-        return super.getNameKey();
+        return super.getKey();
     }
 
     @Override
-    public String getName() {
+    public String getNameKey() {
         return KronConfig.super.getName();
     }
 
     @Override
     public String getInfoKey() {
-        return getComment();
-    }
-
-    @Override
-    public String getComment() {
         return KronConfig.super.getComment();
     }
 

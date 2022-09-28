@@ -1,35 +1,21 @@
 package io.github.darkkronicle.kronhud.util;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.platform.GlStateManager.DstFactor;
-import com.mojang.blaze3d.platform.GlStateManager.SrcFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
-import fi.dy.masa.malilib.render.RenderUtils;
+import io.github.darkkronicle.darkkore.util.Color;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.DiffuseLighting;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.VertexConsumerProvider.Immediate;
+import net.minecraft.client.render.*;
 import net.minecraft.client.render.VertexFormat.DrawMode;
-import net.minecraft.client.render.VertexFormats;
-import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Util;
-import net.minecraft.util.crash.CrashReport;
-import net.minecraft.util.crash.CrashReportSection;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -200,7 +186,7 @@ public class ItemUtil {
             RenderSystem.disableBlend();
             int i = stack.getItemBarStep();
             int j = stack.getItemBarColor();
-            DrawUtil.fillRect(matrices, new Rectangle(x + 2, y + 13, 13, 2), Color.BLACK);
+            DrawUtil.fillRect(matrices, new Rectangle(x + 2, y + 13, 13, 2), ColorUtil.BLACK);
             DrawUtil.fillRect(matrices, new Rectangle(x + 2, y + 13, i, 1), new Color(j >> 16 & 255, j >> 8 & 255,
                     j & 255,
                     255));
@@ -217,7 +203,7 @@ public class ItemUtil {
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
             DrawUtil.fillRect(matrices, new Rectangle(x, y + MathHelper.floor(16.0F * (1.0F - f)), 16,
-                MathHelper.ceil(16.0F * f)), Color.WHITE.withAlpha(127));
+                MathHelper.ceil(16.0F * f)), ColorUtil.WHITE.withAlpha(127));
             RenderSystem.enableTexture();
             RenderSystem.enableDepthTest();
         }

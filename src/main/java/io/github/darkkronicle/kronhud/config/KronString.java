@@ -1,14 +1,14 @@
 package io.github.darkkronicle.kronhud.config;
 
-import fi.dy.masa.malilib.config.options.ConfigString;
+import io.github.darkkronicle.darkkore.config.options.StringOption;
 
-public class KronString extends ConfigString implements KronConfig {
+public class KronString extends StringOption implements KronConfig {
 
     private final String entryId;
 
     public KronString(String id, String entryId, String defaultValue) {
-        super(id, defaultValue, null);
-        this.entryId=entryId;
+        super(id, "", "", defaultValue);
+        this.entryId = entryId;
     }
 
     @Override
@@ -18,16 +18,17 @@ public class KronString extends ConfigString implements KronConfig {
 
     @Override
     public String getId() {
-        return super.getName();
+        return super.getKey();
     }
 
     @Override
-    public String getName() {
+    public String getNameKey() {
         return KronConfig.super.getName();
     }
 
     @Override
-    public String getComment() {
+    public String getInfoKey() {
         return KronConfig.super.getComment();
     }
+
 }

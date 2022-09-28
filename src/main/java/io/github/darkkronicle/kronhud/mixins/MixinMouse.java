@@ -19,4 +19,5 @@ public class MixinMouse {
             KronHudHooks.MOUSE_INPUT.invoker().onMouseButton(window, button, action, mods);
         }
     }
+
 }

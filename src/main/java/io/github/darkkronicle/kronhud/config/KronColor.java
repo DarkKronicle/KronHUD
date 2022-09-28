@@ -1,39 +1,15 @@
 package io.github.darkkronicle.kronhud.config;
 
-import io.github.darkkronicle.darkkore.config.options.IntegerOption;
-import io.github.darkkronicle.kronhud.util.Color;
+import io.github.darkkronicle.darkkore.config.options.ColorOption;
+import io.github.darkkronicle.darkkore.util.Color;
 
-public class KronColor extends IntegerOption implements KronConfig {
+public class KronColor extends ColorOption implements KronConfig {
 
     private final String entryId;
-    private Color color;
 
-    public KronColor(String id, String entryId, String defaultValue) {
-        super(id, entryId, "", Color.parse(defaultValue).color());
-        this.color = new Color(this.defaultValue);
+    public KronColor(String id, String entryId, Color defaultValue) {
+        super(id, entryId, "", defaultValue);
         this.entryId = entryId;
-    }
-
-    public Color getColor() {
-        return color;
-    }
-
-    public String getDefaultStringValue() {
-        return new Color(defaultValue).toString();
-    }
-
-    public void setValueFromString(String value) {
-        this.value = (color = Color.parse(value)).color();
-    }
-
-    @Override
-    public void setValue(Integer value) {
-        this.color = new Color(value);
-        super.setValue(value);
-    }
-
-    public boolean isModified(String newValue) {
-        return Color.parse(newValue).color() != defaultValue;
     }
 
     @Override
@@ -43,16 +19,16 @@ public class KronColor extends IntegerOption implements KronConfig {
 
     @Override
     public String getId() {
-        return super.getNameKey();
+        return super.getKey();
     }
 
     @Override
-    public String getName() {
+    public String getNameKey() {
         return KronConfig.super.getName();
     }
 
     @Override
-    public String getComment() {
+    public String getInfoKey() {
         return KronConfig.super.getComment();
     }
 

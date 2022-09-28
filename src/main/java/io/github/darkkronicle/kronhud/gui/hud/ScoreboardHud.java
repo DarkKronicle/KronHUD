@@ -3,8 +3,9 @@ package io.github.darkkronicle.kronhud.gui.hud;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
-import fi.dy.masa.malilib.config.IConfigBase;
-import fi.dy.masa.malilib.config.options.ConfigBoolean;
+import io.github.darkkronicle.darkkore.config.options.BooleanOption;
+import io.github.darkkronicle.darkkore.config.options.Option;
+import io.github.darkkronicle.darkkore.util.Color;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.config.KronColor;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
@@ -45,10 +46,10 @@ public class ScoreboardHud extends AbstractHudEntry {
         return objective;
     });
 
-    private KronColor backgroundColor = new KronColor("backgroundcolor", ID.getPath(), "#4C000000");
-    private KronColor topColor = new KronColor("topbackgroundcolor", ID.getPath(), "#66000000");
-    private ConfigBoolean scores = new KronBoolean("scores", ID.getPath(), true);
-    private KronColor scoreColor = new KronColor("scorecolor", ID.getPath(), "#FFFF5555");
+    private final KronColor backgroundColor = new KronColor("backgroundcolor", ID.getPath(), new Color(0x4C000000));
+    private final KronColor topColor = new KronColor("topbackgroundcolor", ID.getPath(), new Color(0x66000000));
+    private final BooleanOption scores = new KronBoolean("scores", ID.getPath(), true);
+    private final KronColor scoreColor = new KronColor("scorecolor", ID.getPath(), new Color(0xFFFF5555));
 
     public ScoreboardHud() {
         super(300, 146);
@@ -138,29 +139,29 @@ public class ScoreboardHud extends AbstractHudEntry {
             Text scoreText = scoreboardPlayerScoreTextPair.getSecond();
             String score = "" + scoreboardPlayerScore2.getScore();
             int relativeY = scoreY - num * 9;
-            if (background.getBooleanValue()) {
-                fillRect(matrices, new Rectangle(textOffset, relativeY, maxWidth, 9), backgroundColor.getColor());
+            if (background.getValue()) {
+                fillRect(matrices, new Rectangle(textOffset, relativeY, maxWidth, 9), backgroundColor.getValue());
             }
-            if (shadow.getBooleanValue()) {
+            if (shadow.getValue()) {
                 client.textRenderer.drawWithShadow(matrices, scoreText, (float) scoreX, (float) relativeY,
                         -1);
             } else {
                 client.textRenderer.draw(matrices, scoreText, (float) scoreX, (float) relativeY,
                         -1);
             }
-            if (this.scores.getBooleanValue()) {
+            if (this.scores.getValue()) {
                 drawString(matrices, client.textRenderer, score,
                         (float) (scoreX + maxWidth - client.textRenderer.getWidth(score) - 2), (float) relativeY,
-                        scoreColor.getColor().color(), shadow.getBooleanValue());
+                        scoreColor.getValue().color(), shadow.getValue());
             }
             if (num == scoresSize) {
-                if (background.getBooleanValue()) {
-                    fillRect(matrices, new Rectangle(textOffset, relativeY - 10, maxWidth, 9), topColor.getColor());
+                if (background.getValue()) {
+                    fillRect(matrices, new Rectangle(textOffset, relativeY - 10, maxWidth, 9), topColor.getValue());
                     fillRect(matrices, new Rectangle(scoreX - 2, relativeY - 1, maxWidth, 1),
-                            backgroundColor.getColor());
+                            backgroundColor.getValue());
                 }
                 float title = (float) (scoreX + maxWidth / 2 - displayNameWidth / 2 - 1);
-                if (shadow.getBooleanValue()) {
+                if (shadow.getValue()) {
                     client.textRenderer.drawWithShadow(matrices, text, title, (float) (relativeY - 9), -1);
                 }
                 else {
@@ -171,7 +172,7 @@ public class ScoreboardHud extends AbstractHudEntry {
     }
 
     @Override
-    public void addConfigOptions(List<IConfigBase> options) {
+    public void addConfigOptions(List<Option<?>> options) {
         super.addConfigOptions(options);
         options.add(background);
         options.add(topColor);

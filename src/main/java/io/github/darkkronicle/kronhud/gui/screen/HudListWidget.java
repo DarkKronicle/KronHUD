@@ -1,11 +1,5 @@
 package io.github.darkkronicle.kronhud.gui.screen;
 
-import fi.dy.masa.malilib.gui.LeftRight;
-import fi.dy.masa.malilib.gui.MaLiLibIcons;
-import fi.dy.masa.malilib.gui.interfaces.ISelectionListener;
-import fi.dy.masa.malilib.gui.widgets.WidgetListBase;
-import fi.dy.masa.malilib.gui.widgets.WidgetSearchBar;
-import fi.dy.masa.malilib.gui.widgets.WidgetSearchBarConfigs;
 import io.github.darkkronicle.kronhud.KronHUD;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 
