@@ -2,7 +2,7 @@ package io.github.darkkronicle.kronhud.config;
 
 import io.github.darkkronicle.darkkore.config.options.DoubleOption;
 
-public class KronDouble extends DoubleOption implements KronConfig {
+public class KronDouble extends DoubleOption implements KronConfig<Double> {
 
     private final String entryId;
 

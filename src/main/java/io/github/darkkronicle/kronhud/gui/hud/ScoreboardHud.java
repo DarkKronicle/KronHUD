@@ -8,6 +8,7 @@ import io.github.darkkronicle.darkkore.config.options.Option;
 import io.github.darkkronicle.darkkore.util.Color;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.config.KronColor;
+import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import io.github.darkkronicle.kronhud.util.Rectangle;
@@ -48,7 +49,7 @@ public class ScoreboardHud extends AbstractHudEntry {
 
     private final KronColor backgroundColor = new KronColor("backgroundcolor", ID.getPath(), new Color(0x4C000000));
     private final KronColor topColor = new KronColor("topbackgroundcolor", ID.getPath(), new Color(0x66000000));
-    private final BooleanOption scores = new KronBoolean("scores", ID.getPath(), true);
+    private final KronBoolean scores = new KronBoolean("scores", ID.getPath(), true);
     private final KronColor scoreColor = new KronColor("scorecolor", ID.getPath(), new Color(0xFFFF5555));
 
     public ScoreboardHud() {
@@ -172,7 +173,7 @@ public class ScoreboardHud extends AbstractHudEntry {
     }
 
     @Override
-    public void addConfigOptions(List<Option<?>> options) {
+    public void addConfigOptions(List<KronConfig<?>> options) {
         super.addConfigOptions(options);
         options.add(background);
         options.add(topColor);

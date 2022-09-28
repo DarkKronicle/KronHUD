@@ -2,7 +2,7 @@ package io.github.darkkronicle.kronhud.config;
 
 import io.github.darkkronicle.darkkore.config.options.IntegerOption;
 
-public class KronInteger extends IntegerOption implements KronConfig {
+public class KronInteger extends IntegerOption implements KronConfig<Integer> {
 
     private final String entryId;
 

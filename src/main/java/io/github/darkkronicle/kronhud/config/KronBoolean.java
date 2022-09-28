@@ -3,7 +3,7 @@ package io.github.darkkronicle.kronhud.config;
 
 import io.github.darkkronicle.darkkore.config.options.BooleanOption;
 
-public class KronBoolean extends BooleanOption implements KronConfig {
+public class KronBoolean extends BooleanOption implements KronConfig<Boolean> {
 
     private final String entryId;
 

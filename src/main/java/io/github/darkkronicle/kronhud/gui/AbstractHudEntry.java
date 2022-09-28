@@ -5,6 +5,7 @@ import io.github.darkkronicle.darkkore.gui.Tab;
 import io.github.darkkronicle.darkkore.util.Color;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.config.KronColor;
+import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.config.KronDouble;
 import io.github.darkkronicle.kronhud.util.ColorUtil;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
@@ -19,6 +20,7 @@ import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class AbstractHudEntry extends DrawUtil {
 
@@ -31,7 +33,7 @@ public abstract class AbstractHudEntry extends DrawUtil {
     private final KronDouble x = new KronDouble("x", null, getDefaultX(), 0, 1);
     private final KronDouble y = new KronDouble("y", null, getDefaultY(), 0, 1);
 
-    private List<Option<?>> options;
+    private List<KronConfig<?>> options;
 
     public int width;
     public int height;
@@ -163,10 +165,11 @@ public abstract class AbstractHudEntry extends DrawUtil {
     }
 
     public Tab getOptionWrapper() {
-        return Tab.ofOptions(getId(), getNameKey(), getOptions());
+        // Need to cast KronConfig to Option
+        return Tab.ofOptions(getId(), getNameKey(), getOptions().stream().map((o -> (Option<?>) o)).collect(Collectors.toList()));
     }
 
-    public List<Option<?>> getOptions() {
+    public List<KronConfig<?>> getOptions() {
         if (options == null) {
             options = new ArrayList<>();
             addConfigOptions(options);
@@ -174,14 +177,14 @@ public abstract class AbstractHudEntry extends DrawUtil {
         return options;
     }
 
-    public List<Option<?>> getAllOptions() {
-        List<Option<?>> options = getOptions();
+    public List<KronConfig<?>> getAllOptions() {
+        List<KronConfig<?>> options = getOptions();
         options.add(x);
         options.add(y);
         return options;
     }
 
-    public void addConfigOptions(List<Option<?>> options) {
+    public void addConfigOptions(List<KronConfig<?>> options) {
         options.add(enabled);
         options.add(scale);
     }
@@ -194,12 +197,16 @@ public abstract class AbstractHudEntry extends DrawUtil {
         return "hud." + getId().getNamespace() + "." + getId().getPath();
     }
 
+    public String getInfoKey() {
+        return "hud." + getId().getNamespace() + "." + getId().getPath() + ".info";
+    }
+
     public String getName() {
         return Text.translatable(getNameKey()).getString();
     }
 
-    public void toggle() {
-        enabled.setValue(!enabled.getValue());
+    public void setEnabled(boolean value) {
+        enabled.setValue(value);
     }
 
     public void init() {}

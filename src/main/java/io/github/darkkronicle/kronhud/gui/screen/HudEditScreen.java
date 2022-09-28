@@ -1,10 +1,12 @@
 
 package io.github.darkkronicle.kronhud.gui.screen;
 
+import io.github.darkkronicle.darkkore.config.options.Option;
 import io.github.darkkronicle.darkkore.gui.Tab;
 import io.github.darkkronicle.kronhud.KronHUD;
+import io.github.darkkronicle.kronhud.config.ConfigHandler;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
-import io.github.darkkronicle.kronhud.gui.hud.HudManager;
+import io.github.darkkronicle.kronhud.gui.HudEntryOption;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import io.github.darkkronicle.kronhud.util.Rectangle;
 import io.github.darkkronicle.kronhud.util.SnappingHelper;
@@ -17,6 +19,7 @@ import net.minecraft.text.Text;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class HudEditScreen extends Screen {
     private boolean mouseDown = false;
@@ -43,9 +46,14 @@ public class HudEditScreen extends Screen {
             updateSnapState();
             button.setMessage(getSnappingButtonText());
         }));
-        addDrawableChild(new ButtonWidget(width / 2 - 50, height - 50 , 100, 20,
+        addDrawableChild(
+                new ButtonWidget(width / 2 - 50, height - 50 , 100, 20,
                 Text.translatable("button.kronhud.configuration"),
-                (button) -> client.setScreen(new ConfigScreen(this, getTabs()))));
+                (button) -> {
+                    io.github.darkkronicle.darkkore.gui.ConfigScreen screen = io.github.darkkronicle.darkkore.gui.ConfigScreen.ofOptions(getHudEntries());
+                    screen.setParent(this);
+                    client.setScreen(screen);
+                }));
     }
 
     private Text getSnappingButtonText() {
@@ -103,7 +111,7 @@ public class HudEditScreen extends Screen {
 
     @Override
     public void removed() {
-        KronHUD.storageHandler.saveDefaultHandling();
+        ConfigHandler.getInstance().save();
         if (parent != null) {
             client.setScreen(parent);
         }
@@ -131,11 +139,21 @@ public class HudEditScreen extends Screen {
         return false;
     }
 
+    private List<Option<?>> getHudEntries() {
+        return KronHUD.hudManager.getEntries().stream().map(HudEntryOption::new).collect(Collectors.toList());
+    }
+
     private List<Tab> getTabs(){
         List<Tab> tabs = new ArrayList<>();
 
         KronHUD.hudManager.getEntries().forEach(abstractHudEntry -> {
-            tabs.add(Tab.ofOptions(abstractHudEntry.getId(), abstractHudEntry.getName(), abstractHudEntry.getOptions()));
+            tabs.add(
+                    Tab.ofOptions(
+                            abstractHudEntry.getId(),
+                            abstractHudEntry.getName(),
+                            abstractHudEntry.getOptions().stream().map(o -> (Option<?>) o).collect(Collectors.toList())
+                    )
+            );
         });
 
         return tabs;

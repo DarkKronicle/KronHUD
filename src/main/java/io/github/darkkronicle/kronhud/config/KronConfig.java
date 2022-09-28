@@ -1,16 +1,9 @@
 package io.github.darkkronicle.kronhud.config;
 
+import io.github.darkkronicle.darkkore.config.options.Option;
 import net.minecraft.client.resource.language.I18n;
 
-public interface KronConfig {
-
-    static String getTranslationBase(String id, String entry) {
-        if (entry == null) {
-            return "option.kronhud." + id;
-        } else {
-            return "option.kronhud." + entry + "." + id;
-        }
-    }
+public interface KronConfig<T> extends Option<T> {
 
     String getEntryId();
 

@@ -1,9 +1,10 @@
 package io.github.darkkronicle.kronhud.config;
 
 import io.github.darkkronicle.darkkore.config.options.ListOption;
+import io.github.darkkronicle.darkkore.config.options.Option;
 import io.github.darkkronicle.darkkore.config.options.OptionListEntry;
 
-public class KronOptionList<T extends OptionListEntry<T>> extends ListOption<T> implements KronConfig {
+public class KronOptionList<T extends OptionListEntry<T>> extends ListOption<T> implements KronConfig<T> {
 
     private final String entryId;
 

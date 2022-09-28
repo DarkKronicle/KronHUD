@@ -3,6 +3,7 @@ package io.github.darkkronicle.kronhud.gui.hud;
 
 import io.github.darkkronicle.darkkore.config.options.Option;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
+import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.config.KronString;
 import lombok.Getter;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -136,7 +137,7 @@ public class ToggleSprintHud extends CleanHudEntry {
     }
 
     @Override
-    public void addConfigOptions(List<Option<?>> options) {
+    public void addConfigOptions(List<KronConfig<?>> options) {
         super.addConfigOptions(options);
         options.add(toggleSprint);
         options.add(toggleSneak);
@@ -145,8 +146,8 @@ public class ToggleSprintHud extends CleanHudEntry {
     }
 
     @Override
-    public List<Option<?>> getAllOptions() {
-        List<Option<?>> options = super.getAllOptions();
+    public List<KronConfig<?>> getAllOptions() {
+        List<KronConfig<?>> options = super.getAllOptions();
         options.add(sprintToggled);
         options.add(sneakToggled);
         return options;

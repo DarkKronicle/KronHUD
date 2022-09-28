@@ -1,8 +1,8 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
-import io.github.darkkronicle.darkkore.config.options.Option;
 import io.github.darkkronicle.darkkore.util.Color;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
+import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.config.KronInteger;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import net.minecraft.client.MinecraftClient;
@@ -110,7 +110,7 @@ public class ActionBarHud extends AbstractHudEntry {
     }
 
     @Override
-    public void addConfigOptions(List<Option<?>> options) {
+    public void addConfigOptions(List<KronConfig<?>> options) {
         super.addConfigOptions(options);
         options.add(shadow);
         options.add(timeShown);

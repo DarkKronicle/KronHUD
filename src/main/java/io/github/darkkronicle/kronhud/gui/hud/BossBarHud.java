@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.darkkronicle.darkkore.config.options.BooleanOption;
 import io.github.darkkronicle.darkkore.config.options.Option;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
+import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.mixins.AccessorBossBarHud;
 import io.github.darkkronicle.kronhud.util.ColorUtil;
@@ -35,8 +36,8 @@ public class BossBarHud extends AbstractHudEntry {
 
     private Map<UUID, ClientBossBar> bossBars;
     private final MinecraftClient client;
-    private final BooleanOption text = new KronBoolean("text", ID.getPath(), true);
-    private final BooleanOption bar = new KronBoolean("bar", ID.getPath(), true);
+    private final KronBoolean text = new KronBoolean("text", ID.getPath(), true);
+    private final KronBoolean bar = new KronBoolean("bar", ID.getPath(), true);
     // TODO custom colour
 
     public BossBarHud() {
@@ -122,7 +123,7 @@ public class BossBarHud extends AbstractHudEntry {
     }
 
     @Override
-    public void addConfigOptions(List<Option<?>> options) {
+    public void addConfigOptions(List<KronConfig<?>> options) {
         super.addConfigOptions(options);
         options.add(text);
         options.add(textColor);

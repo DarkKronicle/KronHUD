@@ -1,9 +1,10 @@
 package io.github.darkkronicle.kronhud.config;
 
+import io.github.darkkronicle.darkkore.colors.ColorAlias;
 import io.github.darkkronicle.darkkore.config.options.ColorOption;
 import io.github.darkkronicle.darkkore.util.Color;
 
-public class KronColor extends ColorOption implements KronConfig {
+public class KronColor extends ColorOption implements KronConfig<ColorAlias> {
 
     private final String entryId;
 
