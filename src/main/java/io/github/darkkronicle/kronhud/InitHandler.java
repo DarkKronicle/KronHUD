@@ -20,7 +20,6 @@ public class InitHandler implements Initializer {
             return Optional.of(new HudEntryComponent(parent, (HudEntryOption) option, width));
         });
 
-        ConfigurationManager.getInstance().add(ConfigHandler.getInstance());
 
     }
 

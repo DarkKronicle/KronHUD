@@ -1,6 +1,7 @@
 package io.github.darkkronicle.kronhud;
 
 import com.google.gson.JsonObject;
+import io.github.darkkronicle.darkkore.config.ConfigurationManager;
 import io.github.darkkronicle.darkkore.intialization.InitializationHandler;
 import io.github.darkkronicle.kronhud.config.ConfigHandler;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
@@ -43,6 +44,8 @@ public class KronHUD implements ClientModInitializer {
             }
         });
         InitializationHandler.getInstance().registerInitializer(MOD_ID, 0, new InitHandler());
+        ConfigurationManager.getInstance().add(ConfigHandler.getInstance());
+
     }
 
     public void initHuds() {
