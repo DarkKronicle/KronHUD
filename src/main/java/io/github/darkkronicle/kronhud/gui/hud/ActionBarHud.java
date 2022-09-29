@@ -110,8 +110,8 @@ public class ActionBarHud extends AbstractHudEntry {
     }
 
     @Override
-    public List<KronConfig<?>> getOptions() {
-        List<KronConfig<?>> options = super.getOptions();
+    public List<KronConfig<?>> getConfigurationOptions() {
+        List<KronConfig<?>> options = super.getConfigurationOptions();
         options.add(shadow);
         options.add(timeShown);
         options.add(customTextColor);

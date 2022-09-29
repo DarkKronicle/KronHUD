@@ -1,9 +1,10 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
-import io.github.darkkronicle.darkkore.config.options.Option;
 import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
+import net.minecraft.client.gl.VertexBuffer;
+import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.util.math.MatrixStack;
 
 import java.util.List;
@@ -26,10 +27,12 @@ public abstract class CleanHudEntry extends AbstractHudEntry {
         if (background.getValue()) {
             fillRect(matrices, getBounds(), backgroundColor.getValue());
         }
-        drawCenteredString(matrices, client.textRenderer, getValue(), new DrawPosition(
+        drawCenteredString(
+                matrices, client.textRenderer, getValue(),
                 pos.x() + (Math.round(width) / 2),
-                pos.y() + (Math.round((float) height / 2)) - 4
-        ), textColor.getValue(), shadow.getValue());
+                pos.y() + (Math.round((float) height / 2)) - 4,
+                textColor.getValue(), shadow.getValue()
+        );
         matrices.pop();
     }
 
@@ -39,19 +42,19 @@ public abstract class CleanHudEntry extends AbstractHudEntry {
         renderPlaceholderBackground(matrices);
         scale(matrices);
         DrawPosition pos = getPos();
-        drawCenteredString(matrices, client.textRenderer, getPlaceholder(),
-                new DrawPosition(
-                        pos.x() + (Math.round(width) / 2),
-                        pos.y() + (Math.round((float) height / 2)) - 4
-                ), textColor.getValue(), shadow.getValue()
+        drawCenteredString(
+                matrices, client.textRenderer, getPlaceholder(),
+                pos.x() + (Math.round(width) / 2),
+                pos.y() + (Math.round((float) height / 2)) - 4,
+                textColor.getValue(), shadow.getValue()
         );
         matrices.pop();
         hovered = false;
     }
 
     @Override
-    public List<KronConfig<?>> getOptions() {
-        List<KronConfig<?>> options = super.getOptions();
+    public List<KronConfig<?>> getConfigurationOptions() {
+        List<KronConfig<?>> options = super.getConfigurationOptions();
         options.add(textColor);
         options.add(shadow);
         options.add(background);

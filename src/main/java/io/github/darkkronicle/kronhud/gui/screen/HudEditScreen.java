@@ -151,7 +151,7 @@ public class HudEditScreen extends Screen {
                     Tab.ofOptions(
                             abstractHudEntry.getId(),
                             abstractHudEntry.getName(),
-                            abstractHudEntry.getOptions().stream().map(o -> (Option<?>) o).collect(Collectors.toList())
+                            abstractHudEntry.getConfigurationOptions().stream().map(o -> (Option<?>) o).collect(Collectors.toList())
                     )
             );
         });

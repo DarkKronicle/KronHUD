@@ -5,10 +5,13 @@ import io.github.darkkronicle.darkkore.config.options.Option;
 import io.github.darkkronicle.darkkore.gui.Tab;
 import io.github.darkkronicle.darkkore.gui.components.Component;
 import io.github.darkkronicle.darkkore.gui.components.impl.ButtonComponent;
+import io.github.darkkronicle.darkkore.gui.components.impl.TextComponent;
 import io.github.darkkronicle.darkkore.gui.components.impl.ToggleComponent;
 import io.github.darkkronicle.darkkore.gui.components.transform.ListComponent;
+import io.github.darkkronicle.darkkore.gui.components.transform.PositionedComponent;
 import io.github.darkkronicle.darkkore.gui.config.OptionComponent;
 import io.github.darkkronicle.darkkore.gui.config.SettingsButtonComponent;
+import io.github.darkkronicle.darkkore.util.Dimensions;
 import io.github.darkkronicle.darkkore.util.FluidText;
 import io.github.darkkronicle.darkkore.util.StringUtil;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
@@ -31,7 +34,7 @@ public class HudEntryComponent extends OptionComponent<AbstractHudEntry, HudEntr
         AbstractHudEntry entry = getOption().getValue();
         return new FluidText(
                 "§7§o" + StringUtil.translate(
-                        "texts.kronhud.optiontype.info." + entry.getId().getNamespace() + "." + entry.getId().getPath()
+                        "texts.kronhud.optiontype.info.hudconfig"
                 )
         );
     }
@@ -43,15 +46,53 @@ public class HudEntryComponent extends OptionComponent<AbstractHudEntry, HudEntr
     }
 
     @Override
+    public void addComponents(Dimensions bounds) {
+        TextComponent nameComp = new TextComponent(parent, bounds.getWidth() - 160, -1, StringUtil.translateToText(option.getNameKey()));
+        addComponent(
+                new PositionedComponent(
+                        parent, nameComp,
+                        4,
+                        3,
+                        nameComp.getBoundingBox().width(),
+                        nameComp.getBoundingBox().height()
+                )
+        );
+        setHeight(nameComp.getHeight() + 6);
+        Component comp = getMainComponent();
+        addComponent(
+                new PositionedComponent(
+                        parent, comp,
+                        bounds.getWidth() - comp.getBoundingBox().width() - 2,
+                        3,
+                        comp.getBoundingBox().width(),
+                        comp.getBoundingBox().height()
+                )
+        );
+        onUpdate();
+    }
+
+    @Override
+    public void onUpdate() {
+        // This is only used to reset values
+    }
+
+    @Override
     public Component getMainComponent() {
         AbstractHudEntry entry = getOption().getValue();
         ToggleComponent onOff = new ToggleComponent(
                 parent,
                 entry.isEnabled(),
+                -1,
+                14,
                 CommonColors.getButtonColor(),
                 CommonColors.getButtonHover(),
                 entry::setEnabled
-        );
+        ) {
+            @Override
+            public String getName() {
+                return StringUtil.translate("kronhud.component.toggle." + getValue());
+            }
+        };
         ButtonComponent settings = new SettingsButtonComponent(
                 parent,
                 14,
@@ -63,7 +104,7 @@ public class HudEntryComponent extends OptionComponent<AbstractHudEntry, HudEntr
                             List.of(Tab.ofOptions(
                                 entry.getId(),
                                 entry.getName(),
-                                entry.getOptions().stream().map(o -> (Option<?>) o).collect(Collectors.toList())
+                                entry.getConfigurationOptions().stream().map(o -> (Option<?>) o).collect(Collectors.toList())
                             ))
                     );
                     screen.setParent(parent);

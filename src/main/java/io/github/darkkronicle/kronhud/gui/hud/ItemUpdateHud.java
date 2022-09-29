@@ -1,6 +1,5 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
-import io.github.darkkronicle.darkkore.config.options.Option;
 import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.config.KronInteger;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
@@ -194,8 +193,8 @@ public class ItemUpdateHud extends AbstractHudEntry {
     }
 
     @Override
-    public List<KronConfig<?>> getOptions() {
-        List<KronConfig<?>> options = super.getOptions();
+    public List<KronConfig<?>> getConfigurationOptions() {
+        List<KronConfig<?>> options = super.getConfigurationOptions();
         options.add(shadow);
         options.add(timeout);
         return options;

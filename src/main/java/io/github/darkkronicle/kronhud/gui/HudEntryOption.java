@@ -21,7 +21,7 @@ public class HudEntryOption extends BasicOption<AbstractHudEntry> {
     public void save(ConfigObject config) {
         AbstractHudEntry entry = getValue();
         ConfigObject obj = config.createNew();
-        for (KronConfig<?> option : entry.getAllOptions()) {
+        for (KronConfig<?> option : entry.getSaveOptions()) {
             option.save(obj);
         }
         config.set(entry.getId().toString(), obj);
@@ -34,7 +34,7 @@ public class HudEntryOption extends BasicOption<AbstractHudEntry> {
         if (nested.isEmpty()) {
             return;
         }
-        for (KronConfig<?> option : value.getAllOptions()) {
+        for (KronConfig<?> option : value.getSaveOptions()) {
             option.load(nested.get());
         }
     }

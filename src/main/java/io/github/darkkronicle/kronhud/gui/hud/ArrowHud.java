@@ -46,7 +46,7 @@ public class ArrowHud extends AbstractHudEntry {
             fillRect(matrices, getBounds(), backgroundColor.getValue());
         }
         drawCenteredString(
-                matrices, client.textRenderer, String.valueOf(arrows), new DrawPosition(pos.x() + width / 2, pos.y() + height - 10),
+                matrices, client.textRenderer, String.valueOf(arrows), pos.x() + width / 2, pos.y() + height - 10,
                 textColor.getValue(), shadow.getValue()
         );
         ItemUtil.renderGuiItemModel(matrices, currentArrow, pos.x() + 2, pos.y() + 2);
@@ -83,7 +83,7 @@ public class ArrowHud extends AbstractHudEntry {
         scale(matrices);
         DrawPosition pos = getPos();
         drawCenteredString(
-                matrices, client.textRenderer, "64", new DrawPosition(pos.x() + width / 2, pos.y() + height - 10), textColor.getValue(),
+                matrices, client.textRenderer, "64", pos.x() + width / 2, pos.y() + height - 10, textColor.getValue(),
                 shadow.getValue()
         );
         ItemUtil.renderGuiItemModel(matrices, new ItemStack(Items.ARROW), pos.x() + 2, pos.y() + 2);
@@ -92,8 +92,8 @@ public class ArrowHud extends AbstractHudEntry {
     }
 
     @Override
-    public List<KronConfig<?>> getOptions() {
-        List<KronConfig<?>> options = super.getOptions();
+    public List<KronConfig<?>> getConfigurationOptions() {
+        List<KronConfig<?>> options = super.getConfigurationOptions();
         options.add(textColor);
         options.add(shadow);
         options.add(background);

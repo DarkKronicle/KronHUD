@@ -1,6 +1,5 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
-import io.github.darkkronicle.darkkore.config.options.Option;
 import io.github.darkkronicle.darkkore.util.Color;
 import io.github.darkkronicle.kronhud.config.KronColor;
 import io.github.darkkronicle.kronhud.config.KronConfig;
@@ -162,8 +161,8 @@ public class KeystrokeHud extends AbstractHudEntry {
     }
 
     @Override
-    public List<KronConfig<?>> getOptions() {
-        List<KronConfig<?>> options = super.getOptions();
+    public List<KronConfig<?>> getConfigurationOptions() {
+        List<KronConfig<?>> options = super.getConfigurationOptions();
         options.add(textColor);
         options.add(pressedTextColor);
         options.add(shadow);

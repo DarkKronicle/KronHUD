@@ -1,6 +1,5 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
-import io.github.darkkronicle.darkkore.config.options.Option;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.config.KronConfig;
 import net.minecraft.client.MinecraftClient;
@@ -35,8 +34,8 @@ public class SpeedHud extends CleanHudEntry {
     }
 
     @Override
-    public List<KronConfig<?>> getOptions() {
-        List<KronConfig<?>> options = super.getOptions();
+    public List<KronConfig<?>> getConfigurationOptions() {
+        List<KronConfig<?>> options = super.getConfigurationOptions();
         options.add(horizontal);
         return options;
     }

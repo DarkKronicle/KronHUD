@@ -13,6 +13,8 @@ import io.github.darkkronicle.kronhud.util.DrawUtil;
 import io.github.darkkronicle.kronhud.util.Rectangle;
 import lombok.Setter;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.BufferRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -25,19 +27,26 @@ import java.util.stream.Collectors;
 public abstract class AbstractHudEntry extends DrawUtil {
 
     protected KronBoolean enabled = new KronBoolean("enabled", null, false);
-    public KronDouble scale = new KronDouble("scale", null, 1, 0.1F, 2);
+    public KronDouble scale = new KronDouble("scale", null, 1, 0.1F, 2, this);
     protected KronColor textColor = new KronColor("textcolor", null, ColorUtil.WHITE);
     protected KronBoolean shadow = new KronBoolean("shadow", null, getShadowDefault());
     protected KronBoolean background = new KronBoolean("background", null, true);
     protected KronColor backgroundColor = new KronColor("backgroundcolor", null, new Color(0x64000000));
-    private final KronDouble x = new KronDouble("x", null, getDefaultX(), 0, 1);
-    private final KronDouble y = new KronDouble("y", null, getDefaultY(), 0, 1);
+    private final KronDouble x = new KronDouble("x", null, getDefaultX(), 0, 1, this);
+    private final KronDouble y = new KronDouble("y", null, getDefaultY(), 0, 1, this);
+
+    private Rectangle scaledBounds = null;
+    private Rectangle unscaledBounds = null;
+    private DrawPosition scaledPosition = null;
+    private DrawPosition unscaledPosition;
 
     public int width;
     public int height;
     @Setter
     protected boolean hovered = false;
     protected MinecraftClient client = MinecraftClient.getInstance();
+
+    private BufferBuilder.BuiltBuffer
 
 
     public AbstractHudEntry(int width, int height) {
@@ -119,9 +128,7 @@ public abstract class AbstractHudEntry extends DrawUtil {
     }
 
     public Rectangle getScaledBounds() {
-        return new Rectangle(getX(), getY(), (int) Math.round(width * scale.getValue()),
-                (int) Math.round(height * scale.getValue())
-        );
+        return scaledBounds;
     }
 
     /**
@@ -130,7 +137,7 @@ public abstract class AbstractHudEntry extends DrawUtil {
      * @return The bounds.
      */
     public Rectangle getBounds() {
-        return new Rectangle(getPos().x(), getPos().y(), width, height);
+        return unscaledBounds;
     }
 
     public float getScale() {
@@ -142,16 +149,24 @@ public abstract class AbstractHudEntry extends DrawUtil {
     }
 
     public DrawPosition getPos() {
-        return getScaledPos().divide(getScale());
+        return unscaledPosition;
     }
 
     public DrawPosition getScaledPos() {
-        return getScaledPos(getScale());
+        return scaledPosition;
     }
 
-    public DrawPosition getScaledPos(float scale) {
+    public void setBounds() {
+        setBounds(getScale());
+    }
+
+    public void setBounds(float scale) {
         if (client.getWindow() == null) {
-            return new DrawPosition(0, 0);
+            scaledPosition = new DrawPosition(0, 0);
+            unscaledPosition = new DrawPosition(0, 0);
+            unscaledBounds = new Rectangle(0, 0, 1, 1);
+            scaledBounds = new Rectangle(0, 0, 1, 1);
+            return;
         }
         int scaledX = floatToInt(x.getValue().floatValue(), client.getWindow().getScaledWidth(),
                 Math.round(width * scale)
@@ -159,23 +174,26 @@ public abstract class AbstractHudEntry extends DrawUtil {
         int scaledY = floatToInt(y.getValue().floatValue(), client.getWindow().getScaledHeight(),
                 Math.round(height * scale)
         );
-        return new DrawPosition(scaledX, scaledY);
+        scaledPosition = new DrawPosition(scaledX, scaledY);
+        unscaledPosition = scaledPosition.divide(getScale());
+        scaledBounds = new Rectangle(getX(), getY(), Math.round(width * getScale()), Math.round(height * getScale()));
+        unscaledBounds = new Rectangle(getX(), getY(), width, height);
     }
 
     public Tab getOptionWrapper() {
         // Need to cast KronConfig to Option
-        return Tab.ofOptions(getId(), getNameKey(), getOptions().stream().map((o -> (Option<?>) o)).collect(Collectors.toList()));
+        return Tab.ofOptions(getId(), getNameKey(), getConfigurationOptions().stream().map((o -> (Option<?>) o)).collect(Collectors.toList()));
     }
 
-    public List<KronConfig<?>> getOptions() {
+    public List<KronConfig<?>> getConfigurationOptions() {
         List<KronConfig<?>> options = new ArrayList<>();
         options.add(enabled);
         options.add(scale);
         return options;
     }
 
-    public List<KronConfig<?>> getAllOptions() {
-        List<KronConfig<?>> options = getOptions();
+    public List<KronConfig<?>> getSaveOptions() {
+        List<KronConfig<?>> options = getConfigurationOptions();
         options.add(x);
         options.add(y);
         return options;

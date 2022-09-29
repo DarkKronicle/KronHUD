@@ -1,8 +1,6 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import io.github.darkkronicle.darkkore.config.options.BooleanOption;
-import io.github.darkkronicle.darkkore.config.options.Option;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
@@ -123,8 +121,8 @@ public class BossBarHud extends AbstractHudEntry {
     }
 
     @Override
-    public List<KronConfig<?>> getOptions() {
-        List<KronConfig<?>> options = super.getOptions();
+    public List<KronConfig<?>> getConfigurationOptions() {
+        List<KronConfig<?>> options = super.getConfigurationOptions();
         options.add(text);
         options.add(textColor);
         options.add(shadow);

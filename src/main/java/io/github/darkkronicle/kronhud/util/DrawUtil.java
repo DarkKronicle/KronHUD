@@ -34,17 +34,17 @@ public class DrawUtil {
 
 
     public static void drawCenteredString(MatrixStack matrices, TextRenderer renderer,
-                                          String text, DrawPosition position,
+                                          String text, int x, int y,
                                           Color color, boolean shadow) {
-        drawCenteredString(matrices, renderer, text, position, color.color(), shadow);
+        drawCenteredString(matrices, renderer, text, x, y, color.color(), shadow);
     }
 
 
     public static void drawCenteredString(MatrixStack matrices, TextRenderer renderer,
-                                          String text, DrawPosition position,
+                                          String text, int x, int y,
                                           int color, boolean shadow) {
-        drawString(matrices, renderer, text, (float)(position.x() - renderer.getWidth(text) / 2),
-                (float) position.y(),
+        drawString(matrices, renderer, text, (float)(x - renderer.getWidth(text) / 2),
+                (float) y,
                 color, shadow);
     }
 
