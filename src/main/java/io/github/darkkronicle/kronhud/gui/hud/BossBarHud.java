@@ -1,12 +1,11 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import fi.dy.masa.malilib.config.IConfigBase;
-import fi.dy.masa.malilib.config.options.ConfigBoolean;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
+import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.mixins.AccessorBossBarHud;
-import io.github.darkkronicle.kronhud.util.Color;
+import io.github.darkkronicle.kronhud.util.ColorUtil;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
@@ -35,8 +34,8 @@ public class BossBarHud extends AbstractHudEntry {
 
     private Map<UUID, ClientBossBar> bossBars;
     private final MinecraftClient client;
-    private ConfigBoolean text = new KronBoolean("text", ID.getPath(), true);
-    private ConfigBoolean bar = new KronBoolean("bar", ID.getPath(), true);
+    private final KronBoolean text = new KronBoolean("text", ID.getPath(), true);
+    private final KronBoolean bar = new KronBoolean("bar", ID.getPath(), true);
     // TODO custom colour
 
     public BossBarHud() {
@@ -76,7 +75,7 @@ public class BossBarHud extends AbstractHudEntry {
         renderPlaceholderBackground(matrices);
         scale(matrices);
         DrawPosition pos = getPos();
-        outlineRect(matrices, getBounds(), Color.BLACK);
+        outlineRect(matrices, getBounds(), ColorUtil.BLACK);
         renderBossBar(matrices, pos.x(), pos.y() + 12, placeholder);
         renderBossBar(matrices, pos.x(), pos.y() + 31, placeholder2);
         hovered = false;
@@ -85,7 +84,7 @@ public class BossBarHud extends AbstractHudEntry {
 
     private void renderBossBar(MatrixStack matrices, int x, int y, BossBar bossBar) {
         RenderSystem.setShaderTexture(0, BARS_TEXTURE);
-        if (bar.getBooleanValue()) {
+        if (bar.getValue()) {
             DrawableHelper.drawTexture(matrices, x, y, 0, bossBar.getColor().ordinal() * 5 * 2, 182, 5, 256, 256);
             if (bossBar.getStyle() != BossBar.Style.PROGRESS) {
                 DrawableHelper.drawTexture(matrices, x, y, 0, 80 + (bossBar.getStyle().ordinal() - 1) * 5 * 2, 182, 5, 256, 256);
@@ -99,14 +98,14 @@ public class BossBarHud extends AbstractHudEntry {
                 }
             }
         }
-        if (text.getBooleanValue()) {
+        if (text.getValue()) {
             Text text = bossBar.getName();
             float textX = x + ((float) width / 2) - ((float) client.textRenderer.getWidth(text) / 2);
             float textY = y - 9;
-            if (shadow.getBooleanValue()) {
-                client.textRenderer.drawWithShadow(matrices, text, textX, textY, textColor.getColor().color());
+            if (shadow.getValue()) {
+                client.textRenderer.drawWithShadow(matrices, text, textX, textY, textColor.getValue().color());
             } else {
-                client.textRenderer.draw(matrices, text, textX, textY, textColor.getColor().color());
+                client.textRenderer.draw(matrices, text, textX, textY, textColor.getValue().color());
             }
         }
     }
@@ -122,12 +121,13 @@ public class BossBarHud extends AbstractHudEntry {
     }
 
     @Override
-    public void addConfigOptions(List<IConfigBase> options) {
-        super.addConfigOptions(options);
+    public List<KronConfig<?>> getConfigurationOptions() {
+        List<KronConfig<?>> options = super.getConfigurationOptions();
         options.add(text);
         options.add(textColor);
         options.add(shadow);
         options.add(bar);
+        return options;
     }
 
     public static class CustomBossBar extends BossBar {

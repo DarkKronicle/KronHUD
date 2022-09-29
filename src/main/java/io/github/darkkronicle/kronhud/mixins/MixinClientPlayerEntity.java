@@ -12,10 +12,10 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public abstract class MixinClientPlayerEntity {
 
     /**
+     * @param sprintKey the sprint key that the user has bound
+     * @return whether the user should try to sprint
      * @author DragonEggBedrockBreaking
      * @license MPL-2.0
-     * @param sprintKey the sprint key that the user has bound
-     * @return whether or not the user should try to sprint
      */
     @Redirect(
             method = "tickMovement",
@@ -26,6 +26,6 @@ public abstract class MixinClientPlayerEntity {
     )
     private boolean alwaysPressed(KeyBinding sprintKey) {
         ToggleSprintHud hud = (ToggleSprintHud) KronHUD.hudManager.get(ToggleSprintHud.ID);
-        return hud.sprintToggled.getBooleanValue() || sprintKey.isPressed();
+        return hud.getSprintToggled().getValue() || sprintKey.isPressed();
     }
 }

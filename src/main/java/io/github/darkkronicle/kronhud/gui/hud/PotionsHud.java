@@ -1,9 +1,9 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import fi.dy.masa.malilib.config.IConfigBase;
+import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
-import io.github.darkkronicle.kronhud.util.Color;
+import io.github.darkkronicle.kronhud.util.ColorUtil;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.texture.Sprite;
@@ -38,10 +38,6 @@ public class PotionsHud extends AbstractHudEntry {
             for (int i = 0; i < effects.size(); i++) {
                 StatusEffectInstance effect = effects.get(i);
                 StatusEffect type = effect.getEffectType();
-//                Removed - night vision appears in vanilla, just not with hideParticles flag.
-//                if (type == StatusEffects.NIGHT_VISION) {
-//                    continue;
-//                }
                 if (i > 8) {
                     break;
                 }
@@ -50,8 +46,9 @@ public class PotionsHud extends AbstractHudEntry {
                 RenderSystem.setShaderTexture(0, sprite.getAtlas().getId());
                 RenderSystem.setShaderColor(1, 1, 1, 1);
                 DrawableHelper.drawSprite(matrices, pos.x(), pos.y() + 1 + lastY, 0, 18, 18, sprite);
-                drawString(matrices, client.textRenderer, StatusEffectUtil.durationToString(effect, 1),
-                        pos.x() + 20, pos.y() + 6 + lastY, textColor.getColor().color(), shadow.getBooleanValue());
+                drawString(matrices, client.textRenderer, StatusEffectUtil.durationToString(effect, 1), pos.x() + 20, pos.y() + 6 + lastY,
+                        textColor.getValue().color(), shadow.getValue()
+                );
 
                 lastY += 20;
             }
@@ -73,17 +70,21 @@ public class PotionsHud extends AbstractHudEntry {
         RenderSystem.setShaderTexture(0, sprite.getAtlas().getId());
         RenderSystem.setShaderColor(1, 1, 1, 1);
         DrawableHelper.drawSprite(matrices, pos.x() + 1, pos.y() + 1, 0, 18, 18, sprite);
-        drawString(matrices, client.textRenderer, StatusEffectUtil.durationToString(effect, 1), pos.x() + 20,
-                pos.y() + 7, Color.WHITE.color(), shadow.getBooleanValue());
+        drawString(
+                matrices, client.textRenderer, StatusEffectUtil.durationToString(effect, 1),
+                pos.x() + 20, pos.y() + 7,
+                ColorUtil.WHITE.color(), shadow.getValue()
+        );
         hovered = false;
         matrices.pop();
     }
 
     @Override
-    public void addConfigOptions(List<IConfigBase> options) {
-        super.addConfigOptions(options);
+    public List<KronConfig<?>> getConfigurationOptions() {
+        List<KronConfig<?>> options = super.getConfigurationOptions();
         options.add(textColor);
         options.add(shadow);
+        return options;
     }
 
     @Override

@@ -1,16 +1,28 @@
 package io.github.darkkronicle.kronhud.config;
 
-import fi.dy.masa.malilib.config.options.ConfigDouble;
-import fi.dy.masa.malilib.config.options.ConfigInteger;
+import io.github.darkkronicle.darkkore.config.options.DoubleOption;
+import io.github.darkkronicle.kronhud.KronHUD;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
+import org.jetbrains.annotations.Nullable;
 
-public class KronDouble extends ConfigDouble implements KronConfig {
+public class KronDouble extends DoubleOption implements KronConfig<Double> {
 
-    private String entryId;
+    private final String entryId;
+    private final AbstractHudEntry refreshHud;
 
-    public KronDouble(String id, String entryId, double defaultValue, double min, double max) {
-        super(id, defaultValue, min, max, null);
+    public KronDouble(String id, String entryId, double defaultValue, double min, double max, @Nullable AbstractHudEntry toRefresh) {
+        super(id, entryId, "", defaultValue, min, max);
         this.entryId = entryId;
+        this.refreshHud = toRefresh;
+    }
+
+    @Override
+    public void setValue(Double value) {
+        super.setValue(value);
+        // Scale has changed!
+        if (refreshHud != null) {
+            refreshHud.setBounds();
+        }
     }
 
     @Override
@@ -20,16 +32,16 @@ public class KronDouble extends ConfigDouble implements KronConfig {
 
     @Override
     public String getId() {
-        return super.getName();
+        return super.getKey();
     }
 
     @Override
-    public String getName() {
+    public String getNameKey() {
         return KronConfig.super.getName();
     }
 
     @Override
-    public String getComment() {
+    public String getInfoKey() {
         return KronConfig.super.getComment();
     }
 

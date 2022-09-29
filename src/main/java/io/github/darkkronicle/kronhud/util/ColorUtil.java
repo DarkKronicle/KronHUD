@@ -1,51 +1,10 @@
 package io.github.darkkronicle.kronhud.util;
 
-import fi.dy.masa.malilib.config.options.ConfigColor;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.With;
-import lombok.experimental.Accessors;
+import io.github.darkkronicle.darkkore.util.Color;
+import lombok.experimental.UtilityClass;
 
-import java.util.Locale;
-
-@Accessors(fluent = true)
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Color {
-
-    @Getter
-    @With(AccessLevel.PUBLIC)
-    private final int red, green, blue;
-    @Getter
-    @With(AccessLevel.PUBLIC)
-    private final int alpha;
-    @EqualsAndHashCode.Include
-    @Getter
-    private final int color;
-
-    public Color(int color) {
-        this(color >> 16 & 0xFF, color >> 8 & 0xFF, color & 0xFF, color >> 24 & 0xFF);
-    }
-
-    public Color(int r, int g, int b) {
-        this(r, g, b, 255);
-    }
-
-    public Color(int r, int g, int b, int a) {
-        this.red = r;
-        this.green = g;
-        this.blue = b;
-        this.alpha = a;
-        int color = a;
-        color = (color << 8) + r;
-        color = (color << 8) + g;
-        color = (color << 8) + b;
-        this.color = color;
-    }
-
-    protected Color(int r, int g, int b, int a, int color) {
-        this(r, g, b, a);
-    }
+@UtilityClass
+public class ColorUtil {
 
     public static Color parse(String color) {
         try {
@@ -53,7 +12,7 @@ public class Color {
         } catch (NumberFormatException ignored) {
         }
 
-        if(color.startsWith("#")) {
+        if (color.startsWith("#")) {
             color = color.substring(1);
         } else if(color.startsWith("0x")) {
             color = color.substring(2);
@@ -72,19 +31,15 @@ public class Color {
         }
     }
 
-    @Override
-    public String toString() {
-        return String.format("#%08X", color());
-    }
 
-    public static Color WHITE = new Color(255, 255, 255);
-    public static Color BLACK = new Color(0, 0, 0);
-    public static Color GRAY = new Color(128, 128, 128);
-    public static Color DARK_GRAY = new Color(49, 51, 53);
-    public static Color SELECTOR_RED = new Color(191, 34, 34);
-    public static Color SELECTOR_GREEN = new Color(53, 219, 103);
-    public static Color SELECTOR_BLUE = new Color(51, 153, 255);
-    public static Color ERROR = new Color(255, 0, 255);
+    public static Color WHITE = new Color(255, 255, 255, 255);
+    public static Color BLACK = new Color(0, 0, 0, 255);
+    public static Color GRAY = new Color(128, 128, 128, 255);
+    public static Color DARK_GRAY = new Color(49, 51, 53, 255);
+    public static Color SELECTOR_RED = new Color(191, 34, 34, 255);
+    public static Color SELECTOR_GREEN = new Color(53, 219, 103, 255);
+    public static Color SELECTOR_BLUE = new Color(51, 153, 255, 255);
+    public static Color ERROR = new Color(255, 0, 255, 255);
 
     /**
      * Blends two {@link Color}s based off of a percentage.
@@ -94,7 +49,7 @@ public class Color {
      * @param percentage the percentage to blend
      * @return the simple color
      */
-    public static Color blend(Color original, Color blend, float percentage) {
+    public Color blend(Color original, Color blend, float percentage) {
         if (percentage >= 1) {
             return blend;
         }
@@ -116,7 +71,7 @@ public class Color {
      * @param percent percent to blend
      * @return the blended int
      */
-    public static int blendInt(int start, int end, float percent) {
+    public int blendInt(int start, int end, float percent) {
         if (percent <= 0) {
             return start;
         }

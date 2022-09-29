@@ -1,16 +1,15 @@
 package io.github.darkkronicle.kronhud.config;
 
-import fi.dy.masa.malilib.config.IConfigOptionListEntry;
-import fi.dy.masa.malilib.config.options.ConfigDouble;
-import fi.dy.masa.malilib.config.options.ConfigOptionList;
-import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
+import io.github.darkkronicle.darkkore.config.options.ListOption;
+import io.github.darkkronicle.darkkore.config.options.Option;
+import io.github.darkkronicle.darkkore.config.options.OptionListEntry;
 
-public class KronOptionList extends ConfigOptionList implements KronConfig {
+public class KronOptionList<T extends OptionListEntry<T>> extends ListOption<T> implements KronConfig<T> {
 
-    private String entryId;
+    private final String entryId;
 
-    public KronOptionList(String id, String entryId, IConfigOptionListEntry defaultValue) {
-        super(id, defaultValue, null);
+    public KronOptionList(String id, String entryId, T defaultValue) {
+        super(id, entryId, "", defaultValue);
         this.entryId = entryId;
     }
 
@@ -20,16 +19,16 @@ public class KronOptionList extends ConfigOptionList implements KronConfig {
 
     @Override
     public String getId() {
-        return super.getName();
+        return super.getKey();
     }
 
     @Override
-    public String getName() {
+    public String getNameKey() {
         return KronConfig.super.getName();
     }
 
     @Override
-    public String getComment() {
+    public String getInfoKey() {
         return KronConfig.super.getComment();
     }
 

@@ -30,6 +30,12 @@ public class HudManager {
         });
     }
 
+    public void refreshAllBounds() {
+        for (AbstractHudEntry entry : getEntries()) {
+            entry.setBounds();
+        }
+    }
+
     public HudManager add(AbstractHudEntry entry) {
         entries.put(entry.getId(), entry);
         return this;
@@ -88,6 +94,4 @@ public class HudManager {
         }
         return bounds;
     }
-
-
 }

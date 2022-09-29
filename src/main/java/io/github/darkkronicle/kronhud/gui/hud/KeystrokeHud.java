@@ -1,10 +1,11 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
-import fi.dy.masa.malilib.config.IConfigBase;
+import io.github.darkkronicle.darkkore.util.Color;
 import io.github.darkkronicle.kronhud.config.KronColor;
+import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.hooks.KronHudHooks;
-import io.github.darkkronicle.kronhud.util.Color;
+import io.github.darkkronicle.kronhud.util.ColorUtil;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import io.github.darkkronicle.kronhud.util.Rectangle;
 import net.minecraft.client.MinecraftClient;
@@ -23,8 +24,8 @@ import java.util.Optional;
 public class KeystrokeHud extends AbstractHudEntry {
     public static final Identifier ID = new Identifier("kronhud", "keystrokehud");
 
-    private KronColor pressedTextColor = new KronColor("heldtextcolor", ID.getPath(), "#FF000000");
-    private KronColor pressedBackgroundColor = new KronColor( "heldbackgroundcolor", ID.getPath(), "#64FFFFFF");
+    private final KronColor pressedTextColor = new KronColor("heldtextcolor", ID.getPath(), new Color(0xFF000000));
+    private final KronColor pressedBackgroundColor = new KronColor("heldbackgroundcolor", ID.getPath(), new Color(0x64FFFFFF));
     private ArrayList<Keystroke> keystrokes;
     private final MinecraftClient client;
 
@@ -35,11 +36,14 @@ public class KeystrokeHud extends AbstractHudEntry {
     }
 
     public static Optional<String> getMouseKeyBindName(KeyBinding keyBinding) {
-        if (keyBinding.getBoundKeyTranslationKey().equalsIgnoreCase(InputUtil.Type.MOUSE.createFromCode(GLFW.GLFW_MOUSE_BUTTON_1).getTranslationKey())) {
+        if (keyBinding.getBoundKeyTranslationKey()
+                      .equalsIgnoreCase(InputUtil.Type.MOUSE.createFromCode(GLFW.GLFW_MOUSE_BUTTON_1).getTranslationKey())) {
             return Optional.of("LMB");
-        } else if (keyBinding.getBoundKeyTranslationKey().equalsIgnoreCase(InputUtil.Type.MOUSE.createFromCode(GLFW.GLFW_MOUSE_BUTTON_2).getTranslationKey())) {
+        } else if (keyBinding.getBoundKeyTranslationKey()
+                             .equalsIgnoreCase(InputUtil.Type.MOUSE.createFromCode(GLFW.GLFW_MOUSE_BUTTON_2).getTranslationKey())) {
             return Optional.of("RMB");
-        } else if (keyBinding.getBoundKeyTranslationKey().equalsIgnoreCase(InputUtil.Type.MOUSE.createFromCode(GLFW.GLFW_MOUSE_BUTTON_3).getTranslationKey())) {
+        } else if (keyBinding.getBoundKeyTranslationKey()
+                             .equalsIgnoreCase(InputUtil.Type.MOUSE.createFromCode(GLFW.GLFW_MOUSE_BUTTON_3).getTranslationKey())) {
             return Optional.of("MMB");
         }
         return Optional.empty();
@@ -71,11 +75,13 @@ public class KeystrokeHud extends AbstractHudEntry {
             Rectangle bounds = stroke.bounds;
             Rectangle spaceBounds = new Rectangle(bounds.x() + stroke.offset.x() + 4,
                     bounds.y() + stroke.offset.y() + 2,
-                    bounds.width() - 8, 1);
+                    bounds.width() - 8, 1
+            );
             fillRect(matrices, spaceBounds, stroke.getFGColor());
-            if (shadow.getBooleanValue()) {
+            if (shadow.getValue()) {
                 fillRect(matrices, spaceBounds.offset(1, 1),
-                        new Color((stroke.getFGColor().color() & 16579836) >> 2 | stroke.getFGColor().color() & -16777216));
+                        new Color((stroke.getFGColor().color() & 16579836) >> 2 | stroke.getFGColor().color() & -16777216)
+                );
             }
         }));
         KeyBinding.unpressAll();
@@ -140,7 +146,7 @@ public class KeystrokeHud extends AbstractHudEntry {
                     ((float) client.textRenderer.getWidth(word) / 2);
             float y = strokeBounds.y() + stroke.offset.y() + ((float) strokeBounds.height() / 2) - 4;
 
-            drawString(matrices, client.textRenderer, word, x, y, stroke.getFGColor().color(), shadow.getBooleanValue());
+            drawString(matrices, client.textRenderer, word, x, y, stroke.getFGColor().color(), shadow.getValue());
         });
     }
 
@@ -155,14 +161,15 @@ public class KeystrokeHud extends AbstractHudEntry {
     }
 
     @Override
-    public void addConfigOptions(List<IConfigBase> options) {
-        super.addConfigOptions(options);
+    public List<KronConfig<?>> getConfigurationOptions() {
+        List<KronConfig<?>> options = super.getConfigurationOptions();
         options.add(textColor);
         options.add(pressedTextColor);
         options.add(shadow);
         options.add(background);
         options.add(backgroundColor);
         options.add(pressedBackgroundColor);
+        return options;
     }
 
     public class Keystroke {
@@ -197,9 +204,10 @@ public class KeystrokeHud extends AbstractHudEntry {
             if (key.isPressed() != wasPressed) {
                 start = Util.getMeasuringTimeMs();
             }
-            if (background.getBooleanValue()) {
+            if (background.getValue()) {
                 fillRect(matrices, bounds.offset(offset),
-                        getColor());
+                        getColor()
+                );
             }
             if ((Util.getMeasuringTimeMs() - start) / animTime >= 1) {
                 start = -1;
@@ -212,18 +220,23 @@ public class KeystrokeHud extends AbstractHudEntry {
         }
 
         public Color getColor() {
-            return key.isPressed() ? Color.blend(backgroundColor.getColor(), pressedBackgroundColor.getColor(),
-                    getPercentPressed()) :
-                    Color.blend(pressedBackgroundColor.getColor(),
-                    backgroundColor.getColor(),
-                    getPercentPressed());
+            return key.isPressed() ? ColorUtil.blend(backgroundColor.getValue(), pressedBackgroundColor.getValue(),
+                    getPercentPressed()
+            ) :
+                   ColorUtil.blend(
+                           pressedBackgroundColor.getValue(),
+                           backgroundColor.getValue(),
+                           getPercentPressed()
+                   );
         }
 
         public Color getFGColor() {
-            return key.isPressed() ? Color.blend(textColor.getColor(), pressedTextColor.getColor(), getPercentPressed()) :
-                    Color.blend(pressedTextColor.getColor(),
-                            textColor.getColor(),
-                            getPercentPressed());
+            return key.isPressed() ? ColorUtil.blend(textColor.getValue(), pressedTextColor.getValue(), getPercentPressed()) :
+                   ColorUtil.blend(
+                           pressedTextColor.getValue(),
+                           textColor.getValue(),
+                           getPercentPressed()
+                   );
         }
 
         public void render(MatrixStack matrices) {

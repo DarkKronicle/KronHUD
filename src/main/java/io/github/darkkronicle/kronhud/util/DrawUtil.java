@@ -1,14 +1,11 @@
 package io.github.darkkronicle.kronhud.util;
 
-import fi.dy.masa.malilib.util.Color4f;
-import lombok.experimental.UtilityClass;
+import io.github.darkkronicle.darkkore.util.Color;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Matrix4f;
 import org.lwjgl.opengl.GL11;
 
 // Cannot use @UtilityClass annotation. Class can't be marked as final.
@@ -37,17 +34,17 @@ public class DrawUtil {
 
 
     public static void drawCenteredString(MatrixStack matrices, TextRenderer renderer,
-                                          String text, DrawPosition position,
+                                          String text, int x, int y,
                                           Color color, boolean shadow) {
-        drawCenteredString(matrices, renderer, text, position, color.color(), shadow);
+        drawCenteredString(matrices, renderer, text, x, y, color.color(), shadow);
     }
 
 
     public static void drawCenteredString(MatrixStack matrices, TextRenderer renderer,
-                                          String text, DrawPosition position,
+                                          String text, int x, int y,
                                           int color, boolean shadow) {
-        drawString(matrices, renderer, text, (float)(position.x() - renderer.getWidth(text) / 2),
-                (float) position.y(),
+        drawString(matrices, renderer, text, (float)(x - renderer.getWidth(text) / 2),
+                (float) y,
                 color, shadow);
     }
 

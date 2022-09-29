@@ -10,11 +10,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(BossBarHud.class)
 public class MixinBossBarHud {
+
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void render(MatrixStack matrices, CallbackInfo ci) {
-        io.github.darkkronicle.kronhud.gui.hud.BossBarHud hud = (io.github.darkkronicle.kronhud.gui.hud.BossBarHud) KronHUD.hudManager.get(io.github.darkkronicle.kronhud.gui.hud.BossBarHud.ID);
+        io.github.darkkronicle.kronhud.gui.hud.BossBarHud hud = (io.github.darkkronicle.kronhud.gui.hud.BossBarHud) KronHUD.hudManager.get(
+                io.github.darkkronicle.kronhud.gui.hud.BossBarHud.ID);
         if (hud != null && hud.isEnabled()) {
             ci.cancel();
         }
     }
+
 }

@@ -1,6 +1,8 @@
 package io.github.darkkronicle.kronhud;
 
 import com.google.gson.JsonObject;
+import io.github.darkkronicle.darkkore.config.ConfigurationManager;
+import io.github.darkkronicle.darkkore.intialization.InitializationHandler;
 import io.github.darkkronicle.kronhud.config.ConfigHandler;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.gui.hud.*;
@@ -15,15 +17,17 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Environment(EnvType.CLIENT)
 public class KronHUD implements ClientModInitializer {
     public static HudManager hudManager;
-    public static JsonObject storage;
-    public static ConfigHandler storageHandler;
+    public static Logger logger = LoggerFactory.getLogger("kronhud");
     @Getter
     private boolean setupComplete;
 
+    public static final String MOD_ID = "kronhud";
 
     @Override
     public void onInitializeClient() {
@@ -39,6 +43,9 @@ public class KronHUD implements ClientModInitializer {
                 client.setScreen(new HudEditScreen(client.currentScreen));
             }
         });
+        InitializationHandler.getInstance().registerInitializer(MOD_ID, 0, new InitHandler());
+        ConfigurationManager.getInstance().add(ConfigHandler.getInstance());
+
     }
 
     public void initHuds() {
@@ -60,7 +67,6 @@ public class KronHUD implements ClientModInitializer {
         hudManager.add(new ActionBarHud());
         hudManager.add(new ToggleSprintHud());
         HudRenderCallback.EVENT.register((matrixStack, v) -> hudManager.render(matrixStack));
-        storageHandler = new ConfigHandler();
         setupComplete = true;
     }
 

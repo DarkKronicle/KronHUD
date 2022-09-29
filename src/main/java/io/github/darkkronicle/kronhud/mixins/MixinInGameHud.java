@@ -23,7 +23,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(InGameHud.class)
 public class MixinInGameHud {
 
-    @Shadow private int overlayRemaining;
+    @Shadow
+    private int overlayRemaining;
 
     @Inject(method = "renderStatusEffectOverlay", at = @At("HEAD"), cancellable = true)
     public void renderStatusEffect(MatrixStack matrices, CallbackInfo ci) {
@@ -50,9 +51,9 @@ public class MixinInGameHud {
     }
 
     @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;drawWithShadow(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/text/Text;FFI)I"))
-    public int getActionBar(TextRenderer instance, MatrixStack matrices, Text message, float x, float y, int color){
+    public int getActionBar(TextRenderer instance, MatrixStack matrices, Text message, float x, float y, int color) {
         ActionBarHud hud = (ActionBarHud) KronHUD.hudManager.get(ActionBarHud.ID);
-        if (hud != null && hud.isEnabled()){
+        if (hud != null && hud.isEnabled()) {
             hud.setActionBar(message, color);
             return 0; // Doesn't matter since return value is not used
         } else {
@@ -61,10 +62,10 @@ public class MixinInGameHud {
     }
 
     @Inject(method = "setOverlayMessage", at = @At("TAIL"))
-    public void setDuration(Text message, boolean tinted, CallbackInfo ci){
+    public void setDuration(Text message, boolean tinted, CallbackInfo ci) {
         ActionBarHud hud = (ActionBarHud) KronHUD.hudManager.get(ActionBarHud.ID);
         if (hud != null && hud.isEnabled()) {
-            overlayRemaining = hud.timeShown.getIntegerValue();
+            overlayRemaining = hud.timeShown.getValue();
         }
     }
 

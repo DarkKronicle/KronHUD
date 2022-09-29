@@ -22,7 +22,7 @@ public class MixinKeybind {
     @Inject(method = "setPressed", at = @At("RETURN"))
     public void onPress(boolean pressed, CallbackInfo ci) {
         if (pressed) {
-            KronHudHooks.KEYBIND_PRESS.invoker().onPress((KeyBinding)((Object)this));
+            KronHudHooks.KEYBIND_PRESS.invoker().onPress((KeyBinding) ((Object) this));
         }
     }
 

@@ -1,6 +1,6 @@
 package io.github.darkkronicle.kronhud.util;
 
-import fi.dy.masa.malilib.util.Color4f;
+import io.github.darkkronicle.darkkore.util.Color;
 import lombok.Setter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
@@ -13,7 +13,7 @@ public class SnappingHelper {
     private final int distance = 4;
     private final HashSet<Integer> x = new HashSet<>();
     private final HashSet<Integer> y = new HashSet<>();
-    private static final Color LINE_COLOR = Color.SELECTOR_BLUE;
+    private static final Color LINE_COLOR = ColorUtil.SELECTOR_BLUE;
     @Setter
     private Rectangle current;
     private final MinecraftClient client;
@@ -63,10 +63,10 @@ public class SnappingHelper {
     public void renderAll(MatrixStack matrices) {
         for (Integer xval : x) {
             DrawUtil.fillRect(matrices, new Rectangle(xval, 0, 1, client.getWindow().getScaledHeight()),
-                    Color.WHITE);
+                    ColorUtil.WHITE);
         }
         for (Integer yval : y) {
-            DrawUtil.fillRect(matrices, new Rectangle(0, yval, client.getWindow().getScaledWidth(), 1), Color.WHITE);
+            DrawUtil.fillRect(matrices, new Rectangle(0, yval, client.getWindow().getScaledWidth(), 1), ColorUtil.WHITE);
         }
     }
 

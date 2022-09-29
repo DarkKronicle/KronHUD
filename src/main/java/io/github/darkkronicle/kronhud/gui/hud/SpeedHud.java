@@ -1,7 +1,7 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
-import fi.dy.masa.malilib.config.IConfigBase;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
+import io.github.darkkronicle.kronhud.config.KronConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
@@ -14,7 +14,7 @@ public class SpeedHud extends CleanHudEntry {
 
     public static final Identifier ID = new Identifier("kronhud", "speedhud");
     private final static NumberFormat FORMATTER = new DecimalFormat("#0.00");
-    private KronBoolean horizontal = new KronBoolean("horizontal", ID.getPath(), true);
+    private final KronBoolean horizontal = new KronBoolean("horizontal", ID.getPath(), true);
 
     @Override
     public Identifier getId() {
@@ -25,7 +25,7 @@ public class SpeedHud extends CleanHudEntry {
     public String getValue() {
         Vec3d vec = MinecraftClient.getInstance().player.getVelocity();
         double speed;
-        if (horizontal.getBooleanValue()) {
+        if (horizontal.getValue()) {
             speed = vec.horizontalLength();
         } else {
             speed = vec.length();
@@ -34,9 +34,10 @@ public class SpeedHud extends CleanHudEntry {
     }
 
     @Override
-    public void addConfigOptions(List<IConfigBase> options) {
-        super.addConfigOptions(options);
+    public List<KronConfig<?>> getConfigurationOptions() {
+        List<KronConfig<?>> options = super.getConfigurationOptions();
         options.add(horizontal);
+        return options;
     }
 
     @Override
