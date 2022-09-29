@@ -6,13 +6,14 @@
   ],
   "client": [
     "AccessorBossBarHud",
+    "AccessorMinecraftClient",
+    "MixinBossBarHud",
+    "MixinClientPlayerEntity",
+    "MixinGameRenderer",
     "MixinInGameHud",
     "MixinKeybind",
-    "AccessorMinecraftClient",
-    "MixinMouse",
-    "MixinBossBarHud",
     "MixinKeyboardInput",
-    "MixinClientPlayerEntity"
+    "MixinMouse"
   ],
   "injectors": {
     "defaultRequire": 1
