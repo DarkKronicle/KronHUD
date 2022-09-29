@@ -12,9 +12,17 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 17
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
       - name: Upload to Discord
         run: ./gradlew discord --stacktrace
         if: |
           !contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.pull_request.title, '[ci skip]')
         env:
           discord_webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          action_url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      - name: Capture build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Artifacts
+          path: build/libs/
