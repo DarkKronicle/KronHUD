@@ -46,9 +46,6 @@ public abstract class AbstractHudEntry extends DrawUtil {
     protected boolean hovered = false;
     protected MinecraftClient client = MinecraftClient.getInstance();
 
-    private BufferBuilder.BuiltBuffer
-
-
     public AbstractHudEntry(int width, int height) {
         this.width = width;
         this.height = height;
