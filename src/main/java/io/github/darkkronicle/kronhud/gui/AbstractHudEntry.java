@@ -1,12 +1,10 @@
 package io.github.darkkronicle.kronhud.gui;
 
+import io.github.darkkronicle.darkkore.colors.ExtendedColor;
 import io.github.darkkronicle.darkkore.config.options.Option;
 import io.github.darkkronicle.darkkore.gui.Tab;
 import io.github.darkkronicle.darkkore.util.Color;
-import io.github.darkkronicle.kronhud.config.KronBoolean;
-import io.github.darkkronicle.kronhud.config.KronColor;
-import io.github.darkkronicle.kronhud.config.KronConfig;
-import io.github.darkkronicle.kronhud.config.KronDouble;
+import io.github.darkkronicle.kronhud.config.*;
 import io.github.darkkronicle.kronhud.util.ColorUtil;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import io.github.darkkronicle.kronhud.util.DrawUtil;
@@ -28,10 +26,10 @@ public abstract class AbstractHudEntry extends DrawUtil {
 
     protected KronBoolean enabled = new KronBoolean("enabled", null, false);
     public KronDouble scale = new KronDouble("scale", null, 1, 0.1F, 2, this);
-    protected KronColor textColor = new KronColor("textcolor", null, ColorUtil.WHITE);
+    protected KronColor textColor = new KronColor("textcolor", null, new ExtendedColor(ColorUtil.WHITE, ExtendedColor.ChromaOptions.getDefault()));
     protected KronBoolean shadow = new KronBoolean("shadow", null, getShadowDefault());
     protected KronBoolean background = new KronBoolean("background", null, true);
-    protected KronColor backgroundColor = new KronColor("backgroundcolor", null, new Color(0x64000000));
+    protected KronExtendedColor backgroundColor = new KronExtendedColor("backgroundcolor", null, new ExtendedColor(0x64000000, ExtendedColor.ChromaOptions.getDefault()));
     private final KronDouble x = new KronDouble("x", null, getDefaultX(), 0, 1, this);
     private final KronDouble y = new KronDouble("y", null, getDefaultY(), 0, 1, this);
 

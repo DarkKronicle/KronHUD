@@ -9,7 +9,6 @@
     "AccessorMinecraftClient",
     "MixinBossBarHud",
     "MixinClientPlayerEntity",
-    "MixinGameRenderer",
     "MixinInGameHud",
     "MixinKeybind",
     "MixinKeyboardInput",

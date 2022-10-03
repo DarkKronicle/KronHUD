@@ -1,8 +1,10 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
+import io.github.darkkronicle.darkkore.colors.ExtendedColor;
 import io.github.darkkronicle.darkkore.util.Color;
 import io.github.darkkronicle.kronhud.config.KronColor;
 import io.github.darkkronicle.kronhud.config.KronConfig;
+import io.github.darkkronicle.kronhud.config.KronExtendedColor;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.hooks.KronHudHooks;
 import io.github.darkkronicle.kronhud.util.ColorUtil;
@@ -25,7 +27,7 @@ public class KeystrokeHud extends AbstractHudEntry {
     public static final Identifier ID = new Identifier("kronhud", "keystrokehud");
 
     private final KronColor pressedTextColor = new KronColor("heldtextcolor", ID.getPath(), new Color(0xFF000000));
-    private final KronColor pressedBackgroundColor = new KronColor("heldbackgroundcolor", ID.getPath(), new Color(0x64FFFFFF));
+    private final KronExtendedColor pressedBackgroundColor = new KronExtendedColor("heldbackgroundcolor", ID.getPath(), new ExtendedColor(0x64FFFFFF, ExtendedColor.ChromaOptions.getDefault()));
     private ArrayList<Keystroke> keystrokes;
     private final MinecraftClient client;
 

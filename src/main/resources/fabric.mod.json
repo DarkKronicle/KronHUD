@@ -32,7 +32,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.9.0",
-    "darkkore": "*",
+    "darkkore": ">=0.3.0-1.19",
     "fabric": "*",
     "minecraft": ">=1.19"
   },

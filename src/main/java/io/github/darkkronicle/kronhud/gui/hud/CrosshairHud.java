@@ -1,12 +1,11 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import io.github.darkkronicle.darkkore.colors.ExtendedColor;
 import io.github.darkkronicle.darkkore.config.options.OptionListEntry;
 import io.github.darkkronicle.darkkore.util.Color;
-import io.github.darkkronicle.kronhud.config.KronBoolean;
-import io.github.darkkronicle.kronhud.config.KronColor;
-import io.github.darkkronicle.kronhud.config.KronConfig;
-import io.github.darkkronicle.kronhud.config.KronOptionList;
+import io.github.darkkronicle.darkkore.util.render.RenderUtil;
+import io.github.darkkronicle.kronhud.config.*;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.util.ColorUtil;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
@@ -38,11 +37,11 @@ public class CrosshairHud extends AbstractHudEntry {
 
     private final KronOptionList<Crosshair> type = new KronOptionList<>("type", ID.getPath(), Crosshair.CROSS);
     private final KronBoolean showInF5 = new KronBoolean("showInF5", ID.getPath(), false);
-    private final KronColor defaultColor = new KronColor("defaultcolor", ID.getPath(), ColorUtil.WHITE);
-    private final KronColor entityColor = new KronColor("entitycolor", ID.getPath(), ColorUtil.SELECTOR_RED);
-    private final KronColor containerColor = new KronColor("blockcolor", ID.getPath(), ColorUtil.SELECTOR_BLUE);
-    private final KronColor attackIndicatorBackgroundColor = new KronColor("attackindicatorbg", ID.getPath(), new Color(0xFF141414));
-    private final KronColor attackIndicatorForegroundColor = new KronColor("attackindicatorfg", ID.getPath(), ColorUtil.WHITE);
+    private final KronExtendedColor defaultColor = new KronExtendedColor("defaultcolor", ID.getPath(), new ExtendedColor(ColorUtil.WHITE, ExtendedColor.ChromaOptions.getDefault()));
+    private final KronExtendedColor entityColor = new KronExtendedColor("entitycolor", ID.getPath(), new ExtendedColor(ColorUtil.SELECTOR_RED, ExtendedColor.ChromaOptions.getDefault()));
+    private final KronExtendedColor containerColor = new KronExtendedColor("blockcolor", ID.getPath(), new ExtendedColor(ColorUtil.SELECTOR_BLUE, ExtendedColor.ChromaOptions.getDefault()));
+    private final KronExtendedColor attackIndicatorBackgroundColor = new KronExtendedColor("attackindicatorbg", ID.getPath(), new ExtendedColor(new Color(0xFF141414), ExtendedColor.ChromaOptions.getDefault()));
+    private final KronExtendedColor attackIndicatorForegroundColor = new KronExtendedColor("attackindicatorfg", ID.getPath(), new ExtendedColor(ColorUtil.WHITE, ExtendedColor.ChromaOptions.getDefault()));
 
     public CrosshairHud() {
         super(17, 17);
@@ -128,51 +127,17 @@ public class CrosshairHud extends AbstractHudEntry {
         if (indicator == AttackIndicator.CROSSHAIR) {
             float progress = this.client.player.getAttackCooldownProgress(0.0F);
             if (progress != 1.0F) {
-                fill(
+                RenderUtil.fill(
                         matrices.peek().getPositionMatrix(), pos.x() + (width / 2) - 6, pos.y() + (height / 2) + 9, 11, 1,
-                        attackIndicatorBackgroundColor.getValue().color()
+                        attackIndicatorBackgroundColor.getValue()
                 );
-                fill(
+                RenderUtil.fill(
                         matrices.peek().getPositionMatrix(), pos.x() + (width / 2) - 6, pos.y() + (height / 2) + 9,
-                        progress * 11, 1, attackIndicatorForegroundColor.getValue().color()
+                        (int) (progress * 11), 1, attackIndicatorForegroundColor.getValue()
                 );
             }
         }
         matrices.pop();
-    }
-
-    private static void fill(Matrix4f matrix, float x, float y, float width, float height, int color) {
-        float x2 = x + width;
-        float y2 = y + height;
-        float swap;
-        if (x < x2) {
-            swap = x;
-            x = x2;
-            x2 = swap;
-        }
-
-        if (y < y2) {
-            swap = y;
-            y = y2;
-            y2 = swap;
-        }
-
-        float alpha = (float) (color >> 24 & 255) / 255.0F;
-        float r = (float) (color >> 16 & 255) / 255.0F;
-        float g = (float) (color >> 8 & 255) / 255.0F;
-        float b = (float) (color & 255) / 255.0F;
-        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-        RenderSystem.enableBlend();
-        RenderSystem.disableTexture();
-        RenderSystem.defaultBlendFunc();
-        bufferBuilder.begin(DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-        bufferBuilder.vertex(matrix, x, y2, 0.0F).color(r, g, b, alpha).next();
-        bufferBuilder.vertex(matrix, x2, y2, 0.0F).color(r, g, b, alpha).next();
-        bufferBuilder.vertex(matrix, x2, y, 0.0F).color(r, g, b, alpha).next();
-        bufferBuilder.vertex(matrix, x, y, 0.0F).color(r, g, b, alpha).next();
-        BufferRenderer.drawWithShader(bufferBuilder.end());
-        RenderSystem.enableTexture();
-        RenderSystem.disableBlend();
     }
 
     public Color getColor() {

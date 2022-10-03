@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.darkkronicle.darkkore.util.Color;
 import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
-import io.github.darkkronicle.kronhud.gui.ShaderHandler;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import io.github.darkkronicle.kronhud.util.Rectangle;
 import net.minecraft.client.render.*;
@@ -29,26 +28,11 @@ public abstract class CleanHudEntry extends AbstractHudEntry {
         matrices.push();
         scale(matrices);
         RenderSystem.enableBlend();
-        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
         RenderSystem.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         RenderSystem.disableTexture();
-        RenderSystem.setShader(() -> ShaderHandler.getInstance().getChromaColor());
         DrawPosition pos = getPos();
         if (background.getValue()) {
-            Color color = backgroundColor.getValue();
-            float r = color.floatRed();
-            float g = color.floatGreen();
-            float b = color.floatBlue();
-            float a = color.floatAlpha();
-            Matrix4f matrix = matrices.peek().getPositionMatrix();
-            Rectangle rect = getBounds();
-            bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-            bufferBuilder.vertex(matrix, rect.x(), rect.y() + height, 0.0F).color(r, g, b, a).next();
-            bufferBuilder.vertex(matrix, rect.x() + rect.width(), rect.y() + height, 0.0F).color(r, g, b, a).next();
-            bufferBuilder.vertex(matrix, rect.x() + rect.width(), rect.y(), 0.0F).color(r, g, b, a).next();
-            bufferBuilder.vertex(matrix, rect.x(), rect.y(), 0.0F).color(r, g, b, a).next();
-            BufferRenderer.drawWithShader(bufferBuilder.end());
-//            fillRect(matrices, getBounds(), backgroundColor.getValue());
+            fillRect(matrices, getBounds(), backgroundColor.getValue());
         }
         drawCenteredString(
                 matrices, client.textRenderer, getValue(),

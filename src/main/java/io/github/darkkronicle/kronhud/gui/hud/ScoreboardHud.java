@@ -3,10 +3,12 @@ package io.github.darkkronicle.kronhud.gui.hud;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
+import io.github.darkkronicle.darkkore.colors.ExtendedColor;
 import io.github.darkkronicle.darkkore.util.Color;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.config.KronColor;
 import io.github.darkkronicle.kronhud.config.KronConfig;
+import io.github.darkkronicle.kronhud.config.KronExtendedColor;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import io.github.darkkronicle.kronhud.util.Rectangle;
@@ -45,8 +47,8 @@ public class ScoreboardHud extends AbstractHudEntry {
         return objective;
     });
 
-    private final KronColor backgroundColor = new KronColor("backgroundcolor", ID.getPath(), new Color(0x4C000000));
-    private final KronColor topColor = new KronColor("topbackgroundcolor", ID.getPath(), new Color(0x66000000));
+    private final KronExtendedColor backgroundColor = new KronExtendedColor("backgroundcolor", ID.getPath(), new ExtendedColor(0x4C000000, ExtendedColor.ChromaOptions.getDefault()));
+    private final KronExtendedColor topColor = new KronExtendedColor("topbackgroundcolor", ID.getPath(), new ExtendedColor(0x66000000, ExtendedColor.ChromaOptions.getDefault()));
     private final KronBoolean scores = new KronBoolean("scores", ID.getPath(), true);
     private final KronColor scoreColor = new KronColor("scorecolor", ID.getPath(), new Color(0xFFFF5555));
 
