@@ -93,7 +93,7 @@ public class ItemUpdateHud extends AbstractHudEntry {
     }
 
     @Override
-    public void render(MatrixStack matrices) {
+    public void render(MatrixStack matrices, float delta) {
         matrices.push();
         scale(matrices);
         DrawPosition pos = getPos();
@@ -151,7 +151,7 @@ public class ItemUpdateHud extends AbstractHudEntry {
     }
 
     @Override
-    public void renderPlaceholder(MatrixStack matrices) {
+    public void renderPlaceholder(MatrixStack matrices, float delta) {
         matrices.push();
         renderPlaceholderBackground(matrices);
         scale(matrices);

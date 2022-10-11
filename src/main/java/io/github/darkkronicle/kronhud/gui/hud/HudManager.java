@@ -59,27 +59,27 @@ public class HudManager {
         return entries.get(identifier);
     }
 
-    public void render(MatrixStack matrices) {
+    public void render(MatrixStack matrices, float delta) {
         if (!(client.currentScreen instanceof HudEditScreen) && !client.options.debugEnabled) {
             for (AbstractHudEntry hud : getEntries()) {
                 if (hud.isEnabled()) {
-                    hud.renderHud(matrices);
+                    hud.renderHud(matrices, delta);
                 }
             }
         }
     }
 
-    public void renderPlaceholder(MatrixStack matrices) {
+    public void renderPlaceholder(MatrixStack matrices, float delta) {
         for (AbstractHudEntry hud : getEntries()) {
             if (hud.isEnabled()) {
-                hud.renderPlaceholder(matrices);
+                hud.renderPlaceholder(matrices, delta);
             }
         }
     }
 
     public Optional<AbstractHudEntry> getEntryXY(int x, int y) {
         for (AbstractHudEntry entry : getMoveableEntries()) {
-            Rectangle bounds = entry.getScaledBounds();
+            Rectangle bounds = entry.getTrueBounds();
             if (bounds.x() <= x && bounds.x() + bounds.width() >= x && bounds.y() <= y && bounds.y() + bounds.height() >= y) {
                 return Optional.of(entry);
             }
@@ -90,7 +90,7 @@ public class HudManager {
     public List<Rectangle> getAllBounds() {
         ArrayList<Rectangle> bounds = new ArrayList<>();
         for (AbstractHudEntry entry : getMoveableEntries()) {
-            bounds.add(entry.getScaledBounds());
+            bounds.add(entry.getTrueBounds());
         }
         return bounds;
     }

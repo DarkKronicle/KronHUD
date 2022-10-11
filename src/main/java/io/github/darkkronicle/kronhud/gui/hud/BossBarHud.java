@@ -49,7 +49,7 @@ public class BossBarHud extends AbstractHudEntry {
 
 
     @Override
-    public void render(MatrixStack matrices) {
+    public void render(MatrixStack matrices, float delta) {
         setBossBars();
         if (this.bossBars.isEmpty()) {
             return;
@@ -62,7 +62,7 @@ public class BossBarHud extends AbstractHudEntry {
         for (ClientBossBar bossBar : bossBars.values()) {
             renderBossBar(matrices, scaledPos.x(), by + scaledPos.y(), bossBar);
             by = by + 19;
-            if (by > height) {
+            if (by > getHeight()) {
                 break;
             }
         }
@@ -70,12 +70,12 @@ public class BossBarHud extends AbstractHudEntry {
     }
 
     @Override
-    public void renderPlaceholder(MatrixStack matrices) {
+    public void renderPlaceholder(MatrixStack matrices, float delta) {
         matrices.push();
         renderPlaceholderBackground(matrices);
         scale(matrices);
         DrawPosition pos = getPos();
-        outlineRect(matrices, getBounds(), ColorUtil.BLACK);
+        outlineRect(matrices, getRenderBounds(), ColorUtil.BLACK);
         renderBossBar(matrices, pos.x(), pos.y() + 12, placeholder);
         renderBossBar(matrices, pos.x(), pos.y() + 31, placeholder2);
         hovered = false;
@@ -100,7 +100,7 @@ public class BossBarHud extends AbstractHudEntry {
         }
         if (text.getValue()) {
             Text text = bossBar.getName();
-            float textX = x + ((float) width / 2) - ((float) client.textRenderer.getWidth(text) / 2);
+            float textX = x + ((float) getWidth() / 2) - ((float) client.textRenderer.getWidth(text) / 2);
             float textY = y - 9;
             if (shadow.getValue()) {
                 client.textRenderer.drawWithShadow(matrices, text, textX, textY, textColor.getValue().color());
@@ -127,6 +127,8 @@ public class BossBarHud extends AbstractHudEntry {
         options.add(textColor);
         options.add(shadow);
         options.add(bar);
+        options.remove(outline);
+        options.remove(outlineColor);
         return options;
     }
 

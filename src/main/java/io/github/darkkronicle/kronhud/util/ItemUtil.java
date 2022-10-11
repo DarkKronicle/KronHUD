@@ -129,38 +129,42 @@ public class ItemUtil {
         return list;
     }
 
-    // Minecraft has decided to not use matrixstack's in their itemrender class. So this is implementing itemRenderer stuff with matrices.
-
     @SuppressWarnings("deprecation")
-    public void renderGuiItemModel(MatrixStack matrices, ItemStack stack, float x, float y) {
+    public void renderGuiItemModel(float scale, ItemStack stack, float x, float y) {
         MinecraftClient client = MinecraftClient.getInstance();
-        BakedModel model = client.getItemRenderer().getModel(stack, null, client.player, (int) (x * y));
+        BakedModel model = client.getItemRenderer().getModel(stack, null, null, (int) (x * y));
         client.getTextureManager().getTexture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE).setFilter(false, false);
         RenderSystem.setShaderTexture(0, SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        matrices.push();
-        matrices.translate(x, y, (100.0F + client.getItemRenderer().zOffset));
-        matrices.translate(8.0D, 8.0D, 0.0D);
-        matrices.scale(1.0F, -1.0F, 1.0F);
-        matrices.scale(16.0F, 16.0F, 16.0F);
+        MatrixStack modelStack = RenderSystem.getModelViewStack();
+        modelStack.push();
+        modelStack.scale(scale, scale, 0);
+        modelStack.translate(x, y, (100.0F + client.getItemRenderer().zOffset));
+        modelStack.translate(8.0D, 8.0D, 0.0D);
+        modelStack.scale(1.0F, -1.0F, 1.0F);
+        modelStack.scale(16.0F, 16.0F, 16.0F);
+
         RenderSystem.applyModelViewMatrix();
+        MatrixStack nextStack = new MatrixStack();
+
         VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
         boolean bl = !model.isSideLit();
         if (bl) {
             DiffuseLighting.disableGuiDepthLighting();
         }
 
-        client.getItemRenderer().renderItem(stack, ModelTransformation.Mode.GUI, false, matrices, immediate, 15728880,
-                OverlayTexture.DEFAULT_UV, model);
+        client.getItemRenderer().renderItem(
+                stack, ModelTransformation.Mode.GUI, false, nextStack, immediate, 15728880, OverlayTexture.DEFAULT_UV, model
+        );
         immediate.draw();
         RenderSystem.enableDepthTest();
         if (bl) {
             DiffuseLighting.enableGuiDepthLighting();
         }
 
-        matrices.pop();
+        modelStack.pop();
         RenderSystem.applyModelViewMatrix();
     }
 

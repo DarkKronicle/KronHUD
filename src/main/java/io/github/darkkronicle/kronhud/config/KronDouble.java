@@ -10,6 +10,10 @@ public class KronDouble extends DoubleOption implements KronConfig<Double> {
     private final String entryId;
     private final AbstractHudEntry refreshHud;
 
+    public KronDouble(String id, String entryId, double defaultValue, double min, double max) {
+        this(id, entryId, defaultValue, min, max, null);
+    }
+
     public KronDouble(String id, String entryId, double defaultValue, double min, double max, @Nullable AbstractHudEntry toRefresh) {
         super(id, entryId, "", defaultValue, min, max);
         this.entryId = entryId;

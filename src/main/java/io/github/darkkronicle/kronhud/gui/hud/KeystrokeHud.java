@@ -2,6 +2,8 @@ package io.github.darkkronicle.kronhud.gui.hud;
 
 import io.github.darkkronicle.darkkore.colors.ExtendedColor;
 import io.github.darkkronicle.darkkore.util.Color;
+import io.github.darkkronicle.darkkore.util.render.RenderUtil;
+import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.config.KronColor;
 import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.config.KronExtendedColor;
@@ -28,13 +30,21 @@ public class KeystrokeHud extends AbstractHudEntry {
 
     private final KronColor pressedTextColor = new KronColor("heldtextcolor", ID.getPath(), new Color(0xFF000000));
     private final KronExtendedColor pressedBackgroundColor = new KronExtendedColor("heldbackgroundcolor", ID.getPath(), new ExtendedColor(0x64FFFFFF, ExtendedColor.ChromaOptions.getDefault()));
+    private final KronExtendedColor pressedOutlineColor = new KronExtendedColor("heldoutlinecolor", ID.getPath(), new ExtendedColor(0, ExtendedColor.ChromaOptions.getDefault()));
+    private final KronBoolean mouseMovement = new KronBoolean("mousemovement", ID.getPath(), false, this::onMouseMovementOption);
     private ArrayList<Keystroke> keystrokes;
     private final MinecraftClient client;
+
+    private float mouseX = 0;
+    private float mouseY = 0;
+    private float lastMouseX = 0;
+    private float lastMouseY = 0;
 
     public KeystrokeHud() {
         super(53, 61);
         this.client = MinecraftClient.getInstance();
         KronHudHooks.KEYBIND_CHANGE.register(key -> setKeystrokes());
+        KronHudHooks.PLAYER_DIRECTION_CHANGE.register(this::onPlayerDirectionChange);
     }
 
     public static Optional<String> getMouseKeyBindName(KeyBinding keyBinding) {
@@ -91,7 +101,7 @@ public class KeystrokeHud extends AbstractHudEntry {
     }
 
     @Override
-    public void render(MatrixStack matrices) {
+    public void render(MatrixStack matrices, float delta) {
         matrices.push();
         scale(matrices);
         if (keystrokes == null) {
@@ -100,7 +110,45 @@ public class KeystrokeHud extends AbstractHudEntry {
         for (Keystroke stroke : keystrokes) {
             stroke.render(matrices);
         }
+        if (mouseMovement.getValue()) {
+            int spaceY = 62 + getY();
+            int spaceX = getX();
+            if (background.getValue()) {
+                RenderUtil.drawRectangle(matrices, spaceX, spaceY, width, 35, backgroundColor.getValue());
+            }
+            if (outline.getValue()) {
+                RenderUtil.drawOutline(matrices, spaceX, spaceY, width, 35, outlineColor.getValue());
+            }
+
+            float calculatedMouseX = (lastMouseX + ((mouseX - lastMouseX) * delta)) - 5;
+            float calculatedMouseY = (lastMouseY + ((mouseY - lastMouseY) * delta)) - 5;
+
+            RenderUtil.drawRectangle(matrices, spaceX + (width / 2) - 1, spaceY + 17, 1, 1, ColorUtil.WHITE);
+
+            matrices.translate(calculatedMouseX, calculatedMouseY, 0); // Woah KodeToad, good use of translate
+
+            RenderUtil.drawOutline(
+                    matrices,
+                    spaceX + (width / 2) - 1,
+                    spaceY + 17,
+                    11,
+                    11,
+                    ColorUtil.WHITE
+            );
+        }
         matrices.pop();
+    }
+
+    public void onPlayerDirectionChange(float prevPitch, float prevYaw, float pitch, float yaw) {
+        // Implementation credit goes to TheKodeToad
+        // This project has the author's approval to use this
+        // https://github.com/Sol-Client/Client/blob/main/game/src/main/java/io/github/solclient/client/mod/impl/hud/keystrokes/KeystrokesMod.java
+        mouseX += (yaw - prevYaw) / 7F;
+        mouseY += (pitch - prevPitch) / 7F;
+        // 0, 0 will be the center of the HUD element
+        float halfWidth = getWidth() / 2f;
+        mouseX = MathHelper.clamp(mouseX, -halfWidth + 4, halfWidth - 4);
+        mouseY = MathHelper.clamp(mouseY, -13, 13);
     }
 
     @Override
@@ -117,6 +165,10 @@ public class KeystrokeHud extends AbstractHudEntry {
         for (Keystroke stroke : keystrokes) {
             stroke.offset = pos;
         }
+        lastMouseX = mouseX;
+        lastMouseY = mouseY;
+        mouseX *= .75f;
+        mouseY *= .75f;
     }
 
     @Override
@@ -125,10 +177,10 @@ public class KeystrokeHud extends AbstractHudEntry {
     }
 
     @Override
-    public void renderPlaceholder(MatrixStack matrices) {
+    public void renderPlaceholder(MatrixStack matrices, float delta) {
         matrices.push();
         renderPlaceholderBackground(matrices);
-        renderHud(matrices);
+        renderHud(matrices, delta);
         hovered = false;
         matrices.pop();
     }
@@ -165,20 +217,33 @@ public class KeystrokeHud extends AbstractHudEntry {
     @Override
     public List<KronConfig<?>> getConfigurationOptions() {
         List<KronConfig<?>> options = super.getConfigurationOptions();
+        options.add(mouseMovement);
         options.add(textColor);
         options.add(pressedTextColor);
         options.add(shadow);
         options.add(background);
         options.add(backgroundColor);
         options.add(pressedBackgroundColor);
+        options.add(outline);
+        options.add(outlineColor);
+        options.add(pressedOutlineColor);
         return options;
     }
 
+    public void onMouseMovementOption(boolean value) {
+        int baseHeight = 61;
+        if (value) {
+            baseHeight += 36;
+        }
+        height = baseHeight;
+        onSizeUpdate();
+    }
+
     public class Keystroke {
-        public final KeyBinding key;
-        public final KeystrokeRenderer render;
-        public Rectangle bounds;
-        public DrawPosition offset;
+        protected final KeyBinding key;
+        protected final KeystrokeRenderer render;
+        protected Rectangle bounds;
+        protected DrawPosition offset;
         private float start = -1;
         private final int animTime = 100;
         private boolean wasPressed = false;
@@ -190,26 +255,16 @@ public class KeystrokeHud extends AbstractHudEntry {
             this.render = render;
         }
 
-        public void setPos(int x, int y) {
-            bounds = new Rectangle(x, y, bounds.width(), bounds.height());
-        }
-
-        public void setDimensions(int width, int height) {
-            bounds = new Rectangle(bounds.x(), bounds.y(), width, height);
-        }
-
-        public void setBounds(int x, int y, int width, int height) {
-            bounds = new Rectangle(x, y, width, height);
-        }
-
         public void renderStroke(MatrixStack matrices) {
             if (key.isPressed() != wasPressed) {
                 start = Util.getMeasuringTimeMs();
             }
+            Rectangle rect = bounds.offset(offset);
             if (background.getValue()) {
-                fillRect(matrices, bounds.offset(offset),
-                        getColor()
-                );
+                fillRect(matrices, rect, getColor());
+            }
+            if (outline.getValue()) {
+                outlineRect(matrices, rect, getOutlineColor());
             }
             if ((Util.getMeasuringTimeMs() - start) / animTime >= 1) {
                 start = -1;
@@ -222,12 +277,31 @@ public class KeystrokeHud extends AbstractHudEntry {
         }
 
         public Color getColor() {
+            if (backgroundColor.getValue().getChroma().isActive() || pressedBackgroundColor.getValue().getChroma().isActive()) {
+                // Can't blend chroma ATM
+                return key.isPressed() ? pressedBackgroundColor.getValue() : backgroundColor.getValue();
+            }
             return key.isPressed() ? ColorUtil.blend(backgroundColor.getValue(), pressedBackgroundColor.getValue(),
                     getPercentPressed()
             ) :
                    ColorUtil.blend(
                            pressedBackgroundColor.getValue(),
                            backgroundColor.getValue(),
+                           getPercentPressed()
+                   );
+        }
+
+        public Color getOutlineColor() {
+            if (outlineColor.getValue().getChroma().isActive() || pressedOutlineColor.getValue().getChroma().isActive()) {
+                // Can't blend chroma ATM
+                return key.isPressed() ? pressedOutlineColor.getValue() : outlineColor.getValue();
+            }
+            return key.isPressed() ? ColorUtil.blend(outlineColor.getValue(), pressedOutlineColor.getValue(),
+                    getPercentPressed()
+            ) :
+                   ColorUtil.blend(
+                           pressedOutlineColor.getValue(),
+                           outlineColor.getValue(),
                            getPercentPressed()
                    );
         }

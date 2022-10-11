@@ -14,6 +14,13 @@ public class DrawUtil {
         );
     }
 
+    public static void rectOutline(MatrixStack matrices, Rectangle rectangle, Color color) {
+        RenderUtil.drawOutline(matrices, rectangle.x(), rectangle.y(), rectangle.width(),
+                rectangle.height(),
+                color
+        );
+    }
+
     public static void outlineRect(MatrixStack matrices, Rectangle rectangle, Color color) {
         RenderUtil.drawOutline(matrices, rectangle.x(), rectangle.y(), rectangle.width(), rectangle.height(), color);
     }

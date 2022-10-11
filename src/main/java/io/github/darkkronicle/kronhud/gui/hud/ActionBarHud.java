@@ -35,7 +35,7 @@ public class ActionBarHud extends AbstractHudEntry {
     }
 
     @Override
-    public void render(MatrixStack matrices) {
+    public void render(MatrixStack matrices, float delta) {
         if (ticksShown >= timeShown.getValue()) {
             this.actionBar = null;
         }
@@ -46,7 +46,7 @@ public class ActionBarHud extends AbstractHudEntry {
             scale(matrices);
             if (shadow.getValue()) {
                 client.textRenderer.drawWithShadow(matrices, actionBar,
-                        (float) getPos().x() + Math.round((float) width / 2) - (float) client.textRenderer.getWidth(actionBar) / 2,
+                        (float) getPos().x() + Math.round((float) getWidth() / 2) - (float) client.textRenderer.getWidth(actionBar) / 2,
                         (float) getPos().y() + 3,
                         customTextColor.getValue() ? (
                                 textColor.getValue().alpha() == 255 ?
@@ -63,7 +63,7 @@ public class ActionBarHud extends AbstractHudEntry {
             } else {
 
                 client.textRenderer.draw(matrices, actionBar,
-                        (float) getPos().x() + Math.round((float) width / 2) - ((float) client.textRenderer.getWidth(actionBar) / 2),
+                        (float) getPos().x() + Math.round((float) getWidth() / 2) - ((float) client.textRenderer.getWidth(actionBar) / 2),
                         (float) getPos().y() + 3,
                         customTextColor.getValue() ? (
                                 textColor.getValue().alpha() == 255 ?
@@ -86,13 +86,13 @@ public class ActionBarHud extends AbstractHudEntry {
     }
 
     @Override
-    public void renderPlaceholder(MatrixStack matrices) {
+    public void renderPlaceholder(MatrixStack matrices, float delta) {
         matrices.push();
         renderPlaceholderBackground(matrices);
         scale(matrices);
         client.textRenderer.draw(
                 matrices, placeholder,
-                (float) getPos().x() + Math.round((float) width / 2) - (float) client.textRenderer.getWidth(placeholder) / 2,
+                (float) getPos().x() + Math.round((float) getWidth() / 2) - (float) client.textRenderer.getWidth(placeholder) / 2,
                 (float) getPos().y() + 3, -1
         );
         matrices.pop();

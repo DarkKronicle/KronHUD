@@ -18,6 +18,14 @@ public class KronHudHooks {
             }
     ));
 
+    public static final Event<PlayerDirectionCallback> PLAYER_DIRECTION_CHANGE = EventFactory.createArrayBacked(PlayerDirectionCallback.class, listeners -> (
+            (prevPitch, prevYaw, pitch, yaw) -> {
+                for (PlayerDirectionCallback listener : listeners) {
+                    listener.onChange(prevPitch, prevYaw, pitch, yaw);
+                }
+            }
+    ));
+
     public static final Event<KeyBindingCallback.ChangeBind> KEYBIND_CHANGE = EventFactory.createArrayBacked(
             KeyBindingCallback.ChangeBind.class, listeners -> (
                     (key) -> {
@@ -25,7 +33,8 @@ public class KronHudHooks {
                             listener.setBoundKey(key);
                         }
                     }
-            ));
+            )
+    );
 
     public static final Event<KeyBindingCallback.OnPress> KEYBIND_PRESS = EventFactory.createArrayBacked(
             KeyBindingCallback.OnPress.class, listeners -> (
@@ -34,7 +43,8 @@ public class KronHudHooks {
                             listener.onPress(key);
                         }
                     }
-            ));
+            )
+    );
 
 
 }

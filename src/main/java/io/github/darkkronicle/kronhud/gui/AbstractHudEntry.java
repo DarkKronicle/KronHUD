@@ -3,16 +3,14 @@ package io.github.darkkronicle.kronhud.gui;
 import io.github.darkkronicle.darkkore.colors.ExtendedColor;
 import io.github.darkkronicle.darkkore.config.options.Option;
 import io.github.darkkronicle.darkkore.gui.Tab;
-import io.github.darkkronicle.darkkore.util.Color;
 import io.github.darkkronicle.kronhud.config.*;
 import io.github.darkkronicle.kronhud.util.ColorUtil;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import io.github.darkkronicle.kronhud.util.DrawUtil;
 import io.github.darkkronicle.kronhud.util.Rectangle;
+import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.BufferRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -30,16 +28,23 @@ public abstract class AbstractHudEntry extends DrawUtil {
     protected KronBoolean shadow = new KronBoolean("shadow", null, getShadowDefault());
     protected KronBoolean background = new KronBoolean("background", null, true);
     protected KronExtendedColor backgroundColor = new KronExtendedColor("backgroundcolor", null, new ExtendedColor(0x64000000, ExtendedColor.ChromaOptions.getDefault()));
+
+    protected KronBoolean outline = new KronBoolean("outline", null, false);
+    protected KronExtendedColor outlineColor = new KronExtendedColor("outlinecolor", null, new ExtendedColor(-1, ExtendedColor.ChromaOptions.getDefault()));
+
     private final KronDouble x = new KronDouble("x", null, getDefaultX(), 0, 1, this);
     private final KronDouble y = new KronDouble("y", null, getDefaultY(), 0, 1, this);
 
-    private Rectangle scaledBounds = null;
-    private Rectangle unscaledBounds = null;
-    private DrawPosition scaledPosition = null;
-    private DrawPosition unscaledPosition;
+    private Rectangle trueBounds = null;
+    private Rectangle renderBounds = null;
+    private DrawPosition truePosition = null;
+    private DrawPosition renderPosition;
 
-    public int width;
-    public int height;
+    @Getter
+    protected int width;
+    @Getter
+    protected int height;
+
     @Setter
     protected boolean hovered = false;
     protected MinecraftClient client = MinecraftClient.getInstance();
@@ -57,21 +62,21 @@ public abstract class AbstractHudEntry extends DrawUtil {
         return MathHelper.clamp((float) (current) / (max - offset), 0, 1);
     }
 
-    public void renderHud(MatrixStack matrices) {
-        render(matrices);
+    public void renderHud(MatrixStack matrices, float delta) {
+        render(matrices, delta);
     }
 
-    public abstract void render(MatrixStack matrices);
+    public abstract void render(MatrixStack matrices, float delta);
 
-    public abstract void renderPlaceholder(MatrixStack matrices);
+    public abstract void renderPlaceholder(MatrixStack matrices, float delta);
 
     public void renderPlaceholderBackground(MatrixStack matrices) {
         if (hovered) {
-            fillRect(matrices, getScaledBounds(), ColorUtil.SELECTOR_BLUE.withAlpha(100));
+            fillRect(matrices, getTrueBounds(), ColorUtil.SELECTOR_BLUE.withAlpha(100));
         } else {
-            fillRect(matrices, getScaledBounds(), ColorUtil.WHITE.withAlpha(50));
+            fillRect(matrices, getTrueBounds(), ColorUtil.WHITE.withAlpha(50));
         }
-        outlineRect(matrices, getScaledBounds(), ColorUtil.BLACK);
+        outlineRect(matrices, getTrueBounds(), ColorUtil.BLACK);
     }
 
     public abstract Identifier getId();
@@ -91,22 +96,22 @@ public abstract class AbstractHudEntry extends DrawUtil {
     }
 
     public int getX() {
-        return getScaledPos().x();
+        return getPos().x();
     }
 
     public void setX(int x) {
         this.x.setValue((double) intToFloat(x, client.getWindow().getScaledWidth(),
-                Math.round(width * getScale())
+                Math.round(getWidth() * getScale())
         ));
     }
 
     public int getY() {
-        return getScaledPos().y();
+        return getPos().y();
     }
 
     public void setY(int y) {
         this.y.setValue((double) intToFloat(y, client.getWindow().getScaledHeight(),
-                Math.round(height * getScale())
+                Math.round(getHeight() * getScale())
         ));
     }
 
@@ -122,8 +127,8 @@ public abstract class AbstractHudEntry extends DrawUtil {
         return true;
     }
 
-    public Rectangle getScaledBounds() {
-        return scaledBounds;
+    public Rectangle getTrueBounds() {
+        return trueBounds;
     }
 
     /**
@@ -131,8 +136,8 @@ public abstract class AbstractHudEntry extends DrawUtil {
      *
      * @return The bounds.
      */
-    public Rectangle getBounds() {
-        return unscaledBounds;
+    public Rectangle getRenderBounds() {
+        return renderBounds;
     }
 
     public float getScale() {
@@ -144,11 +149,15 @@ public abstract class AbstractHudEntry extends DrawUtil {
     }
 
     public DrawPosition getPos() {
-        return unscaledPosition;
+        return renderPosition;
     }
 
-    public DrawPosition getScaledPos() {
-        return scaledPosition;
+    public DrawPosition getTruePos() {
+        return truePosition;
+    }
+
+    public void onSizeUpdate() {
+        setBounds();
     }
 
     public void setBounds() {
@@ -157,22 +166,22 @@ public abstract class AbstractHudEntry extends DrawUtil {
 
     public void setBounds(float scale) {
         if (client.getWindow() == null) {
-            scaledPosition = new DrawPosition(0, 0);
-            unscaledPosition = new DrawPosition(0, 0);
-            unscaledBounds = new Rectangle(0, 0, 1, 1);
-            scaledBounds = new Rectangle(0, 0, 1, 1);
+            truePosition = new DrawPosition(0, 0);
+            renderPosition = new DrawPosition(0, 0);
+            renderBounds = new Rectangle(0, 0, 1, 1);
+            trueBounds = new Rectangle(0, 0, 1, 1);
             return;
         }
         int scaledX = floatToInt(x.getValue().floatValue(), client.getWindow().getScaledWidth(),
-                Math.round(width * scale)
+                Math.round(getWidth() * scale)
         );
         int scaledY = floatToInt(y.getValue().floatValue(), client.getWindow().getScaledHeight(),
-                Math.round(height * scale)
+                Math.round(getHeight() * scale)
         );
-        scaledPosition = new DrawPosition(scaledX, scaledY);
-        unscaledPosition = scaledPosition.divide(getScale());
-        scaledBounds = new Rectangle(getX(), getY(), Math.round(width * getScale()), Math.round(height * getScale()));
-        unscaledBounds = new Rectangle(getX(), getY(), width, height);
+        truePosition = new DrawPosition(scaledX, scaledY);
+        renderPosition = truePosition.divide(getScale());
+        trueBounds = new Rectangle(scaledX, scaledY, Math.round(getWidth() * getScale()), Math.round(getHeight() * getScale()));
+        renderBounds = new Rectangle(renderPosition.x(), renderPosition.y(), getWidth(), getHeight());
     }
 
     public Tab getOptionWrapper() {

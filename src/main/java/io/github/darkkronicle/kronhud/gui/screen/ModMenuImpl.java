@@ -7,6 +7,6 @@ public class ModMenuImpl implements ModMenuApi {
 
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return HudEditScreen::new;
+        return parent -> new HudEditScreen(null);
     }
 }

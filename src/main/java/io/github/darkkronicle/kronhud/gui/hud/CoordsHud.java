@@ -88,12 +88,15 @@ public class CoordsHud extends AbstractHudEntry {
     }
 
     @Override
-    public void render(MatrixStack matrices) {
+    public void render(MatrixStack matrices, float delta) {
         matrices.push();
         scale(matrices);
         DrawPosition pos = getPos();
-        if (background.getValue()) {
-            fillRect(matrices, getBounds(), backgroundColor.getValue());
+        if (background.getValue() && backgroundColor.getValue().alpha() > 0) {
+            fillRect(matrices, getRenderBounds(), backgroundColor.getValue());
+        }
+        if (outline.getValue() && outlineColor.getValue().alpha() > 0) {
+            outlineRect(matrices, getRenderBounds(), outlineColor.getValue());
         }
         StringBuilder format = new StringBuilder("#");
         if (decimalPlaces.getValue() > 0) {
@@ -165,7 +168,7 @@ public class CoordsHud extends AbstractHudEntry {
     }
 
     @Override
-    public void renderPlaceholder(MatrixStack matrices) {
+    public void renderPlaceholder(MatrixStack matrices, float delta) {
         matrices.push();
         renderPlaceholderBackground(matrices);
         scale(matrices);
@@ -222,6 +225,8 @@ public class CoordsHud extends AbstractHudEntry {
         List<KronConfig<?>> options = super.getConfigurationOptions();
         options.add(background);
         options.add(backgroundColor);
+        options.add(outline);
+        options.add(outlineColor);
         options.add(firstColor);
         options.add(secondColor);
         options.add(decimalPlaces);

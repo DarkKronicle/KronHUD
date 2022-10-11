@@ -28,7 +28,7 @@ public class ArrowHud extends AbstractHudEntry {
     }
 
     @Override
-    public void render(MatrixStack matrices) {
+    public void render(MatrixStack matrices, float delta) {
         if (dynamic.getValue()) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (!(
@@ -42,14 +42,17 @@ public class ArrowHud extends AbstractHudEntry {
         scale(matrices);
 
         DrawPosition pos = getPos();
-        if (background.getValue()) {
-            fillRect(matrices, getBounds(), backgroundColor.getValue());
+        if (background.getValue() && backgroundColor.getValue().alpha() > 0) {
+            fillRect(matrices, getRenderBounds(), backgroundColor.getValue());
+        }
+        if (outline.getValue() && outlineColor.getValue().alpha() > 0) {
+            outlineRect(matrices, getRenderBounds(), outlineColor.getValue());
         }
         drawCenteredString(
-                matrices, client.textRenderer, String.valueOf(arrows), pos.x() + width / 2, pos.y() + height - 10,
+                matrices, client.textRenderer, String.valueOf(arrows), pos.x() + getWidth() / 2, pos.y() + getHeight() - 10,
                 textColor.getValue(), shadow.getValue()
         );
-        ItemUtil.renderGuiItemModel(matrices, currentArrow, pos.x() + 2, pos.y() + 2);
+        ItemUtil.renderGuiItemModel(getScale(), currentArrow, pos.x() + 2, pos.y() + 2);
         matrices.pop();
     }
 
@@ -77,16 +80,16 @@ public class ArrowHud extends AbstractHudEntry {
     }
 
     @Override
-    public void renderPlaceholder(MatrixStack matrices) {
+    public void renderPlaceholder(MatrixStack matrices, float delta) {
         matrices.push();
         renderPlaceholderBackground(matrices);
         scale(matrices);
         DrawPosition pos = getPos();
         drawCenteredString(
-                matrices, client.textRenderer, "64", pos.x() + width / 2, pos.y() + height - 10, textColor.getValue(),
+                matrices, client.textRenderer, "64", pos.x() + getWidth() / 2, pos.y() + getHeight() - 10, textColor.getValue(),
                 shadow.getValue()
         );
-        ItemUtil.renderGuiItemModel(matrices, new ItemStack(Items.ARROW), pos.x() + 2, pos.y() + 2);
+        ItemUtil.renderGuiItemModel(getScale(), new ItemStack(Items.ARROW), pos.x() + 2, pos.y() + 2);
         hovered = false;
         matrices.pop();
     }
@@ -98,6 +101,8 @@ public class ArrowHud extends AbstractHudEntry {
         options.add(shadow);
         options.add(background);
         options.add(backgroundColor);
+        options.add(outline);
+        options.add(outlineColor);
         options.add(dynamic);
         options.add(allArrowTypes);
         return options;

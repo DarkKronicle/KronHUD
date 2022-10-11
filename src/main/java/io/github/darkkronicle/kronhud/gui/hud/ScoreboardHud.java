@@ -57,7 +57,7 @@ public class ScoreboardHud extends AbstractHudEntry {
     }
 
     @Override
-    public void render(MatrixStack matrices) {
+    public void render(MatrixStack matrices, float delta) {
         matrices.push();
         scale(matrices);
         Scoreboard scoreboard = this.client.world.getScoreboard();
@@ -78,7 +78,7 @@ public class ScoreboardHud extends AbstractHudEntry {
     }
 
     @Override
-    public void renderPlaceholder(MatrixStack matrices) {
+    public void renderPlaceholder(MatrixStack matrices, float delta) {
         matrices.push();
         renderPlaceholderBackground(matrices);
         scale(matrices);
@@ -118,14 +118,14 @@ public class ScoreboardHud extends AbstractHudEntry {
         }
         maxWidth = maxWidth + 2;
 
-        if (maxWidth > width) {
+        if (maxWidth > getWidth()) {
             maxWidth = 200;
         }
 
         int scoresSize = scores.size();
         int scoreHeight = scoresSize * 9;
         DrawPosition pos = getPos();
-        Rectangle bounds = getBounds();
+        Rectangle bounds = getRenderBounds();
         Rectangle inside = new Rectangle(pos.x(), pos.y(), maxWidth, scoreHeight + 9);
         Rectangle calculated = new Rectangle(bounds.x() + bounds.width() - inside.width(),
                 bounds.y() + (bounds.height() / 2 - inside.height() / 2), inside.width(), inside.height());
@@ -134,15 +134,20 @@ public class ScoreboardHud extends AbstractHudEntry {
         int num = 0;
         int textOffset = scoreX - 2;
 
+        if (background.getValue() && backgroundColor.getValue().alpha() > 0) {
+            fillRect(matrices, getRenderBounds(), backgroundColor.getValue());
+        }
+        if (outline.getValue() && outlineColor.getValue().alpha() > 0) {
+            outlineRect(matrices, getRenderBounds(), outlineColor.getValue());
+        }
+
         for (Pair<ScoreboardPlayerScore, Text> scoreboardPlayerScoreTextPair : scoresWText) {
             ++num;
             ScoreboardPlayerScore scoreboardPlayerScore2 = scoreboardPlayerScoreTextPair.getFirst();
             Text scoreText = scoreboardPlayerScoreTextPair.getSecond();
             String score = "" + scoreboardPlayerScore2.getScore();
             int relativeY = scoreY - num * 9;
-            if (background.getValue()) {
-                fillRect(matrices, new Rectangle(textOffset, relativeY, maxWidth, 9), backgroundColor.getValue());
-            }
+
             if (shadow.getValue()) {
                 client.textRenderer.drawWithShadow(matrices, scoreText, (float) scoreX, (float) relativeY,
                         -1);
@@ -178,6 +183,8 @@ public class ScoreboardHud extends AbstractHudEntry {
         options.add(background);
         options.add(topColor);
         options.add(backgroundColor);
+        options.add(outline);
+        options.add(outlineColor);
         options.add(shadow);
         options.add(scores);
         options.add(scoreColor);

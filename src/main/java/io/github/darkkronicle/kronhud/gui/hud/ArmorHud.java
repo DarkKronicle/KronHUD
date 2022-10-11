@@ -19,12 +19,15 @@ public class ArmorHud extends AbstractHudEntry {
     }
 
     @Override
-    public void render(MatrixStack matrices) {
+    public void render(MatrixStack matrices, float delta) {
         matrices.push();
         scale(matrices);
         DrawPosition pos = getPos();
-        if (background.getValue()) {
-            fillRect(matrices, getBounds(), backgroundColor.getValue());
+        if (background.getValue() && backgroundColor.getValue().alpha() > 0) {
+            fillRect(matrices, getRenderBounds(), backgroundColor.getValue());
+        }
+        if (outline.getValue() && outlineColor.getValue().alpha() > 0) {
+            outlineRect(matrices, getRenderBounds(), outlineColor.getValue());
         }
         int lastY = 2 + (4 * 20);
         renderMainItem(matrices, client.player.getInventory().getMainHandStack(), pos.x() + 2, pos.y() + lastY);
@@ -38,12 +41,12 @@ public class ArmorHud extends AbstractHudEntry {
     }
 
     public void renderItem(MatrixStack matrices, ItemStack stack, int x, int y) {
-        ItemUtil.renderGuiItemModel(matrices, stack, x, y);
+        ItemUtil.renderGuiItemModel(getScale(), stack, x, y);
         ItemUtil.renderGuiItemOverlay(matrices, client.textRenderer, stack, x, y, null, textColor.getValue().color(), shadow.getValue());
     }
 
     public void renderMainItem(MatrixStack matrices, ItemStack stack, int x, int y) {
-        ItemUtil.renderGuiItemModel(matrices, stack, x, y);
+        ItemUtil.renderGuiItemModel(getScale(), stack, x, y);
         String total = String.valueOf(ItemUtil.getTotal(client, stack));
         if (total.equals("1")) {
             total = null;
@@ -52,13 +55,13 @@ public class ArmorHud extends AbstractHudEntry {
     }
 
     @Override
-    public void renderPlaceholder(MatrixStack matrices) {
+    public void renderPlaceholder(MatrixStack matrices, float delta) {
         matrices.push();
         renderPlaceholderBackground(matrices);
         scale(matrices);
         DrawPosition pos = getPos();
         int lastY = 2 + (4 * 20);
-        ItemUtil.renderGuiItemModel(matrices, new ItemStack(Items.GRASS_BLOCK), pos.x() + 2, pos.y() + lastY);
+        ItemUtil.renderGuiItemModel(getScale(), new ItemStack(Items.GRASS_BLOCK), pos.x() + 2, pos.y() + lastY);
         ItemUtil.renderGuiItemOverlay(matrices, client.textRenderer, new ItemStack(Items.GRASS_BLOCK), pos.x() + 2, pos.y() + lastY, "90",
                 textColor.getValue().color(), shadow.getValue()
         );
@@ -83,6 +86,8 @@ public class ArmorHud extends AbstractHudEntry {
         options.add(shadow);
         options.add(background);
         options.add(backgroundColor);
+        options.add(outline);
+        options.add(outlineColor);
         return options;
     }
 

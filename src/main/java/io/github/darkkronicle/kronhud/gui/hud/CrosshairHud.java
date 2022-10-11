@@ -14,19 +14,13 @@ import lombok.AllArgsConstructor;
 import net.minecraft.block.AbstractChestBlock;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.option.AttackIndicator;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.BufferRenderer;
 import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexFormat.DrawMode;
-import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3f;
 import net.minecraft.world.World;
 
@@ -58,7 +52,7 @@ public class CrosshairHud extends AbstractHudEntry {
     }
 
     @Override
-    public void render(MatrixStack matrices) {
+    public void render(MatrixStack matrices, float delta) {
         if (!client.options.getPerspective().isFirstPerson() && !showInF5.getValue()) {
             return;
         }
@@ -70,17 +64,17 @@ public class CrosshairHud extends AbstractHudEntry {
         AttackIndicator indicator = this.client.options.getAttackIndicator().getValue();
 
         if (type.getValue() == Crosshair.DOT) {
-            fillRect(matrices, new Rectangle(pos.x() + (width / 2) - 2, pos.y() + (height / 2) - 2, 3, 3), color);
+            fillRect(matrices, new Rectangle(pos.x() + (getWidth() / 2) - 2, pos.y() + (getHeight() / 2) - 2, 3, 3), color);
         } else if (type.getValue() == Crosshair.CROSS) {
-            fillRect(matrices, new Rectangle(pos.x() + (width / 2) - 6, pos.y() + (height / 2) - 1, 6, 1), color);
-            fillRect(matrices, new Rectangle(pos.x() + (width / 2), pos.y() + (height / 2) - 1, 5, 1), color);
-            fillRect(matrices, new Rectangle(pos.x() + (width / 2) - 1, pos.y() + (height / 2) - 6, 1, 6), color);
-            fillRect(matrices, new Rectangle(pos.x() + (width / 2) - 1, pos.y() + (height / 2), 1, 5), color);
+            fillRect(matrices, new Rectangle(pos.x() + (getWidth() / 2) - 6, pos.y() + (getHeight() / 2) - 1, 6, 1), color);
+            fillRect(matrices, new Rectangle(pos.x() + (getWidth() / 2), pos.y() + (getHeight() / 2) - 1, 5, 1), color);
+            fillRect(matrices, new Rectangle(pos.x() + (getWidth() / 2) - 1, pos.y() + (getHeight() / 2) - 6, 1, 6), color);
+            fillRect(matrices, new Rectangle(pos.x() + (getWidth() / 2) - 1, pos.y() + (getHeight() / 2), 1, 5), color);
         } else if (type.getValue() == Crosshair.DIRECTION) {
             Camera camera = this.client.gameRenderer.getCamera();
             MatrixStack matrixStack = RenderSystem.getModelViewStack();
             matrixStack.push();
-            matrixStack.translate(getX() + ((float) width / 2), getY() + ((float) height / 2), 0);
+            matrixStack.translate(getX() + ((float) getWidth() / 2), getY() + ((float) getHeight() / 2), 0);
             matrixStack.multiply(Vec3f.NEGATIVE_X.getDegreesQuaternion(camera.getPitch()));
             matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(camera.getYaw()));
             matrixStack.scale(-getScale(), -getScale(), getScale());
@@ -127,12 +121,12 @@ public class CrosshairHud extends AbstractHudEntry {
         if (indicator == AttackIndicator.CROSSHAIR) {
             float progress = this.client.player.getAttackCooldownProgress(0.0F);
             if (progress != 1.0F) {
-                RenderUtil.fill(
-                        matrices.peek().getPositionMatrix(), pos.x() + (width / 2) - 6, pos.y() + (height / 2) + 9, 11, 1,
+                RenderUtil.drawRectangle(
+                        matrices, pos.x() + (getWidth() / 2) - 6, pos.y() + (getHeight() / 2) + 9, 11, 1,
                         attackIndicatorBackgroundColor.getValue()
                 );
-                RenderUtil.fill(
-                        matrices.peek().getPositionMatrix(), pos.x() + (width / 2) - 6, pos.y() + (height / 2) + 9,
+                RenderUtil.drawRectangle(
+                        matrices, pos.x() + (getWidth() / 2) - 6, pos.y() + (getHeight() / 2) + 9,
                         (int) (progress * 11), 1, attackIndicatorForegroundColor.getValue()
                 );
             }
@@ -158,7 +152,7 @@ public class CrosshairHud extends AbstractHudEntry {
     }
 
     @Override
-    public void renderPlaceholder(MatrixStack matrices) {
+    public void renderPlaceholder(MatrixStack matrices, float delta) {
         // Shouldn't need this...
     }
 

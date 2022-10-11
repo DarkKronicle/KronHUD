@@ -30,7 +30,7 @@ public class SpeedHud extends CleanHudEntry {
         } else {
             speed = vec.length();
         }
-        return FORMATTER.format(speed) + " BPT";
+        return FORMATTER.format(speed * 20) + " BPS";
     }
 
     @Override
@@ -42,6 +42,6 @@ public class SpeedHud extends CleanHudEntry {
 
     @Override
     public String getPlaceholder() {
-        return "0.95 BPT";
+        return "4.35 BPS";
     }
 }

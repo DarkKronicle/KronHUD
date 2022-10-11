@@ -58,5 +58,5 @@ Open a terminal and run `./gradlew build`.
 - DarkKronicle - Developer for KronHUD
 - Chronos22 - Created logo
 - qsefthuopq - Created Chinese translations
-- TheKodeToad - Contributor
+- TheKodeToad - Contributor (also has mouse movement HUD from [Sol Client](https://github.com/Sol-Client/))
 - moehreag - Contributor

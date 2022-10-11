@@ -3,6 +3,8 @@ package io.github.darkkronicle.kronhud.gui.screen;
 
 import io.github.darkkronicle.darkkore.config.options.Option;
 import io.github.darkkronicle.darkkore.gui.Tab;
+import io.github.darkkronicle.darkkore.settings.DarkKoreConfig;
+import io.github.darkkronicle.darkkore.util.render.RenderUtil;
 import io.github.darkkronicle.kronhud.KronHUD;
 import io.github.darkkronicle.kronhud.config.ConfigHandler;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
@@ -62,10 +64,11 @@ public class HudEditScreen extends Screen {
 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        RenderUtil.fill(matrices, 0, 0, width, height, DarkKoreConfig.getInstance().screenBackgroundColor.getValue());
         super.render(matrices, mouseX, mouseY, delta);
         Optional<AbstractHudEntry> entry = KronHUD.hudManager.getEntryXY(mouseX, mouseY);
         entry.ifPresent(abstractHudEntry -> abstractHudEntry.setHovered(true));
-        KronHUD.hudManager.renderPlaceholder(matrices);
+        KronHUD.hudManager.renderPlaceholder(matrices, delta);
         if (mouseDown && snap != null) {
             snap.renderSnaps(matrices);
         }
@@ -79,7 +82,7 @@ public class HudEditScreen extends Screen {
             mouseDown = true;
             if (entry.isPresent()) {
                 current = entry.get();
-                offset = new DrawPosition((int) Math.round(mouseX - current.getX()), (int) Math.round(mouseY - current.getY()));
+                offset = new DrawPosition((int) Math.round(mouseX - current.getTruePos().x()), (int) Math.round(mouseY - current.getTruePos().y()));
                 updateSnapState();
                 return true;
             } else {
@@ -94,8 +97,8 @@ public class HudEditScreen extends Screen {
     private void updateSnapState() {
         if (snapEnabled && current != null) {
             List<Rectangle> bounds = KronHUD.hudManager.getAllBounds();
-            bounds.remove(current.getScaledBounds());
-            snap = new SnappingHelper(bounds, current.getScaledBounds());
+            bounds.remove(current.getTrueBounds());
+            snap = new SnappingHelper(bounds, current.getTrueBounds());
         } else if (snap != null) {
             snap = null;
         }
@@ -123,7 +126,7 @@ public class HudEditScreen extends Screen {
             current.setXY((int) mouseX - offset.x(), (int) mouseY - offset.y());
             if (snap != null) {
                 Integer snapX, snapY;
-                snap.setCurrent(current.getScaledBounds());
+                snap.setCurrent(current.getTrueBounds());
                 if ((snapX = snap.getCurrentXSnap()) != null) {
                     current.setX(snapX);
                 }
