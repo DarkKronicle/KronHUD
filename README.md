@@ -8,7 +8,7 @@ A mod to add clean and useful HUD widgets.
 
 Download this mod on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/kronhud).
 
-Requires [MaLiLib](https://www.curseforge.com/minecraft/mc-mods/malilib) and Minecraft 1.19.
+Requires [DarkKore](https://www.curseforge.com/minecraft/mc-mods/darkkore) and Minecraft 1.19.
 
 
 ## Widgets
