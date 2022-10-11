@@ -26,7 +26,7 @@ jobs:
           modrinth_token: ${{ secrets.MODRINTH_TOKEN }}
           curseforge_token: ${{ secrets.CURSEFORGE_TOKEN }}
           github_token: ${{ secrets.GH_API_KEY }}
-          discord_release_webhook: ${{ secrets.DISCORD_ANNOUNCEMENT_WEBHOOK }}
+          discord_release_webhook: ${{ secrets.DISCORD_RELEASE_WEBHOOK }}
       - name: Capture build artifacts
         uses: actions/upload-artifact@v2
         with:
