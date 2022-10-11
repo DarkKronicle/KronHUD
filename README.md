@@ -30,6 +30,7 @@ Currenty KronHUD has:
 - Action bar
 - Server IP
 - Speedometer
+- Player Model
 
 All modules can be moved around freely, and have snapable movement so you can get everything in line!
 
