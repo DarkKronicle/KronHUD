@@ -22,34 +22,18 @@ import org.slf4j.LoggerFactory;
 
 @Environment(EnvType.CLIENT)
 public class KronHUD implements ClientModInitializer {
-    public static HudManager hudManager;
-    public static Logger logger = LoggerFactory.getLogger("kronhud");
-    @Getter
-    private boolean setupComplete;
 
     public static final String MOD_ID = "kronhud";
 
     @Override
     public void onInitializeClient() {
-        KeyBinding key = new KeyBinding("keys.kronhud.edithud", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_RIGHT_SHIFT,
-                "keys.category.kronhud.keys");
-        KeyBindingHelper.registerKeyBinding(key);
-
         initHuds();
-        hudManager.getEntries().forEach(AbstractHudEntry::init);
-
-        ClientTickEvents.START_CLIENT_TICK.register(client -> {
-            if (key.wasPressed()) {
-                client.setScreen(new HudEditScreen(client.currentScreen));
-            }
-        });
         InitializationHandler.getInstance().registerInitializer(MOD_ID, 0, new InitHandler());
         ConfigurationManager.getInstance().add(ConfigHandler.getInstance());
-
     }
 
     public void initHuds() {
-        hudManager = new HudManager();
+        HudManager hudManager = HudManager.getInstance();
         hudManager.add(new ArmorHud());
         hudManager.add(new ArrowHud());
         hudManager.add(new CPSHud());
@@ -67,8 +51,8 @@ public class KronHUD implements ClientModInitializer {
         hudManager.add(new PlayerHud());
         hudManager.add(new ActionBarHud());
         hudManager.add(new ToggleSprintHud());
-        HudRenderCallback.EVENT.register((matrixStack, v) -> hudManager.render(matrixStack, v));
-        setupComplete = true;
+        HudRenderCallback.EVENT.register(hudManager::render);
+        hudManager.getEntries().forEach(AbstractHudEntry::init);
     }
 
 }

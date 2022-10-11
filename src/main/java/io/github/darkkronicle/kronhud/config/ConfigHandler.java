@@ -6,6 +6,10 @@ import com.google.gson.JsonParser;
 import io.github.darkkronicle.darkkore.DarkKore;
 import io.github.darkkronicle.darkkore.config.ModConfig;
 import io.github.darkkronicle.darkkore.config.options.Option;
+import io.github.darkkronicle.darkkore.config.options.OptionSection;
+import io.github.darkkronicle.darkkore.hotkeys.HotkeySettings;
+import io.github.darkkronicle.darkkore.hotkeys.HotkeySettingsOption;
+import io.github.darkkronicle.darkkore.intialization.profiles.PlayerContextCheck;
 import io.github.darkkronicle.darkkore.util.Color;
 import io.github.darkkronicle.kronhud.KronHUD;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
@@ -14,9 +18,11 @@ import io.github.darkkronicle.kronhud.gui.hud.CoordsHud;
 import io.github.darkkronicle.kronhud.gui.hud.CrosshairHud;
 import io.github.darkkronicle.kronhud.gui.hud.HudManager;
 import io.github.darkkronicle.kronhud.gui.hud.ScoreboardHud;
+import lombok.Getter;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,6 +30,7 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.glfw.GLFW;
 
 public class ConfigHandler extends ModConfig {
 
@@ -36,9 +43,17 @@ public class ConfigHandler extends ModConfig {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final File CONFIG_FILE = new File(FabricLoader.getInstance().getConfigDir() + "/kronhud.json");
 
-    private ConfigHandler() {
+    private ConfigHandler() {}
 
-    }
+    public final HotkeySettingsOption editHud = new HotkeySettingsOption(
+            "RIGHT_SHIFT", "option.kronhud.general.edithud", "option.kronhud.general.edithud.info",
+            new HotkeySettings(false, false, true, new ArrayList<>(List.of(GLFW.GLFW_KEY_RIGHT_SHIFT)), PlayerContextCheck.getDefault())
+    );
+
+    public final OptionSection general = new OptionSection(
+            "general", "option.section.general", "option.section.general.info",
+            List.of(editHud)
+    );
 
     @Override
     public File getFile() {
@@ -80,7 +95,9 @@ public class ConfigHandler extends ModConfig {
 
     @Override
     public List<Option<?>> getOptions() {
-        return KronHUD.hudManager.getEntries().stream().map(HudEntryOption::new).collect(Collectors.toList());
+        List<Option<?>> options = HudManager.getInstance().getEntries().stream().map(HudEntryOption::new).collect(Collectors.toList());
+        options.add(general);
+        return options;
     }
 
     public enum ConfigVersions {

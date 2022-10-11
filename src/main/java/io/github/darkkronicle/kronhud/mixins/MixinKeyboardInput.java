@@ -1,6 +1,7 @@
 package io.github.darkkronicle.kronhud.mixins;
 
 import io.github.darkkronicle.kronhud.KronHUD;
+import io.github.darkkronicle.kronhud.gui.hud.HudManager;
 import io.github.darkkronicle.kronhud.gui.hud.ToggleSprintHud;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.KeyboardInput;
@@ -19,7 +20,7 @@ public abstract class MixinKeyboardInput {
      */
     @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/KeyBinding;isPressed()Z", ordinal = 5))
     public boolean toggleSneak(KeyBinding instance) {
-        ToggleSprintHud hud = (ToggleSprintHud) KronHUD.hudManager.get(ToggleSprintHud.ID);
+        ToggleSprintHud hud = (ToggleSprintHud) HudManager.getInstance().get(ToggleSprintHud.ID);
         return hud.isEnabled() && hud.getSneakToggled().getValue() && MinecraftClient.getInstance().currentScreen == null || instance.isPressed();
     }
 }

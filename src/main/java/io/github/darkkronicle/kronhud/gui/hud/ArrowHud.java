@@ -30,7 +30,7 @@ public class ArrowHud extends AbstractHudEntry {
     @Override
     public void render(MatrixStack matrices, float delta) {
         if (dynamic.getValue()) {
-            ClientPlayerEntity player = MinecraftClient.getInstance().player;
+            ClientPlayerEntity player = client.player;
             if (!(
                     player.getStackInHand(Hand.MAIN_HAND).getItem() instanceof RangedWeaponItem
                             || player.getStackInHand(Hand.OFF_HAND).getItem() instanceof RangedWeaponItem

@@ -9,6 +9,7 @@ import io.github.darkkronicle.kronhud.KronHUD;
 import io.github.darkkronicle.kronhud.config.ConfigHandler;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.gui.HudEntryOption;
+import io.github.darkkronicle.kronhud.gui.hud.HudManager;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import io.github.darkkronicle.kronhud.util.Rectangle;
 import io.github.darkkronicle.kronhud.util.SnappingHelper;
@@ -66,9 +67,9 @@ public class HudEditScreen extends Screen {
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         RenderUtil.fill(matrices, 0, 0, width, height, DarkKoreConfig.getInstance().screenBackgroundColor.getValue());
         super.render(matrices, mouseX, mouseY, delta);
-        Optional<AbstractHudEntry> entry = KronHUD.hudManager.getEntryXY(mouseX, mouseY);
+        Optional<AbstractHudEntry> entry = HudManager.getInstance().getEntryXY(mouseX, mouseY);
         entry.ifPresent(abstractHudEntry -> abstractHudEntry.setHovered(true));
-        KronHUD.hudManager.renderPlaceholder(matrices, delta);
+        HudManager.getInstance().renderPlaceholder(matrices, delta);
         if (mouseDown && snap != null) {
             snap.renderSnaps(matrices);
         }
@@ -77,7 +78,7 @@ public class HudEditScreen extends Screen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         super.mouseClicked(mouseX, mouseY, button);
-        Optional<AbstractHudEntry> entry = KronHUD.hudManager.getEntryXY((int) Math.round(mouseX), (int) Math.round(mouseY));
+        Optional<AbstractHudEntry> entry = HudManager.getInstance().getEntryXY((int) Math.round(mouseX), (int) Math.round(mouseY));
         if (button == 0) {
             mouseDown = true;
             if (entry.isPresent()) {
@@ -96,7 +97,7 @@ public class HudEditScreen extends Screen {
 
     private void updateSnapState() {
         if (snapEnabled && current != null) {
-            List<Rectangle> bounds = KronHUD.hudManager.getAllBounds();
+            List<Rectangle> bounds = HudManager.getInstance().getAllBounds();
             bounds.remove(current.getTrueBounds());
             snap = new SnappingHelper(bounds, current.getTrueBounds());
         } else if (snap != null) {
@@ -143,13 +144,13 @@ public class HudEditScreen extends Screen {
     }
 
     private List<Option<?>> getHudEntries() {
-        return KronHUD.hudManager.getEntries().stream().map(HudEntryOption::new).collect(Collectors.toList());
+        return HudManager.getInstance().getEntries().stream().map(HudEntryOption::new).collect(Collectors.toList());
     }
 
     private List<Tab> getTabs(){
         List<Tab> tabs = new ArrayList<>();
 
-        KronHUD.hudManager.getEntries().forEach(abstractHudEntry -> {
+        HudManager.getInstance().getEntries().forEach(abstractHudEntry -> {
             tabs.add(
                     Tab.ofOptions(
                             abstractHudEntry.getId(),

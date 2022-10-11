@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import io.github.darkkronicle.darkkore.colors.ExtendedColor;
 import io.github.darkkronicle.darkkore.util.Color;
+import io.github.darkkronicle.darkkore.util.render.RenderUtil;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.config.KronColor;
 import io.github.darkkronicle.kronhud.config.KronConfig;
@@ -53,7 +54,7 @@ public class ScoreboardHud extends AbstractHudEntry {
     private final KronColor scoreColor = new KronColor("scorecolor", ID.getPath(), new Color(0xFFFF5555));
 
     public ScoreboardHud() {
-        super(300, 146);
+        super(200, 146);
     }
 
     @Override
@@ -124,36 +125,36 @@ public class ScoreboardHud extends AbstractHudEntry {
 
         int scoresSize = scores.size();
         int scoreHeight = scoresSize * 9;
-        DrawPosition pos = getPos();
         Rectangle bounds = getRenderBounds();
-        Rectangle inside = new Rectangle(pos.x(), pos.y(), maxWidth, scoreHeight + 9);
-        Rectangle calculated = new Rectangle(bounds.x() + bounds.width() - inside.width(),
-                bounds.y() + (bounds.height() / 2 - inside.height() / 2), inside.width(), inside.height());
-        int scoreY = calculated.y() + scoreHeight + 9;
-        int scoreX = calculated.x() + 2;
+        int fullHeight = scoreHeight + 9;
+
+        int renderX = bounds.x() + bounds.width() - maxWidth;
+        int renderY = bounds.y() + (bounds.height() / 2 - fullHeight / 2);
+
+        int scoreX = renderX + 2;
+        int scoreY = renderY + scoreHeight + 9;
         int num = 0;
         int textOffset = scoreX - 2;
 
-        if (background.getValue() && backgroundColor.getValue().alpha() > 0) {
-            fillRect(matrices, getRenderBounds(), backgroundColor.getValue());
-        }
         if (outline.getValue() && outlineColor.getValue().alpha() > 0) {
-            outlineRect(matrices, getRenderBounds(), outlineColor.getValue());
+            RenderUtil.drawOutline(matrices, textOffset, bounds.y(), maxWidth, fullHeight, outlineColor.getValue());
         }
 
         for (Pair<ScoreboardPlayerScore, Text> scoreboardPlayerScoreTextPair : scoresWText) {
             ++num;
             ScoreboardPlayerScore scoreboardPlayerScore2 = scoreboardPlayerScoreTextPair.getFirst();
             Text scoreText = scoreboardPlayerScoreTextPair.getSecond();
-            String score = "" + scoreboardPlayerScore2.getScore();
+            String score = String.valueOf(scoreboardPlayerScore2.getScore());
             int relativeY = scoreY - num * 9;
 
+            if (background.getValue() && backgroundColor.getValue().alpha() > 0) {
+                RenderUtil.drawRectangle(matrices, textOffset, relativeY, maxWidth, 9, backgroundColor.getValue());
+            }
+
             if (shadow.getValue()) {
-                client.textRenderer.drawWithShadow(matrices, scoreText, (float) scoreX, (float) relativeY,
-                        -1);
+                client.textRenderer.drawWithShadow(matrices, scoreText, (float) scoreX, (float) relativeY, -1);
             } else {
-                client.textRenderer.draw(matrices, scoreText, (float) scoreX, (float) relativeY,
-                        -1);
+                client.textRenderer.draw(matrices, scoreText, (float) scoreX, (float) relativeY, -1);
             }
             if (this.scores.getValue()) {
                 drawString(matrices, client.textRenderer, score,
@@ -162,8 +163,8 @@ public class ScoreboardHud extends AbstractHudEntry {
             }
             if (num == scoresSize) {
                 if (background.getValue()) {
-                    fillRect(matrices, new Rectangle(textOffset, relativeY - 10, maxWidth, 9), topColor.getValue());
-                    fillRect(matrices, new Rectangle(scoreX - 2, relativeY - 1, maxWidth, 1),
+                    RenderUtil.fill(matrices, textOffset, relativeY - 10, maxWidth, 9, topColor.getValue());
+                    RenderUtil.fill(matrices, scoreX - 2, relativeY - 1, maxWidth, 1,
                             backgroundColor.getValue());
                 }
                 float title = (float) (scoreX + maxWidth / 2 - displayNameWidth / 2 - 1);

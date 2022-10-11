@@ -1,6 +1,6 @@
 package io.github.darkkronicle.kronhud.mixins;
 
-import io.github.darkkronicle.kronhud.KronHUD;
+import io.github.darkkronicle.kronhud.gui.hud.HudManager;
 import io.github.darkkronicle.kronhud.gui.hud.ToggleSprintHud;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
@@ -25,7 +25,7 @@ public abstract class MixinClientPlayerEntity {
             )
     )
     private boolean alwaysPressed(KeyBinding sprintKey) {
-        ToggleSprintHud hud = (ToggleSprintHud) KronHUD.hudManager.get(ToggleSprintHud.ID);
+        ToggleSprintHud hud = (ToggleSprintHud) HudManager.getInstance().get(ToggleSprintHud.ID);
         return hud.getSprintToggled().getValue() || sprintKey.isPressed();
     }
 }

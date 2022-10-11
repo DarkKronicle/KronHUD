@@ -3,6 +3,7 @@ package io.github.darkkronicle.kronhud.gui;
 import io.github.darkkronicle.darkkore.colors.ExtendedColor;
 import io.github.darkkronicle.darkkore.config.options.Option;
 import io.github.darkkronicle.darkkore.gui.Tab;
+import io.github.darkkronicle.darkkore.util.StringUtil;
 import io.github.darkkronicle.kronhud.config.*;
 import io.github.darkkronicle.kronhud.util.ColorUtil;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
@@ -87,8 +88,7 @@ public abstract class AbstractHudEntry extends DrawUtil {
         return false;
     }
 
-    public void tick() {
-    }
+    public void tick() {}
 
     public void setXY(int x, int y) {
         setX(x);
@@ -189,6 +189,10 @@ public abstract class AbstractHudEntry extends DrawUtil {
         return Tab.ofOptions(getId(), getNameKey(), getConfigurationOptions().stream().map((o -> (Option<?>) o)).collect(Collectors.toList()));
     }
 
+    /**
+     * Returns a list of options that should be shown in configuration screens
+     * @return List of options
+     */
     public List<KronConfig<?>> getConfigurationOptions() {
         List<KronConfig<?>> options = new ArrayList<>();
         options.add(enabled);
@@ -196,6 +200,10 @@ public abstract class AbstractHudEntry extends DrawUtil {
         return options;
     }
 
+    /**
+     * Returns a list of options that should be saved. By default, this includes {@link #getConfigurationOptions()}
+     * @return
+     */
     public List<KronConfig<?>> getSaveOptions() {
         List<KronConfig<?>> options = getConfigurationOptions();
         options.add(x);
@@ -207,16 +215,26 @@ public abstract class AbstractHudEntry extends DrawUtil {
         return enabled.getValue();
     }
 
+    /**
+     * Gets the display name key
+     *
+     * @return The display name key
+     */
     public String getNameKey() {
         return "hud." + getId().getNamespace() + "." + getId().getPath();
     }
 
+    /**
+     * Gets the info key to render on hover
+     *
+     * @return Info key
+     */
     public String getInfoKey() {
         return "hud." + getId().getNamespace() + "." + getId().getPath() + ".info";
     }
 
     public String getName() {
-        return Text.translatable(getNameKey()).getString();
+        return StringUtil.translate(getNameKey());
     }
 
     public void setEnabled(boolean value) {

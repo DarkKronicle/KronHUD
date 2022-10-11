@@ -15,10 +15,17 @@ import java.util.stream.Collectors;
 
 @Environment(EnvType.CLIENT)
 public class HudManager {
+
+    private final static HudManager INSTANCE = new HudManager();
+
+    public static HudManager getInstance() {
+        return INSTANCE;
+    }
+
     private final Map<Identifier, AbstractHudEntry> entries;
     private final MinecraftClient client;
 
-    public HudManager() {
+    private HudManager() {
         this.entries = new LinkedHashMap<>();
         client = MinecraftClient.getInstance();
         ClientTickEvents.END_CLIENT_TICK.register(minecraftClient -> {

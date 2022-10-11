@@ -1,6 +1,7 @@
 package io.github.darkkronicle.kronhud.mixins;
 
 import io.github.darkkronicle.kronhud.KronHUD;
+import io.github.darkkronicle.kronhud.gui.hud.HudManager;
 import io.github.darkkronicle.kronhud.hooks.KronHudHooks;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -24,7 +25,7 @@ public class MixinMouse {
     @Inject(method = "onResolutionChanged", at = @At(value = "HEAD"))
     private void onResolutionChanged(CallbackInfo ci) {
         // Resize and rebuild!
-        KronHUD.hudManager.refreshAllBounds();
+        HudManager.getInstance().refreshAllBounds();
     }
 
 }

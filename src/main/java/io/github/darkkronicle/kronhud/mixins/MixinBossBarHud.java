@@ -1,6 +1,7 @@
 package io.github.darkkronicle.kronhud.mixins;
 
 import io.github.darkkronicle.kronhud.KronHUD;
+import io.github.darkkronicle.kronhud.gui.hud.HudManager;
 import net.minecraft.client.gui.hud.BossBarHud;
 import net.minecraft.client.util.math.MatrixStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,7 +14,7 @@ public class MixinBossBarHud {
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void render(MatrixStack matrices, CallbackInfo ci) {
-        io.github.darkkronicle.kronhud.gui.hud.BossBarHud hud = (io.github.darkkronicle.kronhud.gui.hud.BossBarHud) KronHUD.hudManager.get(
+        io.github.darkkronicle.kronhud.gui.hud.BossBarHud hud = (io.github.darkkronicle.kronhud.gui.hud.BossBarHud) HudManager.getInstance().get(
                 io.github.darkkronicle.kronhud.gui.hud.BossBarHud.ID);
         if (hud != null && hud.isEnabled()) {
             ci.cancel();

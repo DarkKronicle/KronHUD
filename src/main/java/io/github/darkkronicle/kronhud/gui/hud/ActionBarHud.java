@@ -26,7 +26,6 @@ public class ActionBarHud extends AbstractHudEntry {
 
     public ActionBarHud() {
         super(115, 13);
-        client = MinecraftClient.getInstance();
     }
 
     public void setActionBar(Text bar, int color) {

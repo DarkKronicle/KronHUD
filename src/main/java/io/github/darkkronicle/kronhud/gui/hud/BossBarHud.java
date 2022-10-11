@@ -40,7 +40,6 @@ public class BossBarHud extends AbstractHudEntry {
 
     public BossBarHud() {
         super(184, 80);
-        client = MinecraftClient.getInstance();
     }
 
     public void setBossBars() {

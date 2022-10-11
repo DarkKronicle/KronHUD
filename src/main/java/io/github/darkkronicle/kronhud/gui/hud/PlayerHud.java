@@ -50,7 +50,6 @@ public class PlayerHud extends AbstractHudEntry {
     }
 
     public void renderPlayer(double x, double y, float delta) {
-        MinecraftClient client = MinecraftClient.getInstance();
         if (client.player == null) {
             return;
         }

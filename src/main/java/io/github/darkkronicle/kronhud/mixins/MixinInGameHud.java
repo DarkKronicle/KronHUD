@@ -1,10 +1,7 @@
 package io.github.darkkronicle.kronhud.mixins;
 
 import io.github.darkkronicle.kronhud.KronHUD;
-import io.github.darkkronicle.kronhud.gui.hud.ActionBarHud;
-import io.github.darkkronicle.kronhud.gui.hud.CrosshairHud;
-import io.github.darkkronicle.kronhud.gui.hud.PotionsHud;
-import io.github.darkkronicle.kronhud.gui.hud.ScoreboardHud;
+import io.github.darkkronicle.kronhud.gui.hud.*;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.font.TextRenderer;
@@ -28,7 +25,7 @@ public class MixinInGameHud {
 
     @Inject(method = "renderStatusEffectOverlay", at = @At("HEAD"), cancellable = true)
     public void renderStatusEffect(MatrixStack matrices, CallbackInfo ci) {
-        PotionsHud hud = (PotionsHud) KronHUD.hudManager.get(PotionsHud.ID);
+        PotionsHud hud = (PotionsHud) HudManager.getInstance().get(PotionsHud.ID);
         if (hud != null && hud.isEnabled()) {
             ci.cancel();
         }
@@ -36,7 +33,7 @@ public class MixinInGameHud {
 
     @Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
     public void renderCrosshair(MatrixStack matrices, CallbackInfo ci) {
-        CrosshairHud hud = (CrosshairHud) KronHUD.hudManager.get(CrosshairHud.ID);
+        CrosshairHud hud = (CrosshairHud) HudManager.getInstance().get(CrosshairHud.ID);
         if (hud != null && hud.isEnabled()) {
             ci.cancel();
         }
@@ -44,7 +41,7 @@ public class MixinInGameHud {
 
     @Inject(method = "renderScoreboardSidebar", at = @At("HEAD"), cancellable = true)
     public void renderScoreboard(MatrixStack matrices, ScoreboardObjective objective, CallbackInfo ci) {
-        ScoreboardHud hud = (ScoreboardHud) KronHUD.hudManager.get(ScoreboardHud.ID);
+        ScoreboardHud hud = (ScoreboardHud) HudManager.getInstance().get(ScoreboardHud.ID);
         if (hud != null && hud.isEnabled()) {
             ci.cancel();
         }
@@ -52,7 +49,7 @@ public class MixinInGameHud {
 
     @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;drawWithShadow(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/text/Text;FFI)I"))
     public int getActionBar(TextRenderer instance, MatrixStack matrices, Text message, float x, float y, int color) {
-        ActionBarHud hud = (ActionBarHud) KronHUD.hudManager.get(ActionBarHud.ID);
+        ActionBarHud hud = (ActionBarHud) HudManager.getInstance().get(ActionBarHud.ID);
         if (hud != null && hud.isEnabled()) {
             hud.setActionBar(message, color);
             return 0; // Doesn't matter since return value is not used
@@ -63,7 +60,7 @@ public class MixinInGameHud {
 
     @Inject(method = "setOverlayMessage", at = @At("TAIL"))
     public void setDuration(Text message, boolean tinted, CallbackInfo ci) {
-        ActionBarHud hud = (ActionBarHud) KronHUD.hudManager.get(ActionBarHud.ID);
+        ActionBarHud hud = (ActionBarHud) HudManager.getInstance().get(ActionBarHud.ID);
         if (hud != null && hud.isEnabled()) {
             overlayRemaining = hud.timeShown.getValue();
         }
