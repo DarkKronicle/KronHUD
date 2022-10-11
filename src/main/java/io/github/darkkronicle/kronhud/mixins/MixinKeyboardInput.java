@@ -1,7 +1,6 @@
 package io.github.darkkronicle.kronhud.mixins;
 
-import io.github.darkkronicle.kronhud.KronHUD;
-import io.github.darkkronicle.kronhud.gui.hud.HudManager;
+import io.github.darkkronicle.kronhud.gui.HudManager;
 import io.github.darkkronicle.kronhud.gui.hud.ToggleSprintHud;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.KeyboardInput;

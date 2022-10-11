@@ -1,7 +1,10 @@
 package io.github.darkkronicle.kronhud.mixins;
 
-import io.github.darkkronicle.kronhud.KronHUD;
+import io.github.darkkronicle.kronhud.gui.HudManager;
 import io.github.darkkronicle.kronhud.gui.hud.*;
+import io.github.darkkronicle.kronhud.gui.hud.vanilla.ActionBarHud;
+import io.github.darkkronicle.kronhud.gui.hud.vanilla.CrosshairHud;
+import io.github.darkkronicle.kronhud.gui.hud.vanilla.ScoreboardHud;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.font.TextRenderer;

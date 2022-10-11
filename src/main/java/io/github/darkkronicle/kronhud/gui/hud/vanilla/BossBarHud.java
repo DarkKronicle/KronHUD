@@ -1,13 +1,11 @@
-package io.github.darkkronicle.kronhud.gui.hud;
+package io.github.darkkronicle.kronhud.gui.hud.vanilla;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.config.KronConfig;
-import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
+import io.github.darkkronicle.kronhud.gui.entry.TextHudEntry;
 import io.github.darkkronicle.kronhud.mixins.AccessorBossBarHud;
-import io.github.darkkronicle.kronhud.util.ColorUtil;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.ClientBossBar;
 import net.minecraft.client.util.math.MatrixStack;
@@ -21,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class BossBarHud extends AbstractHudEntry {
+public class BossBarHud extends TextHudEntry {
 
     public static final Identifier ID = new Identifier("kronhud", "bossbarhud");
     private static final Identifier BARS_TEXTURE = new Identifier("textures/gui/bars.png");
@@ -33,30 +31,25 @@ public class BossBarHud extends AbstractHudEntry {
     });
 
     private Map<UUID, ClientBossBar> bossBars;
-    private final MinecraftClient client;
     private final KronBoolean text = new KronBoolean("text", ID.getPath(), true);
     private final KronBoolean bar = new KronBoolean("bar", ID.getPath(), true);
-    // TODO custom colour
+    // TODO custom color
 
     public BossBarHud() {
-        super(184, 80);
+        super(184, 80, false);
     }
 
     public void setBossBars() {
         bossBars = ((AccessorBossBarHud) client.inGameHud.getBossBarHud()).getBossBars();
     }
 
-
     @Override
-    public void render(MatrixStack matrices, float delta) {
+    public void renderComponent(MatrixStack matrices, float delta) {
         setBossBars();
         if (this.bossBars.isEmpty()) {
             return;
         }
-        matrices.push();
-        scale(matrices);
         DrawPosition scaledPos = getPos();
-
         int by = 12;
         for (ClientBossBar bossBar : bossBars.values()) {
             renderBossBar(matrices, scaledPos.x(), by + scaledPos.y(), bossBar);
@@ -65,20 +58,13 @@ public class BossBarHud extends AbstractHudEntry {
                 break;
             }
         }
-        matrices.pop();
     }
 
     @Override
-    public void renderPlaceholder(MatrixStack matrices, float delta) {
-        matrices.push();
-        renderPlaceholderBackground(matrices);
-        scale(matrices);
+    public void renderPlaceholderComponent(MatrixStack matrices, float delta) {
         DrawPosition pos = getPos();
-        outlineRect(matrices, getRenderBounds(), ColorUtil.BLACK);
         renderBossBar(matrices, pos.x(), pos.y() + 12, placeholder);
         renderBossBar(matrices, pos.x(), pos.y() + 31, placeholder2);
-        hovered = false;
-        matrices.pop();
     }
 
     private void renderBossBar(MatrixStack matrices, int x, int y, BossBar bossBar) {
@@ -123,11 +109,7 @@ public class BossBarHud extends AbstractHudEntry {
     public List<KronConfig<?>> getConfigurationOptions() {
         List<KronConfig<?>> options = super.getConfigurationOptions();
         options.add(text);
-        options.add(textColor);
-        options.add(shadow);
         options.add(bar);
-        options.remove(outline);
-        options.remove(outlineColor);
         return options;
     }
 

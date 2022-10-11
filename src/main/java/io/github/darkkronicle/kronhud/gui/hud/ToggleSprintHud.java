@@ -4,6 +4,7 @@ package io.github.darkkronicle.kronhud.gui.hud;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.config.KronString;
+import io.github.darkkronicle.kronhud.gui.entry.SimpleTextHudEntry;
 import lombok.Getter;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-public class ToggleSprintHud extends CleanHudEntry {
+public class ToggleSprintHud extends SimpleTextHudEntry {
 
     public static final Identifier ID = new Identifier("kronhud", "togglesprint");
     private final KronBoolean toggleSprint = new KronBoolean("toggleSprint", ID.getPath(), false);
@@ -42,7 +43,7 @@ public class ToggleSprintHud extends CleanHudEntry {
     private String text = "";
 
     public ToggleSprintHud() {
-        super(100, 20);
+        super(100, 20, false);
     }
 
     @Override

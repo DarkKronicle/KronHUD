@@ -1,7 +1,8 @@
-package io.github.darkkronicle.kronhud.gui.hud;
+package io.github.darkkronicle.kronhud.gui.hud.simple;
 
 import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.config.KronConfig;
+import io.github.darkkronicle.kronhud.gui.entry.SimpleTextHudEntry;
 import io.github.darkkronicle.kronhud.hooks.KronHudHooks;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
@@ -9,7 +10,7 @@ import net.minecraft.util.Util;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CPSHud extends CleanHudEntry {
+public class CPSHud extends SimpleTextHudEntry {
     public static final Identifier ID = new Identifier("kronhud", "cpshud");
 
     private final KronBoolean fromKeybindings = new KronBoolean("cpskeybind", ID.getPath(), false);

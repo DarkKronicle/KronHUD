@@ -1,6 +1,5 @@
-package io.github.darkkronicle.kronhud.gui.hud;
+package io.github.darkkronicle.kronhud.gui;
 
-import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.gui.screen.HudEditScreen;
 import io.github.darkkronicle.kronhud.util.Rectangle;
 import net.fabricmc.api.EnvType;
@@ -70,7 +69,7 @@ public class HudManager {
         if (!(client.currentScreen instanceof HudEditScreen) && !client.options.debugEnabled) {
             for (AbstractHudEntry hud : getEntries()) {
                 if (hud.isEnabled()) {
-                    hud.renderHud(matrices, delta);
+                    hud.render(matrices, delta);
                 }
             }
         }

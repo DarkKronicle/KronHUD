@@ -4,6 +4,7 @@ import io.github.darkkronicle.kronhud.config.KronColor;
 import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.config.KronInteger;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
+import io.github.darkkronicle.kronhud.gui.entry.TextHudEntry;
 import io.github.darkkronicle.kronhud.util.ColorUtil;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import net.minecraft.client.font.TextRenderer;
@@ -14,7 +15,7 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
 
-public class CoordsHud extends AbstractHudEntry {
+public class CoordsHud extends TextHudEntry {
 
     public static final Identifier ID = new Identifier("kronhud", "coordshud");
 
@@ -23,7 +24,7 @@ public class CoordsHud extends AbstractHudEntry {
     private final KronInteger decimalPlaces = new KronInteger("decimalplaces", ID.getPath(), 0, 0, 15);
 
     public CoordsHud() {
-        super(79, 31);
+        super(79, 31, true);
     }
 
     public static String getZDir(int dir) {
@@ -37,19 +38,13 @@ public class CoordsHud extends AbstractHudEntry {
     }
 
     public static String getXDir(int dir) {
-        switch (dir) {
-            case 3:
-                return "++";
-            case 2:
-            case 4:
-                return "+";
-            case 6:
-            case 8:
-                return "-";
-            case 7:
-                return "--";
-        }
-        return "";
+        return switch (dir) {
+            case 3 -> "++";
+            case 2, 4 -> "+";
+            case 6, 8 -> "-";
+            case 7 -> "--";
+            default -> "";
+        };
     }
 
     /**
@@ -88,22 +83,12 @@ public class CoordsHud extends AbstractHudEntry {
     }
 
     @Override
-    public void render(MatrixStack matrices, float delta) {
-        matrices.push();
-        scale(matrices);
+    public void renderComponent(MatrixStack matrices, float delta) {
         DrawPosition pos = getPos();
-        if (background.getValue() && backgroundColor.getValue().alpha() > 0) {
-            fillRect(matrices, getRenderBounds(), backgroundColor.getValue());
-        }
-        if (outline.getValue() && outlineColor.getValue().alpha() > 0) {
-            outlineRect(matrices, getRenderBounds(), outlineColor.getValue());
-        }
         StringBuilder format = new StringBuilder("#");
         if (decimalPlaces.getValue() > 0) {
             format.append(".");
-            for (int i = 0; i < decimalPlaces.getValue(); i++) {
-                format.append("0");
-            }
+            format.append("0".repeat(Math.max(0, decimalPlaces.getValue())));
         }
         DecimalFormat df = new DecimalFormat(format.toString());
         df.setRoundingMode(RoundingMode.CEILING);
@@ -163,22 +148,15 @@ public class CoordsHud extends AbstractHudEntry {
                 pos.x() + 60, pos.y() + 22,
                 secondColor.getValue().color(), shadow.getValue()
         );
-
-        matrices.pop();
     }
 
     @Override
-    public void renderPlaceholder(MatrixStack matrices, float delta) {
-        matrices.push();
-        renderPlaceholderBackground(matrices);
-        scale(matrices);
+    public void renderPlaceholderComponent(MatrixStack matrices, float delta) {
         DrawPosition pos = getPos();
         StringBuilder format = new StringBuilder("#");
         if (decimalPlaces.getValue() > 0) {
             format.append(".");
-            for (int i = 0; i < decimalPlaces.getValue(); i++) {
-                format.append("#");
-            }
+            format.append("#".repeat(Math.max(0, decimalPlaces.getValue())));
         }
 
         DecimalFormat df = new DecimalFormat(format.toString());
@@ -199,13 +177,10 @@ public class CoordsHud extends AbstractHudEntry {
         textRenderer.drawWithShadow(matrices, direction, pos.x() + 60, pos.y() + 12, firstColor.getValue().color());
         textRenderer.drawWithShadow(matrices, getXDir(dir), pos.x() + 60, pos.y() + 2, secondColor.getValue().color());
         textRenderer.drawWithShadow(matrices, getZDir(dir), pos.x() + 60, pos.y() + 22, secondColor.getValue().color());
-
-        matrices.pop();
-        hovered = false;
     }
 
     public String getWordedDirection(int dir) {
-        String direction = switch (dir) {
+        return switch (dir) {
             case 1 -> "N";
             case 2 -> "NE";
             case 3 -> "E";
@@ -217,25 +192,15 @@ public class CoordsHud extends AbstractHudEntry {
             case 0 -> "?";
             default -> "";
         };
-        return direction;
     }
 
     @Override
     public List<KronConfig<?>> getConfigurationOptions() {
         List<KronConfig<?>> options = super.getConfigurationOptions();
-        options.add(background);
-        options.add(backgroundColor);
-        options.add(outline);
-        options.add(outlineColor);
         options.add(firstColor);
         options.add(secondColor);
         options.add(decimalPlaces);
         return options;
-    }
-
-    @Override
-    public boolean movable() {
-        return true;
     }
 
     @Override

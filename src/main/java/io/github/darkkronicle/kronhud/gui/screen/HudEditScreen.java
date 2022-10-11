@@ -5,11 +5,10 @@ import io.github.darkkronicle.darkkore.config.options.Option;
 import io.github.darkkronicle.darkkore.gui.Tab;
 import io.github.darkkronicle.darkkore.settings.DarkKoreConfig;
 import io.github.darkkronicle.darkkore.util.render.RenderUtil;
-import io.github.darkkronicle.kronhud.KronHUD;
 import io.github.darkkronicle.kronhud.config.ConfigHandler;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.gui.HudEntryOption;
-import io.github.darkkronicle.kronhud.gui.hud.HudManager;
+import io.github.darkkronicle.kronhud.gui.HudManager;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import io.github.darkkronicle.kronhud.util.Rectangle;
 import io.github.darkkronicle.kronhud.util.SnappingHelper;
@@ -53,7 +52,7 @@ public class HudEditScreen extends Screen {
                 new ButtonWidget(width / 2 - 50, height - 50 , 100, 20,
                 Text.translatable("button.kronhud.configuration"),
                 (button) -> {
-                    io.github.darkkronicle.darkkore.gui.ConfigScreen screen = io.github.darkkronicle.darkkore.gui.ConfigScreen.ofOptions(getHudEntries());
+                    EntryConfigScreen screen = new EntryConfigScreen();
                     screen.setParent(this);
                     client.setScreen(screen);
                 }));

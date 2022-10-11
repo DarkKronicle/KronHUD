@@ -1,10 +1,11 @@
-package io.github.darkkronicle.kronhud.gui.hud;
+package io.github.darkkronicle.kronhud.gui.hud.vanilla;
 
 import io.github.darkkronicle.darkkore.util.Color;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.config.KronInteger;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
+import io.github.darkkronicle.kronhud.gui.entry.TextHudEntry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -12,7 +13,7 @@ import net.minecraft.util.Identifier;
 
 import java.util.List;
 
-public class ActionBarHud extends AbstractHudEntry {
+public class ActionBarHud extends TextHudEntry {
 
     public static final Identifier ID = new Identifier("kronhud", "actionbarhud");
 
@@ -25,7 +26,7 @@ public class ActionBarHud extends AbstractHudEntry {
     private final String placeholder = "Action Bar";
 
     public ActionBarHud() {
-        super(115, 13);
+        super(115, 13, false);
     }
 
     public void setActionBar(Text bar, int color) {
@@ -34,15 +35,13 @@ public class ActionBarHud extends AbstractHudEntry {
     }
 
     @Override
-    public void render(MatrixStack matrices, float delta) {
+    public void renderComponent(MatrixStack matrices, float delta) {
         if (ticksShown >= timeShown.getValue()) {
             this.actionBar = null;
         }
         Color vanillaColor = new Color(color);
         if (this.actionBar != null) {
 
-            matrices.push();
-            scale(matrices);
             if (shadow.getValue()) {
                 client.textRenderer.drawWithShadow(matrices, actionBar,
                         (float) getPos().x() + Math.round((float) getWidth() / 2) - (float) client.textRenderer.getWidth(actionBar) / 2,
@@ -77,7 +76,6 @@ public class ActionBarHud extends AbstractHudEntry {
                         color
                 );
             }
-            matrices.pop();
             ticksShown++;
         } else {
             ticksShown = 0;
@@ -85,27 +83,17 @@ public class ActionBarHud extends AbstractHudEntry {
     }
 
     @Override
-    public void renderPlaceholder(MatrixStack matrices, float delta) {
-        matrices.push();
-        renderPlaceholderBackground(matrices);
-        scale(matrices);
+    public void renderPlaceholderComponent(MatrixStack matrices, float delta) {
         client.textRenderer.draw(
                 matrices, placeholder,
                 (float) getPos().x() + Math.round((float) getWidth() / 2) - (float) client.textRenderer.getWidth(placeholder) / 2,
                 (float) getPos().y() + 3, -1
         );
-        matrices.pop();
-        hovered = false;
     }
 
     @Override
     public Identifier getId() {
         return ID;
-    }
-
-    @Override
-    public boolean movable() {
-        return true;
     }
 
     @Override

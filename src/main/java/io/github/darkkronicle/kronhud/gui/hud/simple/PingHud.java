@@ -1,14 +1,14 @@
-package io.github.darkkronicle.kronhud.gui.hud;
+package io.github.darkkronicle.kronhud.gui.hud.simple;
 
+import io.github.darkkronicle.kronhud.gui.entry.SimpleTextHudEntry;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.util.Identifier;
 
 
-public class PingHud extends CleanHudEntry {
+public class PingHud extends SimpleTextHudEntry {
     public static final Identifier ID = new Identifier("kronhud", "pinghud");
 
     public PingHud() {
-        // super(x, y, scale);
         super();
     }
 

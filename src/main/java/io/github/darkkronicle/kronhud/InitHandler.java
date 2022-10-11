@@ -6,7 +6,7 @@ import io.github.darkkronicle.darkkore.hotkeys.HotkeyHandler;
 import io.github.darkkronicle.darkkore.intialization.Initializer;
 import io.github.darkkronicle.kronhud.config.ConfigHandler;
 import io.github.darkkronicle.kronhud.gui.HudEntryOption;
-import io.github.darkkronicle.kronhud.gui.hud.HudManager;
+import io.github.darkkronicle.kronhud.gui.HudManager;
 import io.github.darkkronicle.kronhud.gui.screen.HudEditScreen;
 import io.github.darkkronicle.kronhud.gui.screen.HudEntryComponent;
 import net.minecraft.client.MinecraftClient;

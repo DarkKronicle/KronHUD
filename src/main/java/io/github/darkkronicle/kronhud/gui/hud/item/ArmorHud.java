@@ -1,7 +1,8 @@
-package io.github.darkkronicle.kronhud.gui.hud;
+package io.github.darkkronicle.kronhud.gui.hud.item;
 
 import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
+import io.github.darkkronicle.kronhud.gui.entry.TextHudEntry;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import io.github.darkkronicle.kronhud.util.ItemUtil;
 import net.minecraft.client.util.math.MatrixStack;
@@ -11,24 +12,17 @@ import net.minecraft.util.Identifier;
 
 import java.util.List;
 
-public class ArmorHud extends AbstractHudEntry {
+public class ArmorHud extends TextHudEntry {
+
     public static final Identifier ID = new Identifier("kronhud", "armorhud");
 
     public ArmorHud() {
-        super(20, 100);
+        super(20, 100, true);
     }
 
     @Override
-    public void render(MatrixStack matrices, float delta) {
-        matrices.push();
-        scale(matrices);
+    public void renderComponent(MatrixStack matrices, float delta) {
         DrawPosition pos = getPos();
-        if (background.getValue() && backgroundColor.getValue().alpha() > 0) {
-            fillRect(matrices, getRenderBounds(), backgroundColor.getValue());
-        }
-        if (outline.getValue() && outlineColor.getValue().alpha() > 0) {
-            outlineRect(matrices, getRenderBounds(), outlineColor.getValue());
-        }
         int lastY = 2 + (4 * 20);
         renderMainItem(matrices, client.player.getInventory().getMainHandStack(), pos.x() + 2, pos.y() + lastY);
         lastY = lastY - 20;
@@ -37,7 +31,6 @@ public class ArmorHud extends AbstractHudEntry {
             renderItem(matrices, item, pos.x() + 2, lastY + pos.y());
             lastY = lastY - 20;
         }
-        matrices.pop();
     }
 
     public void renderItem(MatrixStack matrices, ItemStack stack, int x, int y) {
@@ -55,18 +48,13 @@ public class ArmorHud extends AbstractHudEntry {
     }
 
     @Override
-    public void renderPlaceholder(MatrixStack matrices, float delta) {
-        matrices.push();
-        renderPlaceholderBackground(matrices);
-        scale(matrices);
+    public void renderPlaceholderComponent(MatrixStack matrices, float delta) {
         DrawPosition pos = getPos();
         int lastY = 2 + (4 * 20);
         ItemUtil.renderGuiItemModel(getScale(), new ItemStack(Items.GRASS_BLOCK), pos.x() + 2, pos.y() + lastY);
         ItemUtil.renderGuiItemOverlay(matrices, client.textRenderer, new ItemStack(Items.GRASS_BLOCK), pos.x() + 2, pos.y() + lastY, "90",
                 textColor.getValue().color(), shadow.getValue()
         );
-        hovered = false;
-        matrices.pop();
     }
 
     @Override
@@ -82,12 +70,6 @@ public class ArmorHud extends AbstractHudEntry {
     @Override
     public List<KronConfig<?>> getConfigurationOptions() {
         List<KronConfig<?>> options = super.getConfigurationOptions();
-        options.add(textColor);
-        options.add(shadow);
-        options.add(background);
-        options.add(backgroundColor);
-        options.add(outline);
-        options.add(outlineColor);
         return options;
     }
 

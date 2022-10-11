@@ -1,9 +1,10 @@
-package io.github.darkkronicle.kronhud.gui.hud;
+package io.github.darkkronicle.kronhud.gui.hud.simple;
 
+import io.github.darkkronicle.kronhud.gui.entry.SimpleTextHudEntry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Identifier;
 
-public class IPHud extends CleanHudEntry {
+public class IPHud extends SimpleTextHudEntry {
 
     public static final Identifier ID = new Identifier("kronhud", "iphud");
 

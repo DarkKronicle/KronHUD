@@ -3,7 +3,7 @@ package io.github.darkkronicle.kronhud.gui.hud;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.config.KronDouble;
-import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
+import io.github.darkkronicle.kronhud.gui.entry.BoxHudEntry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -15,38 +15,24 @@ import net.minecraft.util.math.Vec3f;
 
 import java.util.List;
 
-public class PlayerHud extends AbstractHudEntry {
+public class PlayerHud extends BoxHudEntry {
 
     public static final Identifier ID = new Identifier("kronhud", "playerhud");
 
     private final KronDouble rotation = new KronDouble("rotation", ID.getPath(), 0, 0, 360);
 
     public PlayerHud() {
-        super(62, 94);
+        super(62, 94, true);
     }
 
     @Override
-    public void render(MatrixStack matrices, float delta) {
-        matrices.push();
-        scale(matrices);
-        if (background.getValue() && backgroundColor.getValue().alpha() > 0) {
-            fillRect(matrices, getRenderBounds(), backgroundColor.getValue());
-        }
-        if (outline.getValue() && outlineColor.getValue().alpha() > 0) {
-            outlineRect(matrices, getRenderBounds(), outlineColor.getValue());
-        }
+    public void renderComponent(MatrixStack matrices, float delta) {
         renderPlayer(getTruePos().x() + 31 * getScale(), getTruePos().y() + 86 * getScale(), delta);
-        matrices.pop();
     }
 
     @Override
-    public void renderPlaceholder(MatrixStack matrices, float delta) {
-        matrices.push();
-        renderPlaceholderBackground(matrices);
-        scale(matrices);
+    public void renderPlaceholderComponent(MatrixStack matrices, float delta) {
         renderPlayer(getTruePos().x() + 31 * getScale(), getTruePos().y() + 86 * getScale(), 0); // If delta was delta, it would start jittering
-        hovered = false;
-        matrices.pop();
     }
 
     public void renderPlayer(double x, double y, float delta) {

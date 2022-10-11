@@ -1,8 +1,10 @@
-package io.github.darkkronicle.kronhud.gui.hud;
+package io.github.darkkronicle.kronhud.gui.hud.item;
 
 import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
+import io.github.darkkronicle.kronhud.gui.entry.BoxHudEntry;
+import io.github.darkkronicle.kronhud.gui.entry.TextHudEntry;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import io.github.darkkronicle.kronhud.util.ItemUtil;
 import net.minecraft.client.MinecraftClient;
@@ -16,7 +18,8 @@ import net.minecraft.util.Identifier;
 
 import java.util.List;
 
-public class ArrowHud extends AbstractHudEntry {
+public class ArrowHud extends TextHudEntry {
+
     public static final Identifier ID = new Identifier("kronhud", "arrowhud");
     private int arrows = 0;
     private KronBoolean dynamic = new KronBoolean("dynamic", ID.getPath(), false);
@@ -24,7 +27,7 @@ public class ArrowHud extends AbstractHudEntry {
     private ItemStack currentArrow = new ItemStack(Items.ARROW);
 
     public ArrowHud() {
-        super(20, 30);
+        super(20, 30, true);
     }
 
     @Override
@@ -38,22 +41,17 @@ public class ArrowHud extends AbstractHudEntry {
                 return;
             }
         }
-        matrices.push();
-        scale(matrices);
+        super.render(matrices, delta);
+    }
 
+    @Override
+    public void renderComponent(MatrixStack matrices, float delta) {
         DrawPosition pos = getPos();
-        if (background.getValue() && backgroundColor.getValue().alpha() > 0) {
-            fillRect(matrices, getRenderBounds(), backgroundColor.getValue());
-        }
-        if (outline.getValue() && outlineColor.getValue().alpha() > 0) {
-            outlineRect(matrices, getRenderBounds(), outlineColor.getValue());
-        }
         drawCenteredString(
                 matrices, client.textRenderer, String.valueOf(arrows), pos.x() + getWidth() / 2, pos.y() + getHeight() - 10,
                 textColor.getValue(), shadow.getValue()
         );
         ItemUtil.renderGuiItemModel(getScale(), currentArrow, pos.x() + 2, pos.y() + 2);
-        matrices.pop();
     }
 
     @Override
@@ -80,29 +78,18 @@ public class ArrowHud extends AbstractHudEntry {
     }
 
     @Override
-    public void renderPlaceholder(MatrixStack matrices, float delta) {
-        matrices.push();
-        renderPlaceholderBackground(matrices);
-        scale(matrices);
+    public void renderPlaceholderComponent(MatrixStack matrices, float delta) {
         DrawPosition pos = getPos();
         drawCenteredString(
                 matrices, client.textRenderer, "64", pos.x() + getWidth() / 2, pos.y() + getHeight() - 10, textColor.getValue(),
                 shadow.getValue()
         );
         ItemUtil.renderGuiItemModel(getScale(), new ItemStack(Items.ARROW), pos.x() + 2, pos.y() + 2);
-        hovered = false;
-        matrices.pop();
     }
 
     @Override
     public List<KronConfig<?>> getConfigurationOptions() {
         List<KronConfig<?>> options = super.getConfigurationOptions();
-        options.add(textColor);
-        options.add(shadow);
-        options.add(background);
-        options.add(backgroundColor);
-        options.add(outline);
-        options.add(outlineColor);
         options.add(dynamic);
         options.add(allArrowTypes);
         return options;

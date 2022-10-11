@@ -1,8 +1,9 @@
-package io.github.darkkronicle.kronhud.gui.hud;
+package io.github.darkkronicle.kronhud.gui.hud.item;
 
 import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.config.KronInteger;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
+import io.github.darkkronicle.kronhud.gui.entry.TextHudEntry;
 import io.github.darkkronicle.kronhud.util.*;
 import net.minecraft.client.util.TextCollector;
 import net.minecraft.client.util.math.MatrixStack;
@@ -20,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ItemUpdateHud extends AbstractHudEntry {
+public class ItemUpdateHud extends TextHudEntry {
     public static final Identifier ID = new Identifier("kronhud", "itemupdatehud");
 
     private List<ItemUtil.ItemStorage> oldItems = new ArrayList<>();
@@ -30,7 +31,7 @@ public class ItemUpdateHud extends AbstractHudEntry {
     private KronInteger timeout = new KronInteger("timeout", ID.getPath(), 6, 1, 60);
 
     public ItemUpdateHud() {
-        super(200, 11 * 6 - 2);
+        super(200, 11 * 6 - 2, true);
         removed = new ArrayList<>();
         added = new ArrayList<>();
     }
@@ -93,9 +94,7 @@ public class ItemUpdateHud extends AbstractHudEntry {
     }
 
     @Override
-    public void render(MatrixStack matrices, float delta) {
-        matrices.push();
-        scale(matrices);
+    public void renderComponent(MatrixStack matrices, float delta) {
         DrawPosition pos = getPos();
         int lastY = 1;
         int i = 0;
@@ -147,14 +146,10 @@ public class ItemUpdateHud extends AbstractHudEntry {
             lastY = lastY + client.textRenderer.fontHeight + 2;
             i++;
         }
-        matrices.pop();
     }
 
     @Override
-    public void renderPlaceholder(MatrixStack matrices, float delta) {
-        matrices.push();
-        renderPlaceholderBackground(matrices);
-        scale(matrices);
+    public void renderPlaceholderComponent(MatrixStack matrices, float delta) {
         DrawPosition pos = getPos();
         TextCollector addM = new TextCollector();
         addM.add(Text.literal("+ "));
@@ -188,8 +183,6 @@ public class ItemUpdateHud extends AbstractHudEntry {
                     Formatting.RED.getColorValue()
             );
         }
-        hovered = false;
-        matrices.pop();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package io.github.darkkronicle.kronhud.gui.hud;
+package io.github.darkkronicle.kronhud.gui.hud.vanilla;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -11,6 +11,7 @@ import io.github.darkkronicle.kronhud.config.KronColor;
 import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.config.KronExtendedColor;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
+import io.github.darkkronicle.kronhud.gui.entry.TextHudEntry;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import io.github.darkkronicle.kronhud.util.Rectangle;
 import net.minecraft.client.util.math.MatrixStack;
@@ -29,7 +30,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ScoreboardHud extends AbstractHudEntry {
+public class ScoreboardHud extends TextHudEntry {
+
     public static final Identifier ID = new Identifier("kronhud", "scoreboardhud");
     public static final ScoreboardObjective placeholder = Util.make(() -> {
         Scoreboard placeScore = new Scoreboard();
@@ -54,13 +56,11 @@ public class ScoreboardHud extends AbstractHudEntry {
     private final KronColor scoreColor = new KronColor("scorecolor", ID.getPath(), new Color(0xFFFF5555));
 
     public ScoreboardHud() {
-        super(200, 146);
+        super(200, 146, true);
     }
 
     @Override
-    public void render(MatrixStack matrices, float delta) {
-        matrices.push();
-        scale(matrices);
+    public void renderComponent(MatrixStack matrices, float delta) {
         Scoreboard scoreboard = this.client.world.getScoreboard();
         ScoreboardObjective scoreboardObjective = null;
         Team team = scoreboard.getPlayerTeam(this.client.player.getEntityName());
@@ -75,17 +75,11 @@ public class ScoreboardHud extends AbstractHudEntry {
         if (scoreboardObjective2 != null) {
             this.renderScoreboardSidebar(matrices, scoreboardObjective2);
         }
-        matrices.pop();
     }
 
     @Override
-    public void renderPlaceholder(MatrixStack matrices, float delta) {
-        matrices.push();
-        renderPlaceholderBackground(matrices);
-        scale(matrices);
+    public void renderPlaceholderComponent(MatrixStack matrices, float delta) {
         renderScoreboardSidebar(matrices, placeholder);
-        hovered = false;
-        matrices.pop();
     }
 
     // Abusing this could break some stuff/could allow for unfair advantages. The goal is not to do this, so it won't
@@ -163,8 +157,8 @@ public class ScoreboardHud extends AbstractHudEntry {
             }
             if (num == scoresSize) {
                 if (background.getValue()) {
-                    RenderUtil.fill(matrices, textOffset, relativeY - 10, maxWidth, 9, topColor.getValue());
-                    RenderUtil.fill(matrices, scoreX - 2, relativeY - 1, maxWidth, 1,
+                    RenderUtil.drawRectangle(matrices, textOffset, relativeY - 10, maxWidth, 9, topColor.getValue());
+                    RenderUtil.drawRectangle(matrices, scoreX - 2, relativeY - 1, maxWidth, 1,
                             backgroundColor.getValue());
                 }
                 float title = (float) (scoreX + maxWidth / 2 - displayNameWidth / 2 - 1);
@@ -181,14 +175,10 @@ public class ScoreboardHud extends AbstractHudEntry {
     @Override
     public List<KronConfig<?>> getConfigurationOptions() {
         List<KronConfig<?>> options = super.getConfigurationOptions();;
-        options.add(background);
         options.add(topColor);
-        options.add(backgroundColor);
-        options.add(outline);
-        options.add(outlineColor);
-        options.add(shadow);
         options.add(scores);
         options.add(scoreColor);
+        options.remove(textColor);
         return options;
     }
 

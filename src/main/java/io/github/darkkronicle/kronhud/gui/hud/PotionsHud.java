@@ -3,6 +3,7 @@ package io.github.darkkronicle.kronhud.gui.hud;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
+import io.github.darkkronicle.kronhud.gui.entry.TextHudEntry;
 import io.github.darkkronicle.kronhud.util.ColorUtil;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import net.minecraft.client.gui.DrawableHelper;
@@ -18,18 +19,16 @@ import net.minecraft.util.Identifier;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PotionsHud extends AbstractHudEntry {
+public class PotionsHud extends TextHudEntry {
 
     public static final Identifier ID = new Identifier("kronhud", "potionshud");
 
     public PotionsHud() {
-        super(60, 200);
+        super(60, 200, false);
     }
 
     @Override
-    public void render(MatrixStack matrices, float delta) {
-        matrices.push();
-        scale(matrices);
+    public void renderComponent(MatrixStack matrices, float delta) {
         ArrayList<StatusEffectInstance> effects = new ArrayList<>(client.player.getStatusEffects());
         if (!effects.isEmpty()) {
             StatusEffectSpriteManager statusEffectSpriteManager = this.client.getStatusEffectSpriteManager();
@@ -53,15 +52,10 @@ public class PotionsHud extends AbstractHudEntry {
                 lastY += 20;
             }
         }
-        matrices.pop();
-
     }
 
     @Override
-    public void renderPlaceholder(MatrixStack matrices, float delta) {
-        matrices.push();
-        renderPlaceholderBackground(matrices);
-        scale(matrices);
+    public void renderPlaceholderComponent(MatrixStack matrices, float delta) {
         DrawPosition pos = getPos();
         StatusEffectSpriteManager statusEffectSpriteManager = this.client.getStatusEffectSpriteManager();
         StatusEffectInstance effect = new StatusEffectInstance(StatusEffects.SPEED);
@@ -75,21 +69,12 @@ public class PotionsHud extends AbstractHudEntry {
                 pos.x() + 20, pos.y() + 7,
                 ColorUtil.WHITE.color(), shadow.getValue()
         );
-        hovered = false;
-        matrices.pop();
     }
 
     @Override
     public List<KronConfig<?>> getConfigurationOptions() {
         List<KronConfig<?>> options = super.getConfigurationOptions();
-        options.add(textColor);
-        options.add(shadow);
         return options;
-    }
-
-    @Override
-    public boolean movable() {
-        return true;
     }
 
     @Override

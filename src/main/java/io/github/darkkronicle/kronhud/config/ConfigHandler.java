@@ -11,14 +11,11 @@ import io.github.darkkronicle.darkkore.hotkeys.HotkeySettings;
 import io.github.darkkronicle.darkkore.hotkeys.HotkeySettingsOption;
 import io.github.darkkronicle.darkkore.intialization.profiles.PlayerContextCheck;
 import io.github.darkkronicle.darkkore.util.Color;
-import io.github.darkkronicle.kronhud.KronHUD;
-import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.gui.HudEntryOption;
 import io.github.darkkronicle.kronhud.gui.hud.CoordsHud;
-import io.github.darkkronicle.kronhud.gui.hud.CrosshairHud;
-import io.github.darkkronicle.kronhud.gui.hud.HudManager;
-import io.github.darkkronicle.kronhud.gui.hud.ScoreboardHud;
-import lombok.Getter;
+import io.github.darkkronicle.kronhud.gui.hud.vanilla.CrosshairHud;
+import io.github.darkkronicle.kronhud.gui.HudManager;
+import io.github.darkkronicle.kronhud.gui.hud.vanilla.ScoreboardHud;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.*;

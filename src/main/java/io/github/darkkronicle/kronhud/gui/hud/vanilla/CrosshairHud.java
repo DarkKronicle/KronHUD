@@ -1,4 +1,4 @@
-package io.github.darkkronicle.kronhud.gui.hud;
+package io.github.darkkronicle.kronhud.gui.hud.vanilla;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.darkkronicle.darkkore.colors.ExtendedColor;

@@ -25,14 +25,6 @@ public abstract class AbstractHudEntry extends DrawUtil {
 
     protected KronBoolean enabled = new KronBoolean("enabled", null, false);
     public KronDouble scale = new KronDouble("scale", null, 1, 0.1F, 2, this);
-    protected KronColor textColor = new KronColor("textcolor", null, new ExtendedColor(ColorUtil.WHITE, ExtendedColor.ChromaOptions.getDefault()));
-    protected KronBoolean shadow = new KronBoolean("shadow", null, getShadowDefault());
-    protected KronBoolean background = new KronBoolean("background", null, true);
-    protected KronExtendedColor backgroundColor = new KronExtendedColor("backgroundcolor", null, new ExtendedColor(0x64000000, ExtendedColor.ChromaOptions.getDefault()));
-
-    protected KronBoolean outline = new KronBoolean("outline", null, false);
-    protected KronExtendedColor outlineColor = new KronExtendedColor("outlinecolor", null, new ExtendedColor(-1, ExtendedColor.ChromaOptions.getDefault()));
-
     private final KronDouble x = new KronDouble("x", null, getDefaultX(), 0, 1, this);
     private final KronDouble y = new KronDouble("y", null, getDefaultY(), 0, 1, this);
 
@@ -63,9 +55,7 @@ public abstract class AbstractHudEntry extends DrawUtil {
         return MathHelper.clamp((float) (current) / (max - offset), 0, 1);
     }
 
-    public void renderHud(MatrixStack matrices, float delta) {
-        render(matrices, delta);
-    }
+    public void init() {}
 
     public abstract void render(MatrixStack matrices, float delta);
 
@@ -241,5 +231,4 @@ public abstract class AbstractHudEntry extends DrawUtil {
         enabled.setValue(value);
     }
 
-    public void init() {}
 }

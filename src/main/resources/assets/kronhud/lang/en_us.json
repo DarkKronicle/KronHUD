@@ -141,5 +141,13 @@
   "hud.kronhud.playerhud.info": "Renders a smaller version of the player model",
   "texts.kronhud.optiontype.info.hudconfig": "Enable/Disable this module from showing. Modify specific options by clicking the gear.",
   "kronhud.component.toggle.true": "&aActive",
-  "kronhud.component.toggle.false": "&cDisabled"
+  "kronhud.component.toggle.false": "&cDisabled",
+  "kronhud.option.justification.center": "Center",
+  "kronhud.option.justification.left": "Left",
+  "kronhud.option.justification.right": "Right",
+  "kronhud.option.justification.center.info": "Text is centered",
+  "kronhud.option.justification.left.info": "Text is aligned left",
+  "kronhud.option.justification.right.info": "Text is aligned right",
+  "option.kronhud.justification": "Text Justification",
+  "option.kronhud.justification.comment": "This option changes how the text is aligned"
 }

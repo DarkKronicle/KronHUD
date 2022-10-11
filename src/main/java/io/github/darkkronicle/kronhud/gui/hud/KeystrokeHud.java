@@ -8,6 +8,7 @@ import io.github.darkkronicle.kronhud.config.KronColor;
 import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.config.KronExtendedColor;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
+import io.github.darkkronicle.kronhud.gui.entry.TextHudEntry;
 import io.github.darkkronicle.kronhud.hooks.KronHudHooks;
 import io.github.darkkronicle.kronhud.util.ColorUtil;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class KeystrokeHud extends AbstractHudEntry {
+public class KeystrokeHud extends TextHudEntry {
     public static final Identifier ID = new Identifier("kronhud", "keystrokehud");
 
     private final KronColor pressedTextColor = new KronColor("heldtextcolor", ID.getPath(), new Color(0xFF000000));
@@ -41,7 +42,7 @@ public class KeystrokeHud extends AbstractHudEntry {
     private float lastMouseY = 0;
 
     public KeystrokeHud() {
-        super(53, 61);
+        super(53, 61, true);
         this.client = MinecraftClient.getInstance();
         KronHudHooks.KEYBIND_CHANGE.register(key -> setKeystrokes());
         KronHudHooks.PLAYER_DIRECTION_CHANGE.register(this::onPlayerDirectionChange);
@@ -104,6 +105,12 @@ public class KeystrokeHud extends AbstractHudEntry {
     public void render(MatrixStack matrices, float delta) {
         matrices.push();
         scale(matrices);
+        renderComponent(matrices, delta);
+        matrices.pop();
+    }
+
+    @Override
+    public void renderComponent(MatrixStack matrices, float delta) {
         if (keystrokes == null) {
             setKeystrokes();
         }
@@ -136,7 +143,6 @@ public class KeystrokeHud extends AbstractHudEntry {
                     ColorUtil.WHITE
             );
         }
-        matrices.pop();
     }
 
     public void onPlayerDirectionChange(float prevPitch, float prevYaw, float pitch, float yaw) {
@@ -177,12 +183,8 @@ public class KeystrokeHud extends AbstractHudEntry {
     }
 
     @Override
-    public void renderPlaceholder(MatrixStack matrices, float delta) {
-        matrices.push();
-        renderPlaceholderBackground(matrices);
-        renderHud(matrices, delta);
-        hovered = false;
-        matrices.pop();
+    public void renderPlaceholderComponent(MatrixStack matrices, float delta) {
+        renderComponent(matrices, delta);
     }
 
     public Keystroke createFromKey(Rectangle bounds, DrawPosition offset, KeyBinding key) {
@@ -216,7 +218,10 @@ public class KeystrokeHud extends AbstractHudEntry {
 
     @Override
     public List<KronConfig<?>> getConfigurationOptions() {
-        List<KronConfig<?>> options = super.getConfigurationOptions();
+        // We want a specific order since this is a more complicated entry
+        List<KronConfig<?>> options = new ArrayList<>();
+        options.add(enabled);
+        options.add(scale);
         options.add(mouseMovement);
         options.add(textColor);
         options.add(pressedTextColor);
