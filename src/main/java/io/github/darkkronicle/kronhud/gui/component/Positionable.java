@@ -79,7 +79,7 @@ public interface Positionable {
      * @return True X position
      */
     default int getRawTrueX() {
-        return (int) (getRawX() * getScale());
+        return (int) (getX() * getScale());
     }
 
     /**
@@ -88,7 +88,7 @@ public interface Positionable {
      * @return True Y position
      */
     default int getRawTrueY() {
-        return (int) (getRawY() * getScale());
+        return (int) (getY() * getScale());
     }
 
     /**

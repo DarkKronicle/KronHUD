@@ -151,5 +151,26 @@
   "option.kronhud.justification": "Text Justification",
   "option.kronhud.justification.comment": "This option changes how the text is aligned",
   "option.section.entries": "HUD Modules",
-  "option.section.general": "General"
+  "option.section.general": "General",
+
+  "option.kronhud.anchorpoint": "Anchor Point",
+  "option.kronhud.anchorpoint.comment": "The point that this object is anchored to if it changes sizes. If set to the top left, the top left position won't change, but the width and height of it will expand downwards and to the left.",
+  "kronhud.option.anchorpoint.topleft": "Top Left &b↖&d",
+  "kronhud.option.anchorpoint.topmiddle": "Top Center &b↑&d",
+  "kronhud.option.anchorpoint.topright": "Top Right &b↗&d",
+  "kronhud.option.anchorpoint.middleleft": "Center Left &b←&d",
+  "kronhud.option.anchorpoint.middlemiddle": "Direct Center &b•&d",
+  "kronhud.option.anchorpoint.middleright": "Center Right &b→&d",
+  "kronhud.option.anchorpoint.bottomleft": "Bottom Left &b↙&d",
+  "kronhud.option.anchorpoint.bottommiddle": "Bottom Middle &b↓&d",
+  "kronhud.option.anchorpoint.bottomright": "Bottom Right &b↘&d",
+  "kronhud.option.anchorpoint.topleft.info": "Top left corner",
+  "kronhud.option.anchorpoint.topmiddle.info": "Top center point",
+  "kronhud.option.anchorpoint.topright.info": "Top right corner",
+  "kronhud.option.anchorpoint.middleleft.info": "Middle left point",
+  "kronhud.option.anchorpoint.middlemiddle.info": "The exact middle",
+  "kronhud.option.anchorpoint.middleright.info": "Middle right point",
+  "kronhud.option.anchorpoint.bottomleft.info": "Bottom left corner",
+  "kronhud.option.anchorpoint.bottommiddle.info": "Bottom middle point",
+  "kronhud.option.anchorpoint.bottomright.info": "Bottom right point"
 }

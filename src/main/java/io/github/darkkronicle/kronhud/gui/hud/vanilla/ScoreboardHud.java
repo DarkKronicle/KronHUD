@@ -50,12 +50,21 @@ public class ScoreboardHud extends TextHudEntry implements DynamicallyPositionab
 
     private final KronExtendedColor backgroundColor = new KronExtendedColor("backgroundcolor", ID.getPath(), new ExtendedColor(0x4C000000, ExtendedColor.ChromaOptions.getDefault()));
     private final KronExtendedColor topColor = new KronExtendedColor("topbackgroundcolor", ID.getPath(), new ExtendedColor(0x66000000, ExtendedColor.ChromaOptions.getDefault()));
+    private final KronInteger topPadding = new KronInteger("toppadding", ID.getPath(), 0, 0, 4);
     private final KronBoolean scores = new KronBoolean("scores", ID.getPath(), true);
     private final KronColor scoreColor = new KronColor("scorecolor", ID.getPath(), new Color(0xFFFF5555));
     private final KronOptionList<AnchorPoint> anchor = DefaultOptions.getAnchorPoint(AnchorPoint.MIDDLE_RIGHT);
 
     public ScoreboardHud() {
         super(200, 146, true);
+    }
+
+    @Override
+    public void render(MatrixStack matrices, float delta) {
+        matrices.push();
+        scale(matrices);
+        renderComponent(matrices, delta);
+        matrices.pop();
     }
 
     @Override
@@ -118,7 +127,7 @@ public class ScoreboardHud extends TextHudEntry implements DynamicallyPositionab
 
         int scoresSize = scores.size();
         int scoreHeight = scoresSize * 9;
-        int fullHeight = scoreHeight + 9;
+        int fullHeight = scoreHeight + 9 + topPadding.getValue() * 2;
 
         boolean updated = false;
         if (fullHeight + 1 != height) {
@@ -169,14 +178,13 @@ public class ScoreboardHud extends TextHudEntry implements DynamicallyPositionab
                         scoreColor.getValue().color(), shadow.getValue());
             }
             if (num == scoresSize) {
+                // Draw the title
                 if (background.getValue()) {
-                    RenderUtil.drawRectangle(matrices, textOffset, relativeY - 10, maxWidth, 9, topColor.getValue());
-                    RenderUtil.drawRectangle(matrices, scoreX - 2, relativeY - 1, maxWidth, 1,
-                            backgroundColor.getValue());
+                    RenderUtil.drawRectangle(matrices, textOffset, relativeY - 10 - topPadding.getValue() * 2, maxWidth, 9 + topPadding.getValue() * 2, topColor.getValue());
                 }
                 float title = (float) (scoreX + maxWidth / 2 - displayNameWidth / 2 - 1);
                 if (shadow.getValue()) {
-                    client.textRenderer.drawWithShadow(matrices, text, title, (float) (relativeY - 9), -1);
+                    client.textRenderer.drawWithShadow(matrices, text, title, (float) (relativeY - 9) + topPadding.getValue(), -1);
                 }
                 else {
                     client.textRenderer.draw(matrices, text, title, (float) (relativeY - 9), -1);

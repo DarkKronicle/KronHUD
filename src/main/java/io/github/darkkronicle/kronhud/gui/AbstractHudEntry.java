@@ -168,7 +168,7 @@ public abstract class AbstractHudEntry extends DrawUtil implements HudEntry {
         truePosition = new DrawPosition(scaledX, scaledY);
         renderPosition = truePosition.divide(getScale());
         renderBounds = new Rectangle(getX(), getY(), getWidth(), getHeight());
-        trueBounds = new Rectangle(getTrueX(), getTrueY(), (int) (getWidth() * getScale()), (int) (getHeight() * getScale()));
+        trueBounds = new Rectangle((int) (getX() * getScale()), (int) (getY() * getScale()), (int) (getWidth() * getScale()), (int) (getHeight() * getScale()));
     }
 
     @Override

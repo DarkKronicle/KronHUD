@@ -60,7 +60,7 @@ public enum AnchorPoint implements OptionListEntry<AnchorPoint> {
 
     @Override
     public String getInfoKey() {
-        return "kronhud.option.anchorpoint." + key;
+        return "kronhud.option.anchorpoint." + key + ".info";
     }
 
     public int offsetWidth(int width) {

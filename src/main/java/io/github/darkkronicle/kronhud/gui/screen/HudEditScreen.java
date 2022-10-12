@@ -143,19 +143,4 @@ public class HudEditScreen extends Screen {
         return false;
     }
 
-    private List<Tab> getTabs(){
-        List<Tab> tabs = new ArrayList<>();
-
-        HudManager.getInstance().getEntries().forEach(abstractHudEntry -> {
-            tabs.add(
-                    Tab.ofOptions(
-                            abstractHudEntry.getId(),
-                            abstractHudEntry.getName(),
-                            abstractHudEntry.getConfigurationOptions().stream().map(o -> (Option<?>) o).collect(Collectors.toList())
-                    )
-            );
-        });
-
-        return tabs;
-    }
 }
