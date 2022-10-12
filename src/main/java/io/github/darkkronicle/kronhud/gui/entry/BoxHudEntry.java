@@ -49,10 +49,10 @@ public abstract class BoxHudEntry extends AbstractHudEntry {
         scale(matrices);
         if (backgroundAllowed) {
             if (background.getValue() && backgroundColor.getValue().alpha() > 0) {
-                fillRect(matrices, getRenderBounds(), backgroundColor.getValue());
+                fillRect(matrices, getBounds(), backgroundColor.getValue());
             }
             if (outline.getValue() && outlineColor.getValue().alpha() > 0) {
-                outlineRect(matrices, getRenderBounds(), outlineColor.getValue());
+                outlineRect(matrices, getBounds(), outlineColor.getValue());
             }
         }
         renderComponent(matrices, delta);

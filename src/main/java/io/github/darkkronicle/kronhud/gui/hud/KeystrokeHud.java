@@ -7,7 +7,6 @@ import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.config.KronColor;
 import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.config.KronExtendedColor;
-import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.gui.entry.TextHudEntry;
 import io.github.darkkronicle.kronhud.hooks.KronHudHooks;
 import io.github.darkkronicle.kronhud.util.ColorUtil;
@@ -118,8 +117,8 @@ public class KeystrokeHud extends TextHudEntry {
             stroke.render(matrices);
         }
         if (mouseMovement.getValue()) {
-            int spaceY = 62 + getY();
-            int spaceX = getX();
+            int spaceY = 62 + getRawY();
+            int spaceX = getRawX();
             if (background.getValue()) {
                 RenderUtil.drawRectangle(matrices, spaceX, spaceY, width, 35, backgroundColor.getValue());
             }
@@ -241,7 +240,7 @@ public class KeystrokeHud extends TextHudEntry {
             baseHeight += 36;
         }
         height = baseHeight;
-        onSizeUpdate();
+        onBoundsUpdate();
     }
 
     public class Keystroke {

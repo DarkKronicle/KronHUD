@@ -42,12 +42,12 @@ public class CrosshairHud extends AbstractHudEntry {
     }
 
     @Override
-    protected double getDefaultX() {
+    public double getDefaultX() {
         return 0.5;
     }
 
     @Override
-    protected float getDefaultY() {
+    public double getDefaultY() {
         return 0.5F;
     }
 
@@ -74,7 +74,7 @@ public class CrosshairHud extends AbstractHudEntry {
             Camera camera = this.client.gameRenderer.getCamera();
             MatrixStack matrixStack = RenderSystem.getModelViewStack();
             matrixStack.push();
-            matrixStack.translate(getX() + ((float) getWidth() / 2), getY() + ((float) getHeight() / 2), 0);
+            matrixStack.translate(getRawX() + ((float) getWidth() / 2), getRawY() + ((float) getHeight() / 2), 0);
             matrixStack.multiply(Vec3f.NEGATIVE_X.getDegreesQuaternion(camera.getPitch()));
             matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(camera.getYaw()));
             matrixStack.scale(-getScale(), -getScale(), getScale());

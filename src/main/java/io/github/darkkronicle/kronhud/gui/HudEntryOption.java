@@ -3,23 +3,24 @@ package io.github.darkkronicle.kronhud.gui;
 import io.github.darkkronicle.darkkore.config.impl.ConfigObject;
 import io.github.darkkronicle.darkkore.config.options.BasicOption;
 import io.github.darkkronicle.kronhud.config.KronConfig;
+import io.github.darkkronicle.kronhud.gui.component.HudEntry;
 
 import java.util.Optional;
 
-public class HudEntryOption extends BasicOption<AbstractHudEntry> {
+public class HudEntryOption extends BasicOption<HudEntry> {
 
-    public HudEntryOption(AbstractHudEntry value) {
+    public HudEntryOption(HudEntry value) {
         this(value.getNameKey(), value.getInfoKey(), value);
     }
 
-    public HudEntryOption(String displayName, String hoverName, AbstractHudEntry value) {
+    public HudEntryOption(String displayName, String hoverName, HudEntry value) {
         super(value.getId().toString(), displayName, hoverName, value);
         setValue(value);
     }
 
     @Override
     public void save(ConfigObject config) {
-        AbstractHudEntry entry = getValue();
+        HudEntry entry = getValue();
         ConfigObject obj = config.createNew();
         for (KronConfig<?> option : entry.getSaveOptions()) {
             option.save(obj);
@@ -29,7 +30,7 @@ public class HudEntryOption extends BasicOption<AbstractHudEntry> {
 
     @Override
     public void load(ConfigObject config) {
-        AbstractHudEntry entry = getValue();
+        HudEntry entry = getValue();
         Optional<ConfigObject> nested = config.getOptional(entry.getId().toString());
         if (nested.isEmpty()) {
             return;

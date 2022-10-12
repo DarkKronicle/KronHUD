@@ -1,25 +1,21 @@
 package io.github.darkkronicle.kronhud.gui.screen;
 
 import io.github.darkkronicle.darkkore.gui.ConfigScreen;
-import io.github.darkkronicle.darkkore.gui.Tab;
-import io.github.darkkronicle.kronhud.KronHUD;
-import io.github.darkkronicle.kronhud.config.ConfigHandler;
-import io.github.darkkronicle.kronhud.gui.HudEntryOption;
-import io.github.darkkronicle.kronhud.gui.HudManager;
-import net.minecraft.util.Identifier;
+import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
+import io.github.darkkronicle.kronhud.gui.component.HudEntry;
+import net.minecraft.client.gui.screen.Screen;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+/**
+ * Config screen for an {@link AbstractHudEntry}
+ */
 public class EntryConfigScreen extends ConfigScreen {
-    public EntryConfigScreen() {
+
+    public EntryConfigScreen(HudEntry hud) {
         super(List.of(
-                Tab.ofOptions(new Identifier("kronhud", "entries"), "option.section.entries", HudManager.getInstance().getEntries().stream().map(HudEntryOption::new).collect(Collectors.toList()))
-                ,
-                Tab.ofOptions(
-                    new Identifier(KronHUD.MOD_ID, ConfigHandler.getInstance().general.getKey()),
-                    ConfigHandler.getInstance().general.getNameKey(),
-                    ConfigHandler.getInstance().general.getOptions())
-                ));
+                hud.toTab()
+        ));
     }
+
 }

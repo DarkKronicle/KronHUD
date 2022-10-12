@@ -7,8 +7,8 @@ import io.github.darkkronicle.darkkore.settings.DarkKoreConfig;
 import io.github.darkkronicle.darkkore.util.render.RenderUtil;
 import io.github.darkkronicle.kronhud.config.ConfigHandler;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
-import io.github.darkkronicle.kronhud.gui.HudEntryOption;
 import io.github.darkkronicle.kronhud.gui.HudManager;
+import io.github.darkkronicle.kronhud.gui.component.HudEntry;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import io.github.darkkronicle.kronhud.util.Rectangle;
 import io.github.darkkronicle.kronhud.util.SnappingHelper;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 public class HudEditScreen extends Screen {
     private boolean mouseDown = false;
-    private AbstractHudEntry current = null;
+    private HudEntry current = null;
     private DrawPosition offset = null;
     private SnappingHelper snap;
     private boolean snapEnabled;
@@ -52,7 +52,7 @@ public class HudEditScreen extends Screen {
                 new ButtonWidget(width / 2 - 50, height - 50 , 100, 20,
                 Text.translatable("button.kronhud.configuration"),
                 (button) -> {
-                    EntryConfigScreen screen = new EntryConfigScreen();
+                    HudConfigScreen screen = new HudConfigScreen();
                     screen.setParent(this);
                     client.setScreen(screen);
                 }));
@@ -66,7 +66,7 @@ public class HudEditScreen extends Screen {
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         RenderUtil.fill(matrices, 0, 0, width, height, DarkKoreConfig.getInstance().screenBackgroundColor.getValue());
         super.render(matrices, mouseX, mouseY, delta);
-        Optional<AbstractHudEntry> entry = HudManager.getInstance().getEntryXY(mouseX, mouseY);
+        Optional<HudEntry> entry = HudManager.getInstance().getEntryXY(mouseX, mouseY);
         entry.ifPresent(abstractHudEntry -> abstractHudEntry.setHovered(true));
         HudManager.getInstance().renderPlaceholder(matrices, delta);
         if (mouseDown && snap != null) {
@@ -77,7 +77,7 @@ public class HudEditScreen extends Screen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         super.mouseClicked(mouseX, mouseY, button);
-        Optional<AbstractHudEntry> entry = HudManager.getInstance().getEntryXY((int) Math.round(mouseX), (int) Math.round(mouseY));
+        Optional<HudEntry> entry = HudManager.getInstance().getEntryXY((int) Math.round(mouseX), (int) Math.round(mouseY));
         if (button == 0) {
             mouseDown = true;
             if (entry.isPresent()) {
@@ -89,7 +89,7 @@ public class HudEditScreen extends Screen {
                 current = null;
             }
         } else if (button == 1) {
-            entry.ifPresent(abstractHudEntry -> client.setScreen(new HudConfigScreen(entry.get(), this)));
+            entry.ifPresent(abstractHudEntry -> client.setScreen(new EntryConfigScreen(entry.get())));
         }
         return false;
     }
@@ -123,7 +123,8 @@ public class HudEditScreen extends Screen {
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         if (current != null) {
-            current.setXY((int) mouseX - offset.x(), (int) mouseY - offset.y());
+            current.setX((int) mouseX - offset.x() - current.offsetTrueWidth());
+            current.setY((int) mouseY - offset.y() - current.offsetTrueHeight());
             if (snap != null) {
                 Integer snapX, snapY;
                 snap.setCurrent(current.getTrueBounds());
@@ -140,10 +141,6 @@ public class HudEditScreen extends Screen {
             return true;
         }
         return false;
-    }
-
-    private List<Option<?>> getHudEntries() {
-        return HudManager.getInstance().getEntries().stream().map(HudEntryOption::new).collect(Collectors.toList());
     }
 
     private List<Tab> getTabs(){

@@ -6,13 +6,10 @@ import com.mojang.datafixers.util.Pair;
 import io.github.darkkronicle.darkkore.colors.ExtendedColor;
 import io.github.darkkronicle.darkkore.util.Color;
 import io.github.darkkronicle.darkkore.util.render.RenderUtil;
-import io.github.darkkronicle.kronhud.config.KronBoolean;
-import io.github.darkkronicle.kronhud.config.KronColor;
-import io.github.darkkronicle.kronhud.config.KronConfig;
-import io.github.darkkronicle.kronhud.config.KronExtendedColor;
-import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
+import io.github.darkkronicle.kronhud.config.*;
+import io.github.darkkronicle.kronhud.gui.component.DynamicallyPositionable;
 import io.github.darkkronicle.kronhud.gui.entry.TextHudEntry;
-import io.github.darkkronicle.kronhud.util.DrawPosition;
+import io.github.darkkronicle.kronhud.gui.layout.AnchorPoint;
 import io.github.darkkronicle.kronhud.util.Rectangle;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.scoreboard.Scoreboard;
@@ -30,7 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ScoreboardHud extends TextHudEntry {
+public class ScoreboardHud extends TextHudEntry implements DynamicallyPositionable {
 
     public static final Identifier ID = new Identifier("kronhud", "scoreboardhud");
     public static final ScoreboardObjective placeholder = Util.make(() -> {
@@ -38,13 +35,14 @@ public class ScoreboardHud extends TextHudEntry {
         ScoreboardObjective objective = placeScore.addObjective("placeholder", ScoreboardCriterion.DUMMY,
                 Text.literal("Scoreboard"),
                 ScoreboardCriterion.RenderType.INTEGER);
-        ScoreboardPlayerScore score = new ScoreboardPlayerScore(placeScore, objective, "DarkKronicle");
-        score.setScore(2);
-        placeScore.updateScore(score);
-        placeScore.updatePlayerScore("DarkKronicle", objective);
-        score.setScore(1);
-        placeScore.updateScore(score);
-        placeScore.updatePlayerScore("Dinnerbone", objective);
+        ScoreboardPlayerScore dark = placeScore.getPlayerScore("DarkKronicle", objective);
+        dark.setScore(8780);
+
+        ScoreboardPlayerScore moeh = placeScore.getPlayerScore("moehreag", objective);
+        moeh.setScore(743);
+
+        ScoreboardPlayerScore kode = placeScore.getPlayerScore("TheKodeToad", objective);
+        kode.setScore(2948);
 
         placeScore.setObjectiveSlot(1, objective);
         return objective;
@@ -54,6 +52,7 @@ public class ScoreboardHud extends TextHudEntry {
     private final KronExtendedColor topColor = new KronExtendedColor("topbackgroundcolor", ID.getPath(), new ExtendedColor(0x66000000, ExtendedColor.ChromaOptions.getDefault()));
     private final KronBoolean scores = new KronBoolean("scores", ID.getPath(), true);
     private final KronColor scoreColor = new KronColor("scorecolor", ID.getPath(), new Color(0xFFFF5555));
+    private final KronOptionList<AnchorPoint> anchor = DefaultOptions.getAnchorPoint(AnchorPoint.MIDDLE_RIGHT);
 
     public ScoreboardHud() {
         super(200, 146, true);
@@ -105,7 +104,11 @@ public class ScoreboardHud extends TextHudEntry {
 
         ScoreboardPlayerScore scoreboardPlayerScore;
         MutableText formattedText;
-        for(Iterator<ScoreboardPlayerScore> scoresIterator = scores.iterator(); scoresIterator.hasNext(); maxWidth = Math.max(maxWidth, client.textRenderer.getWidth(formattedText) + spacerWidth + client.textRenderer.getWidth(Integer.toString(scoreboardPlayerScore.getScore())))) {
+        for (
+                Iterator<ScoreboardPlayerScore> scoresIterator = scores.iterator();
+                scoresIterator.hasNext();
+                maxWidth = Math.max(maxWidth, client.textRenderer.getWidth(formattedText) + spacerWidth + client.textRenderer.getWidth(Integer.toString(scoreboardPlayerScore.getScore())))
+        ) {
             scoreboardPlayerScore = scoresIterator.next();
             Team team = scoreboard.getPlayerTeam(scoreboardPlayerScore.getPlayerName());
             formattedText = Team.decorateName(team, Text.literal(scoreboardPlayerScore.getPlayerName()));
@@ -113,17 +116,27 @@ public class ScoreboardHud extends TextHudEntry {
         }
         maxWidth = maxWidth + 2;
 
-        if (maxWidth > getWidth()) {
-            maxWidth = 200;
-        }
-
         int scoresSize = scores.size();
         int scoreHeight = scoresSize * 9;
-        Rectangle bounds = getRenderBounds();
         int fullHeight = scoreHeight + 9;
 
+        boolean updated = false;
+        if (fullHeight + 1 != height) {
+            setHeight(fullHeight + 1);
+            updated = true;
+        }
+        if (maxWidth + 1 != width) {
+            setWidth(maxWidth + 1);
+            updated = true;
+        }
+        if (updated) {
+            onBoundsUpdate();
+        }
+
+        Rectangle bounds = getBounds();
+
         int renderX = bounds.x() + bounds.width() - maxWidth;
-        int renderY = bounds.y() + (bounds.height() / 2 - fullHeight / 2);
+        int renderY = bounds.y() + (bounds.height() / 2 - fullHeight / 2) + 1;
 
         int scoreX = renderX + 2;
         int scoreY = renderY + scoreHeight + 9;
@@ -178,6 +191,7 @@ public class ScoreboardHud extends TextHudEntry {
         options.add(topColor);
         options.add(scores);
         options.add(scoreColor);
+        options.add(anchor);
         options.remove(textColor);
         return options;
     }
@@ -192,4 +206,8 @@ public class ScoreboardHud extends TextHudEntry {
         return true;
     }
 
+    @Override
+    public AnchorPoint getAnchor() {
+        return anchor.getValue();
+    }
 }

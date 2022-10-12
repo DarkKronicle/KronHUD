@@ -16,6 +16,7 @@ import io.github.darkkronicle.darkkore.util.FluidText;
 import io.github.darkkronicle.darkkore.util.StringUtil;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.gui.HudEntryOption;
+import io.github.darkkronicle.kronhud.gui.component.HudEntry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
@@ -23,7 +24,7 @@ import net.minecraft.text.Text;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class HudEntryComponent extends OptionComponent<AbstractHudEntry, HudEntryOption> {
+public class HudEntryComponent extends OptionComponent<HudEntry, HudEntryOption> {
 
     public HudEntryComponent(Screen parent, HudEntryOption option, int width) {
         super(parent, option, width, 20);
@@ -31,7 +32,7 @@ public class HudEntryComponent extends OptionComponent<AbstractHudEntry, HudEntr
 
     @Override
     public Text getConfigTypeInfo() {
-        AbstractHudEntry entry = getOption().getValue();
+        HudEntry entry = getOption().getValue();
         return new FluidText(
                 "§7§o" + StringUtil.translate(
                         "texts.kronhud.optiontype.info.hudconfig"
@@ -40,7 +41,7 @@ public class HudEntryComponent extends OptionComponent<AbstractHudEntry, HudEntr
     }
 
     @Override
-    public void setValue(AbstractHudEntry newValue) {
+    public void setValue(HudEntry newValue) {
         // We shouldn't really set the value here
 
     }
@@ -78,7 +79,7 @@ public class HudEntryComponent extends OptionComponent<AbstractHudEntry, HudEntr
 
     @Override
     public Component getMainComponent() {
-        AbstractHudEntry entry = getOption().getValue();
+        HudEntry entry = getOption().getValue();
         ToggleComponent onOff = new ToggleComponent(
                 parent,
                 entry.isEnabled(),

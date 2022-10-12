@@ -149,5 +149,7 @@
   "kronhud.option.justification.left.info": "Text is aligned left",
   "kronhud.option.justification.right.info": "Text is aligned right",
   "option.kronhud.justification": "Text Justification",
-  "option.kronhud.justification.comment": "This option changes how the text is aligned"
+  "option.kronhud.justification.comment": "This option changes how the text is aligned",
+  "option.section.entries": "HUD Modules",
+  "option.section.general": "General"
 }

@@ -13,6 +13,9 @@ public abstract class TextHudEntry extends BoxHudEntry {
     protected KronColor textColor = new KronColor("textcolor", null, new ExtendedColor(ColorUtil.WHITE, ExtendedColor.ChromaOptions.getDefault()));
     protected KronBoolean shadow = new KronBoolean("shadow", null, getShadowDefault());
 
+    protected boolean getShadowDefault() {
+        return true;
+    }
 
     public TextHudEntry(int width, int height, boolean backgroundAllowed) {
         super(width, height, backgroundAllowed);

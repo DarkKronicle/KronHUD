@@ -3,18 +3,19 @@ package io.github.darkkronicle.kronhud.config;
 import io.github.darkkronicle.darkkore.config.options.DoubleOption;
 import io.github.darkkronicle.kronhud.KronHUD;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
+import io.github.darkkronicle.kronhud.gui.component.HudEntry;
 import org.jetbrains.annotations.Nullable;
 
 public class KronDouble extends DoubleOption implements KronConfig<Double> {
 
     private final String entryId;
-    private final AbstractHudEntry refreshHud;
+    private final HudEntry refreshHud;
 
     public KronDouble(String id, String entryId, double defaultValue, double min, double max) {
         this(id, entryId, defaultValue, min, max, null);
     }
 
-    public KronDouble(String id, String entryId, double defaultValue, double min, double max, @Nullable AbstractHudEntry toRefresh) {
+    public KronDouble(String id, String entryId, double defaultValue, double min, double max, @Nullable HudEntry toRefresh) {
         super(id, entryId, "", defaultValue, min, max);
         this.entryId = entryId;
         this.refreshHud = toRefresh;
@@ -25,7 +26,7 @@ public class KronDouble extends DoubleOption implements KronConfig<Double> {
         super.setValue(value);
         // Scale has changed!
         if (refreshHud != null) {
-            refreshHud.setBounds();
+            refreshHud.onBoundsUpdate();
         }
     }
 

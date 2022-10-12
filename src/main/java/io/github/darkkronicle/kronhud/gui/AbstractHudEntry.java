@@ -1,10 +1,9 @@
 package io.github.darkkronicle.kronhud.gui;
 
-import io.github.darkkronicle.darkkore.colors.ExtendedColor;
 import io.github.darkkronicle.darkkore.config.options.Option;
 import io.github.darkkronicle.darkkore.gui.Tab;
-import io.github.darkkronicle.darkkore.util.StringUtil;
 import io.github.darkkronicle.kronhud.config.*;
+import io.github.darkkronicle.kronhud.gui.component.HudEntry;
 import io.github.darkkronicle.kronhud.util.ColorUtil;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import io.github.darkkronicle.kronhud.util.DrawUtil;
@@ -13,29 +12,27 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class AbstractHudEntry extends DrawUtil {
+public abstract class AbstractHudEntry extends DrawUtil implements HudEntry {
 
-    protected KronBoolean enabled = new KronBoolean("enabled", null, false);
-    public KronDouble scale = new KronDouble("scale", null, 1, 0.1F, 2, this);
-    private final KronDouble x = new KronDouble("x", null, getDefaultX(), 0, 1, this);
-    private final KronDouble y = new KronDouble("y", null, getDefaultY(), 0, 1, this);
+    protected final KronBoolean enabled = DefaultOptions.getEnabled();
+    protected final KronDouble scale = DefaultOptions.getScale(this);
+    private final KronDouble x = DefaultOptions.getX(this, getDefaultX());
+    private final KronDouble y = DefaultOptions.getY(this, getDefaultY());
 
     private Rectangle trueBounds = null;
     private Rectangle renderBounds = null;
     private DrawPosition truePosition = null;
     private DrawPosition renderPosition;
 
-    @Getter
+    @Setter @Getter
     protected int width;
-    @Getter
+    @Setter @Getter
     protected int height;
 
     @Setter
@@ -57,10 +54,6 @@ public abstract class AbstractHudEntry extends DrawUtil {
 
     public void init() {}
 
-    public abstract void render(MatrixStack matrices, float delta);
-
-    public abstract void renderPlaceholder(MatrixStack matrices, float delta);
-
     public void renderPlaceholderBackground(MatrixStack matrices) {
         if (hovered) {
             fillRect(matrices, getTrueBounds(), ColorUtil.SELECTOR_BLUE.withAlpha(100));
@@ -70,22 +63,7 @@ public abstract class AbstractHudEntry extends DrawUtil {
         outlineRect(matrices, getTrueBounds(), ColorUtil.BLACK);
     }
 
-    public abstract Identifier getId();
-
-    public abstract boolean movable();
-
-    public boolean tickable() {
-        return false;
-    }
-
-    public void tick() {}
-
-    public void setXY(int x, int y) {
-        setX(x);
-        setY(y);
-    }
-
-    public int getX() {
+    public int getRawX() {
         return getPos().x();
     }
 
@@ -95,7 +73,7 @@ public abstract class AbstractHudEntry extends DrawUtil {
         ));
     }
 
-    public int getY() {
+    public int getRawY() {
         return getPos().y();
     }
 
@@ -103,18 +81,6 @@ public abstract class AbstractHudEntry extends DrawUtil {
         this.y.setValue((double) intToFloat(y, client.getWindow().getScaledHeight(),
                 Math.round(getHeight() * getScale())
         ));
-    }
-
-    protected double getDefaultX() {
-        return 0;
-    }
-
-    protected float getDefaultY() {
-        return 0;
-    }
-
-    protected boolean getShadowDefault() {
-        return true;
     }
 
     public Rectangle getTrueBounds() {
@@ -126,32 +92,63 @@ public abstract class AbstractHudEntry extends DrawUtil {
      *
      * @return The bounds.
      */
-    public Rectangle getRenderBounds() {
+    public Rectangle getBounds() {
         return renderBounds;
     }
 
+    @Override
     public float getScale() {
         return scale.getValue().floatValue();
     }
 
     public void scale(MatrixStack matrices) {
-        matrices.scale(getScale(), getScale(), 1);
+        float scale = getScale();
+        matrices.scale(scale, scale, 1);
     }
 
+    @Override
     public DrawPosition getPos() {
         return renderPosition;
     }
 
+    @Override
     public DrawPosition getTruePos() {
         return truePosition;
     }
 
-    public void onSizeUpdate() {
+    @Override
+    public void onBoundsUpdate() {
         setBounds();
     }
 
     public void setBounds() {
         setBounds(getScale());
+    }
+
+    @Override
+    public int getRawTrueX() {
+        return truePosition.x();
+    }
+
+    @Override
+    public int getRawTrueY() {
+        return truePosition.y();
+    }
+
+    @Override
+    public int getTrueWidth() {
+        if (trueBounds == null) {
+            return HudEntry.super.getTrueWidth();
+        }
+        return trueBounds.width();
+    }
+
+    @Override
+    public int getTrueHeight() {
+        if (trueBounds == null) {
+            return HudEntry.super.getTrueHeight();
+        }
+        return trueBounds.height();
     }
 
     public void setBounds(float scale) {
@@ -164,17 +161,18 @@ public abstract class AbstractHudEntry extends DrawUtil {
         }
         int scaledX = floatToInt(x.getValue().floatValue(), client.getWindow().getScaledWidth(),
                 Math.round(getWidth() * scale)
-        );
+        ) + offsetWidth();
         int scaledY = floatToInt(y.getValue().floatValue(), client.getWindow().getScaledHeight(),
                 Math.round(getHeight() * scale)
-        );
+        ) + offsetHeight();
         truePosition = new DrawPosition(scaledX, scaledY);
         renderPosition = truePosition.divide(getScale());
-        trueBounds = new Rectangle(scaledX, scaledY, Math.round(getWidth() * getScale()), Math.round(getHeight() * getScale()));
-        renderBounds = new Rectangle(renderPosition.x(), renderPosition.y(), getWidth(), getHeight());
+        renderBounds = new Rectangle(getX(), getY(), getWidth(), getHeight());
+        trueBounds = new Rectangle(getTrueX(), getTrueY(), (int) (getWidth() * getScale()), (int) (getHeight() * getScale()));
     }
 
-    public Tab getOptionWrapper() {
+    @Override
+    public Tab toTab() {
         // Need to cast KronConfig to Option
         return Tab.ofOptions(getId(), getNameKey(), getConfigurationOptions().stream().map((o -> (Option<?>) o)).collect(Collectors.toList()));
     }
@@ -183,6 +181,7 @@ public abstract class AbstractHudEntry extends DrawUtil {
      * Returns a list of options that should be shown in configuration screens
      * @return List of options
      */
+    @Override
     public List<KronConfig<?>> getConfigurationOptions() {
         List<KronConfig<?>> options = new ArrayList<>();
         options.add(enabled);
@@ -192,8 +191,10 @@ public abstract class AbstractHudEntry extends DrawUtil {
 
     /**
      * Returns a list of options that should be saved. By default, this includes {@link #getConfigurationOptions()}
+     *
      * @return
      */
+    @Override
     public List<KronConfig<?>> getSaveOptions() {
         List<KronConfig<?>> options = getConfigurationOptions();
         options.add(x);
@@ -201,32 +202,12 @@ public abstract class AbstractHudEntry extends DrawUtil {
         return options;
     }
 
+    @Override
     public boolean isEnabled() {
         return enabled.getValue();
     }
 
-    /**
-     * Gets the display name key
-     *
-     * @return The display name key
-     */
-    public String getNameKey() {
-        return "hud." + getId().getNamespace() + "." + getId().getPath();
-    }
-
-    /**
-     * Gets the info key to render on hover
-     *
-     * @return Info key
-     */
-    public String getInfoKey() {
-        return "hud." + getId().getNamespace() + "." + getId().getPath() + ".info";
-    }
-
-    public String getName() {
-        return StringUtil.translate(getNameKey());
-    }
-
+    @Override
     public void setEnabled(boolean value) {
         enabled.setValue(value);
     }
