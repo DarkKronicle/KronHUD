@@ -1,6 +1,7 @@
 package io.github.darkkronicle.kronhud.mixins;
 
 import io.github.darkkronicle.kronhud.gui.HudManager;
+import io.github.darkkronicle.kronhud.gui.hud.simple.ComboHud;
 import io.github.darkkronicle.kronhud.gui.hud.simple.ReachHud;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
@@ -27,6 +28,8 @@ public abstract class MixinPlayerEntity extends Entity {
         if (getId() == MinecraftClient.getInstance().player.getId() && entity != null){
             ReachHud reachDisplayHud = (ReachHud) HudManager.getInstance().get(ReachHud.ID);
             reachDisplayHud.updateDistance(this, entity);
+            ComboHud comboHud = (ComboHud) HudManager.getInstance().get(ComboHud.ID);
+            comboHud.onEntityAttack(entity);
         }
     }
 

@@ -7,6 +7,7 @@ import io.github.darkkronicle.kronhud.gui.entry.SimpleTextHudEntry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
@@ -23,8 +24,7 @@ public class ReachHud extends SimpleTextHudEntry {
     private final KronInteger decimalPlaces = new KronInteger("decimalplaces", ID.getPath(), 0, 0, 15);
 
     private String currentDist;
-    private boolean attacking;
-    private Instant lastTime = Instant.now();
+    private long lastTime = 0;
 
     @Override
     public Identifier getId() {
@@ -35,7 +35,7 @@ public class ReachHud extends SimpleTextHudEntry {
     public String getValue() {
         if (currentDist == null) {
             return "0 blocks";
-        } else if (lastTime.getEpochSecond() + 2 < Instant.now().getEpochSecond()) {
+        } else if (lastTime + 2000 < Util.getMeasuringTimeMs()) {
             currentDist = null;
             return "0 blocks";
         }
@@ -100,7 +100,7 @@ public class ReachHud extends SimpleTextHudEntry {
         DecimalFormat formatter = new DecimalFormat(format.toString());
         formatter.setRoundingMode(RoundingMode.HALF_UP);
         currentDist = formatter.format(distance) + " blocks";
-        lastTime = Instant.now();
+        lastTime = Util.getMeasuringTimeMs();
     }
 
     @Override

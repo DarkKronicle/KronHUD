@@ -6,6 +6,7 @@ import io.github.darkkronicle.darkkore.util.render.RenderUtil;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.config.KronColor;
 import io.github.darkkronicle.kronhud.config.KronConfig;
+import io.github.darkkronicle.kronhud.config.KronInteger;
 import io.github.darkkronicle.kronhud.gui.component.DynamicallyPositionable;
 import io.github.darkkronicle.kronhud.gui.entry.TextHudEntry;
 import io.github.darkkronicle.kronhud.gui.layout.AnchorPoint;
@@ -20,6 +21,8 @@ public class CompassHud extends TextHudEntry implements DynamicallyPositionable 
 
     public final Identifier ID = new Identifier("kronhud", "compasshud");
 
+    private final KronInteger widthOption = new KronInteger("width", ID.getPath(), width, 100, 800, this::updateWidth);
+
     private final KronColor lookingBox = new KronColor("lookingbox", ID.getPath(), new Color(0x80000000));
     private final KronColor degreesColor = new KronColor("degreescolor", ID.getPath(), new Color(-1));
     private final KronColor majorIndicatorColor = new KronColor("majorindicator", ID.getPath(), new Color(-1));
@@ -27,6 +30,11 @@ public class CompassHud extends TextHudEntry implements DynamicallyPositionable 
     private final KronColor cardinalColor = new KronColor("cardinalcolor", ID.getPath(), new Color(0xFFFFFFFF));
     private final KronColor semiCardinalColor = new KronColor("semicardinalcolor", ID.getPath(), new Color(0xFFAAAAAA));
     private final KronBoolean invert = new KronBoolean("invert", ID.getPath(), false);
+
+    private void updateWidth(int newWidth){
+        setWidth(newWidth);
+        onBoundsUpdate();
+    }
 
     public CompassHud() {
         super(240, 33, false);
@@ -151,6 +159,7 @@ public class CompassHud extends TextHudEntry implements DynamicallyPositionable 
     @Override
     public List<KronConfig<?>> getConfigurationOptions() {
         List<KronConfig<?>> options = super.getConfigurationOptions();
+        options.add(widthOption);
         options.add(invert);
         options.add(lookingBox);
         options.add(degreesColor);
