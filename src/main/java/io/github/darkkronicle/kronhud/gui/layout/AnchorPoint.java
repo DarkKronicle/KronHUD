@@ -74,8 +74,8 @@ public enum AnchorPoint implements OptionListEntry<AnchorPoint> {
     public int offsetHeight(int height) {
         return switch (yComponent) {
             case 0 -> (height / 2);
-            case 1 -> height;
-            default -> 0;
+            case 1 -> 0;
+            default -> height;
         };
     }
 }

@@ -69,7 +69,7 @@ public abstract class AbstractHudEntry extends DrawUtil implements HudEntry {
 
     public void setX(int x) {
         this.x.setValue((double) intToFloat(x, client.getWindow().getScaledWidth(),
-                Math.round(getWidth() * getScale())
+                0
         ));
     }
 
@@ -79,7 +79,7 @@ public abstract class AbstractHudEntry extends DrawUtil implements HudEntry {
 
     public void setY(int y) {
         this.y.setValue((double) intToFloat(y, client.getWindow().getScaledHeight(),
-                Math.round(getHeight() * getScale())
+                0
         ));
     }
 
@@ -159,16 +159,34 @@ public abstract class AbstractHudEntry extends DrawUtil implements HudEntry {
             trueBounds = new Rectangle(0, 0, 1, 1);
             return;
         }
-        int scaledX = floatToInt(x.getValue().floatValue(), client.getWindow().getScaledWidth(),
-                Math.round(getWidth() * scale)
-        ) + offsetWidth();
-        int scaledY = floatToInt(y.getValue().floatValue(), client.getWindow().getScaledHeight(),
-                Math.round(getHeight() * scale)
-        ) + offsetHeight();
+        int scaledX = floatToInt(x.getValue().floatValue(), client.getWindow().getScaledWidth(), 0) - offsetTrueWidth();
+        int scaledY = floatToInt(y.getValue().floatValue(), client.getWindow().getScaledHeight(), 0) - offsetTrueHeight();
+        if (scaledX < 0) {
+            setX(offsetTrueWidth());
+            return;
+        }
+        if (scaledY < 0) {
+            setY(offsetTrueHeight());
+            return;
+        }
+        int trueWidth = (int) (getWidth() * getScale());
+        if (trueWidth < client.getWindow().getScaledWidth() && scaledX + trueWidth > client.getWindow().getScaledWidth()) {
+            scaledX = client.getWindow().getScaledWidth() - trueWidth;
+            setX(scaledX + offsetTrueWidth());
+            // It calls this method when updated
+            return;
+        }
+        int trueHeight = (int) (getHeight() * getScale());
+        if (trueHeight < client.getWindow().getScaledHeight() && scaledY + trueHeight > client.getWindow().getScaledHeight()) {
+            scaledY = client.getWindow().getScaledHeight() - trueHeight;
+            setY(scaledY + offsetTrueHeight());
+            // It calls this method when updated
+            return;
+        }
         truePosition = new DrawPosition(scaledX, scaledY);
         renderPosition = truePosition.divide(getScale());
-        renderBounds = new Rectangle(getX(), getY(), getWidth(), getHeight());
-        trueBounds = new Rectangle((int) (getX() * getScale()), (int) (getY() * getScale()), (int) (getWidth() * getScale()), (int) (getHeight() * getScale()));
+        renderBounds = new Rectangle(renderPosition.x(), renderPosition.y(), getWidth(), getHeight());
+        trueBounds = new Rectangle(scaledX, scaledY, (int) (getWidth() * getScale()), (int) (getHeight() * getScale()));
     }
 
     @Override

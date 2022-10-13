@@ -5,11 +5,12 @@
   "mixins": [
   ],
   "client": [
-    "MixinEntity",
+    "MixinPlayerEntity",
     "AccessorBossBarHud",
     "AccessorMinecraftClient",
     "MixinBossBarHud",
     "MixinClientPlayerEntity",
+    "MixinEntity",
     "MixinInGameHud",
     "MixinKeybind",
     "MixinKeyboardInput",

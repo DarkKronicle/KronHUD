@@ -2,6 +2,7 @@ package io.github.darkkronicle.kronhud.config;
 
 import io.github.darkkronicle.kronhud.gui.component.HudEntry;
 import io.github.darkkronicle.kronhud.gui.layout.AnchorPoint;
+import io.github.darkkronicle.kronhud.gui.layout.CardinalOrder;
 import lombok.experimental.UtilityClass;
 
 /**
@@ -32,6 +33,10 @@ public class DefaultOptions {
 
     public static KronOptionList<AnchorPoint> getAnchorPoint(AnchorPoint defaultValue) {
         return new KronOptionList<>("anchorpoint", null, defaultValue);
+    }
+
+    public static KronOptionList<CardinalOrder> getCardinalOrder(CardinalOrder defaultValue) {
+        return new KronOptionList<>("cardinalorder", null, defaultValue);
     }
 
 }

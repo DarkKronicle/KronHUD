@@ -123,11 +123,11 @@ public class ScoreboardHud extends TextHudEntry implements DynamicallyPositionab
             formattedText = Team.decorateName(team, Text.literal(scoreboardPlayerScore.getPlayerName()));
             scoresWText.add(Pair.of(scoreboardPlayerScore, formattedText));
         }
-        maxWidth = maxWidth + 2;
+        maxWidth = maxWidth + 6;
 
         int scoresSize = scores.size();
         int scoreHeight = scoresSize * 9;
-        int fullHeight = scoreHeight + 9 + topPadding.getValue() * 2;
+        int fullHeight = scoreHeight + 11 + topPadding.getValue() * 2;
 
         boolean updated = false;
         if (fullHeight + 1 != height) {
@@ -147,24 +147,36 @@ public class ScoreboardHud extends TextHudEntry implements DynamicallyPositionab
         int renderX = bounds.x() + bounds.width() - maxWidth;
         int renderY = bounds.y() + (bounds.height() / 2 - fullHeight / 2) + 1;
 
-        int scoreX = renderX + 2;
-        int scoreY = renderY + scoreHeight + 9;
+        int scoreX = renderX + 4;
+        int scoreY = renderY + scoreHeight + 10;
         int num = 0;
-        int textOffset = scoreX - 2;
-
-        if (outline.getValue() && outlineColor.getValue().alpha() > 0) {
-            RenderUtil.drawOutline(matrices, textOffset, bounds.y(), maxWidth, fullHeight, outlineColor.getValue());
-        }
+        int textOffset = scoreX - 4;
 
         for (Pair<ScoreboardPlayerScore, Text> scoreboardPlayerScoreTextPair : scoresWText) {
             ++num;
             ScoreboardPlayerScore scoreboardPlayerScore2 = scoreboardPlayerScoreTextPair.getFirst();
             Text scoreText = scoreboardPlayerScoreTextPair.getSecond();
             String score = String.valueOf(scoreboardPlayerScore2.getScore());
-            int relativeY = scoreY - num * 9;
+            int relativeY = scoreY - num * 9 + topPadding.getValue() * 2;
 
             if (background.getValue() && backgroundColor.getValue().alpha() > 0) {
-                RenderUtil.drawRectangle(matrices, textOffset, relativeY, maxWidth, 9, backgroundColor.getValue());
+                if (num == scoresSize) {
+                    RenderUtil.drawRectangle(
+                            matrices,
+                            textOffset, relativeY - 1, maxWidth, 10, backgroundColor.getValue()
+                    );
+                } else if (num == 1) {
+                    RenderUtil.drawRectangle(
+                            matrices,
+                            textOffset,
+                           relativeY, maxWidth, 10, backgroundColor.getValue()
+                    );
+                } else {
+                    RenderUtil.drawRectangle(
+                            matrices,
+                            textOffset, relativeY, maxWidth, 9, backgroundColor.getValue()
+                    );
+                }
             }
 
             if (shadow.getValue()) {
@@ -174,22 +186,26 @@ public class ScoreboardHud extends TextHudEntry implements DynamicallyPositionab
             }
             if (this.scores.getValue()) {
                 drawString(matrices, client.textRenderer, score,
-                        (float) (scoreX + maxWidth - client.textRenderer.getWidth(score) - 2), (float) relativeY,
+                        (float) (scoreX + maxWidth - client.textRenderer.getWidth(score) - 6), (float) relativeY,
                         scoreColor.getValue().color(), shadow.getValue());
             }
             if (num == scoresSize) {
                 // Draw the title
                 if (background.getValue()) {
-                    RenderUtil.drawRectangle(matrices, textOffset, relativeY - 10 - topPadding.getValue() * 2, maxWidth, 9 + topPadding.getValue() * 2, topColor.getValue());
+                    RenderUtil.drawRectangle(matrices, textOffset, relativeY - 10 - topPadding.getValue() * 2 - 1, maxWidth, 10 + topPadding.getValue() * 2, topColor.getValue());
                 }
-                float title = (float) (scoreX + maxWidth / 2 - displayNameWidth / 2 - 1);
+                float title = (float) (renderX + (maxWidth - displayNameWidth) / 2);
                 if (shadow.getValue()) {
-                    client.textRenderer.drawWithShadow(matrices, text, title, (float) (relativeY - 9) + topPadding.getValue(), -1);
+                    client.textRenderer.drawWithShadow(matrices, text, title, (float) (relativeY - 9) - topPadding.getValue(), -1);
                 }
                 else {
                     client.textRenderer.draw(matrices, text, title, (float) (relativeY - 9), -1);
                 }
             }
+        }
+
+        if (outline.getValue() && outlineColor.getValue().alpha() > 0) {
+            RenderUtil.drawOutline(matrices, textOffset, bounds.y(), maxWidth, fullHeight + 2, outlineColor.getValue());
         }
     }
 
@@ -200,6 +216,7 @@ public class ScoreboardHud extends TextHudEntry implements DynamicallyPositionab
         options.add(scores);
         options.add(scoreColor);
         options.add(anchor);
+        options.add(topPadding);
         options.remove(textColor);
         return options;
     }

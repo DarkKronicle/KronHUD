@@ -1,9 +1,13 @@
 package io.github.darkkronicle.kronhud.gui.hud.vanilla;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import io.github.darkkronicle.kronhud.config.DefaultOptions;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.config.KronConfig;
+import io.github.darkkronicle.kronhud.config.KronOptionList;
+import io.github.darkkronicle.kronhud.gui.component.DynamicallyPositionable;
 import io.github.darkkronicle.kronhud.gui.entry.TextHudEntry;
+import io.github.darkkronicle.kronhud.gui.layout.AnchorPoint;
 import io.github.darkkronicle.kronhud.mixins.AccessorBossBarHud;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import net.minecraft.client.gui.DrawableHelper;
@@ -19,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class BossBarHud extends TextHudEntry {
+public class BossBarHud extends TextHudEntry implements DynamicallyPositionable {
 
     public static final Identifier ID = new Identifier("kronhud", "bossbarhud");
     private static final Identifier BARS_TEXTURE = new Identifier("textures/gui/bars.png");
@@ -34,13 +38,23 @@ public class BossBarHud extends TextHudEntry {
     private final KronBoolean text = new KronBoolean("text", ID.getPath(), true);
     private final KronBoolean bar = new KronBoolean("bar", ID.getPath(), true);
     // TODO custom color
+    private final KronOptionList<AnchorPoint> anchor = DefaultOptions.getAnchorPoint(AnchorPoint.TOP_MIDDLE);
 
     public BossBarHud() {
         super(184, 80, false);
     }
 
     public void setBossBars() {
+        int prevLength = bossBars.size();
         bossBars = ((AccessorBossBarHud) client.inGameHud.getBossBarHud()).getBossBars();
+        if (bossBars.size() != prevLength) {
+            if (bossBars.size() == 0) {
+                // Just leave it alone, it's not rendering anyways
+                return;
+            }
+            // Update height
+            setHeight(12 + prevLength * 19);
+        }
     }
 
     @Override
@@ -110,6 +124,7 @@ public class BossBarHud extends TextHudEntry {
         List<KronConfig<?>> options = super.getConfigurationOptions();
         options.add(text);
         options.add(bar);
+        options.add(anchor);
         return options;
     }
 
@@ -117,5 +132,10 @@ public class BossBarHud extends TextHudEntry {
         public CustomBossBar(Text name, Color color, Style style) {
             super(MathHelper.randomUuid(), name, color, style);
         }
+    }
+
+    @Override
+    public AnchorPoint getAnchor() {
+        return anchor.getValue();
     }
 }

@@ -51,6 +51,8 @@ public class KronHUD implements ClientModInitializer {
         hudManager.add(new PlayerHud());
         hudManager.add(new ActionBarHud());
         hudManager.add(new ToggleSprintHud());
+        hudManager.add(new IRLTimeHud());
+        hudManager.add(new ReachHud());
         HudRenderCallback.EVENT.register(hudManager::render);
         hudManager.getEntries().forEach(HudEntry::init);
     }

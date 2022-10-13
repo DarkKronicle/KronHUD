@@ -123,16 +123,16 @@ public class HudEditScreen extends Screen {
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         if (current != null) {
-            current.setX((int) mouseX - offset.x() - current.offsetTrueWidth());
-            current.setY((int) mouseY - offset.y() - current.offsetTrueHeight());
+            current.setX((int) mouseX - offset.x() + current.offsetTrueWidth());
+            current.setY((int) mouseY - offset.y() + current.offsetTrueHeight());
             if (snap != null) {
                 Integer snapX, snapY;
                 snap.setCurrent(current.getTrueBounds());
                 if ((snapX = snap.getCurrentXSnap()) != null) {
-                    current.setX(snapX);
+                    current.setX(snapX + current.offsetTrueWidth());
                 }
                 if ((snapY = snap.getCurrentYSnap()) != null) {
-                    current.setY(snapY);
+                    current.setY(snapY + current.offsetTrueHeight());
                 }
             }
             if (current.tickable()) {
