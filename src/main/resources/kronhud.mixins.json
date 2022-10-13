@@ -5,7 +5,6 @@
   "mixins": [
   ],
   "client": [
-    "MixinPlayerEntity",
     "AccessorBossBarHud",
     "AccessorMinecraftClient",
     "MixinBossBarHud",
@@ -13,8 +12,10 @@
     "MixinEntity",
     "MixinInGameHud",
     "MixinKeybind",
+    "MixinNetworkPlayHandler",
     "MixinKeyboardInput",
-    "MixinMouse"
+    "MixinMouse",
+    "MixinPlayerEntity"
   ],
   "injectors": {
     "defaultRequire": 1

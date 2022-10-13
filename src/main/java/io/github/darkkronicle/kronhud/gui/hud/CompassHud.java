@@ -24,8 +24,8 @@ public class CompassHud extends TextHudEntry implements DynamicallyPositionable 
     private final KronColor degreesColor = new KronColor("degreescolor", ID.getPath(), new Color(-1));
     private final KronColor majorIndicatorColor = new KronColor("majorindicator", ID.getPath(), new Color(-1));
     private final KronColor minorIndicatorColor = new KronColor("minorindicator", ID.getPath(), new Color(0xCCFFFFFF));
-    private final KronColor cardinalColor = new KronColor("cardinalColor", ID.getPath(), new Color(0xFFFFFFFF));
-    private final KronColor semiCardinalColor = new KronColor("cardinalColor", ID.getPath(), new Color(0xFFAAAAAA));
+    private final KronColor cardinalColor = new KronColor("cardinalcolor", ID.getPath(), new Color(0xFFFFFFFF));
+    private final KronColor semiCardinalColor = new KronColor("semicardinalcolor", ID.getPath(), new Color(0xFFAAAAAA));
     private final KronBoolean invert = new KronBoolean("invert", ID.getPath(), false);
 
     public CompassHud() {
