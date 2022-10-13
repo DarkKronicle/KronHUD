@@ -24,7 +24,7 @@ public abstract class MixinPlayerEntity extends Entity {
     @Inject(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;getAttributeValue(Lnet/minecraft/entity/attribute/EntityAttribute;)D"))
     private void getReach(Entity entity, CallbackInfo ci){
         // This is only ever called when the client attacks. Without more work not possible to get when someone else attacks.
-        if (getId() == MinecraftClient.getInstance().player.getId()){
+        if (getId() == MinecraftClient.getInstance().player.getId() && entity != null){
             ReachHud reachDisplayHud = (ReachHud) HudManager.getInstance().get(ReachHud.ID);
             reachDisplayHud.updateDistance(this, entity);
         }

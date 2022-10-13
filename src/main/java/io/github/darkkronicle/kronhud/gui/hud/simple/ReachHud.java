@@ -79,7 +79,7 @@ public class ReachHud extends SimpleTextHudEntry {
         EntityHitResult result = ProjectileUtil.raycast(attacking, camera, possibleHits, box, entity -> entity.getId() == receiving.getId(), d);
         if (result.getEntity() == null) {
             // This should not happen...
-            return - 1;
+            return -1;
         }
         return camera.distanceTo(result.getPos());
     }

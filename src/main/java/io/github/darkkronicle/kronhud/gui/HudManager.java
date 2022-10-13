@@ -48,6 +48,12 @@ public class HudManager {
         return this;
     }
 
+    public List<HudEntry> getEntriesSorted() {
+        List<HudEntry> entryList = getEntries();
+        entryList.sort(Comparator.comparing(hudEntry -> hudEntry.getId().toString()));
+        return entryList;
+    }
+
     public List<HudEntry> getEntries() {
         if (entries.size() > 0) {
             return new ArrayList<>(entries.values());

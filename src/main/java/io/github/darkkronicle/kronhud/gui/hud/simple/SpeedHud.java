@@ -24,7 +24,10 @@ public class SpeedHud extends SimpleTextHudEntry {
 
     @Override
     public String getValue() {
-        Vec3d vec = MinecraftClient.getInstance().player.getVelocity();
+        Vec3d vec = client.player.getVelocity();
+        if (client.player.isOnGround() && vec.y < 0) {
+            vec = new Vec3d(vec.x, 0, vec.z);
+        }
         double speed;
         if (horizontal.getValue()) {
             speed = vec.horizontalLength();

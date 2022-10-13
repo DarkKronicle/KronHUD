@@ -92,7 +92,7 @@ public class ConfigHandler extends ModConfig {
 
     @Override
     public List<Option<?>> getOptions() {
-        List<Option<?>> options = HudManager.getInstance().getEntries().stream().map(HudEntryOption::new).collect(Collectors.toList());
+        List<Option<?>> options = HudManager.getInstance().getEntriesSorted().stream().map(HudEntryOption::new).collect(Collectors.toList());
         options.add(general);
         return options;
     }

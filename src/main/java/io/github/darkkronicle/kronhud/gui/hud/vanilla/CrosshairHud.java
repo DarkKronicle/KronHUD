@@ -143,8 +143,10 @@ public class CrosshairHud extends AbstractHudEntry {
         } else if (hit.getType() == HitResult.Type.BLOCK) {
             BlockPos blockPos = ((BlockHitResult) hit).getBlockPos();
             World world = this.client.world;
-            if (world.getBlockState(blockPos).createScreenHandlerFactory(world, blockPos) != null || world.getBlockState(blockPos)
-                                                                                                          .getBlock() instanceof AbstractChestBlock<?>) {
+            if (
+                    world.getBlockState(blockPos).createScreenHandlerFactory(world, blockPos) != null
+                    || world.getBlockState(blockPos).getBlock() instanceof AbstractChestBlock<?>
+            ) {
                 return containerColor.getValue();
             }
         }
