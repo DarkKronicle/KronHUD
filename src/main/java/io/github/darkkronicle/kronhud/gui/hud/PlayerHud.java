@@ -12,7 +12,9 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Quaternion;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3f;
 
 import java.util.List;
@@ -26,6 +28,9 @@ public class PlayerHud extends BoxHudEntry {
 
     private float lastYawOffset = 0;
     private float yawOffset = 0;
+    private float lastYOffset = 0;
+    private float yOffset = 0;
+
 
     public PlayerHud() {
         super(62, 94, true);
@@ -47,9 +52,11 @@ public class PlayerHud extends BoxHudEntry {
             return;
         }
 
+        float lerpY = (lastYOffset + ((yOffset - lastYOffset) * delta));
+
         MatrixStack matrixStack = RenderSystem.getModelViewStack();
         matrixStack.push();
-        matrixStack.translate(x, y, 1050);
+        matrixStack.translate(x, y - lerpY, 1050);
         matrixStack.scale(1, 1, -1);
 
         RenderSystem.applyModelViewMatrix();
@@ -104,6 +111,31 @@ public class PlayerHud extends BoxHudEntry {
     public void tick() {
         lastYawOffset = yawOffset;
         yawOffset *= .93f;
+        lastYOffset = yOffset;
+        if (client.player != null && client.player.isInSwimmingPose()) {
+            float rawPitch = client.player.isTouchingWater() ? -90.0F - client.player.getPitch() : -90.0F;
+            float pitch = MathHelper.lerp(client.player.getLeaningPitch(1), 0.0F, rawPitch);
+            float height = client.player.getHeight();
+            // sin = opposite / hypotenuse
+            float offset = (float) (Math.sin(Math.toRadians(pitch)) * height);
+            yOffset = Math.abs(offset) + 35;
+        } else if (client.player != null && client.player.isFallFlying()) {
+            // Elytra!
+
+            float j = (float)client.player.getRoll() + 1;
+            float k = MathHelper.clamp(j * j / 100.0F, 0.0F, 1.0F);
+
+            float pitch = k * (-90.0F - client.player.getPitch()) + 90;
+            float height = client.player.getHeight();
+            // sin = opposite / hypotenuse
+            float offset = (float) (Math.sin(Math.toRadians(pitch)) * height) * 50;
+            yOffset = 35 - offset;
+            if (pitch < 0) {
+                yOffset -= ((1 / (1 + Math.exp(-pitch / 4))) - .5) * 20;
+            }
+        } else {
+            yOffset *= .8;
+        }
     }
 
     @Override

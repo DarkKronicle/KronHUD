@@ -43,6 +43,9 @@ public class ComboHud extends SimpleTextHudEntry {
     }
 
     public void onEntityDamage(Entity entity) {
+        if (client.player == null) {
+            return;
+        }
         if (entity.getId() == client.player.getId()) {
             target = -1;
             count = 0;
