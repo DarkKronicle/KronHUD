@@ -7,6 +7,8 @@ import io.github.darkkronicle.darkkore.util.Color;
 import io.github.darkkronicle.darkkore.util.render.RenderUtil;
 import io.github.darkkronicle.kronhud.config.*;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
+import io.github.darkkronicle.kronhud.gui.component.DynamicallyPositionable;
+import io.github.darkkronicle.kronhud.gui.layout.AnchorPoint;
 import io.github.darkkronicle.kronhud.util.ColorUtil;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import io.github.darkkronicle.kronhud.util.Rectangle;
@@ -15,6 +17,7 @@ import net.minecraft.block.AbstractChestBlock;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.option.AttackIndicator;
 import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
@@ -26,7 +29,7 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class CrosshairHud extends AbstractHudEntry {
+public class CrosshairHud extends AbstractHudEntry implements DynamicallyPositionable {
     public static final Identifier ID = new Identifier("kronhud", "crosshairhud");
 
     private final KronOptionList<Crosshair> type = new KronOptionList<>("type", ID.getPath(), Crosshair.CROSS);
@@ -38,7 +41,7 @@ public class CrosshairHud extends AbstractHudEntry {
     private final KronExtendedColor attackIndicatorForegroundColor = new KronExtendedColor("attackindicatorfg", ID.getPath(), new ExtendedColor(ColorUtil.WHITE, ExtendedColor.ChromaOptions.getDefault()));
 
     public CrosshairHud() {
-        super(17, 17);
+        super(15, 15);
     }
 
     @Override
@@ -83,7 +86,9 @@ public class CrosshairHud extends AbstractHudEntry {
             matrixStack.pop();
             RenderSystem.applyModelViewMatrix();
         } else if (type.getValue() == Crosshair.TEXTURE) {
-            client.getTextureManager().bindTexture(DrawableHelper.GUI_ICONS_TEXTURE);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.setShader(GameRenderer::getPositionTexShader);
+            RenderSystem.setShaderTexture(0, DrawableHelper.GUI_ICONS_TEXTURE);
 
             // Draw crosshair
             RenderSystem.setShaderColor(
@@ -179,6 +184,11 @@ public class CrosshairHud extends AbstractHudEntry {
         options.add(attackIndicatorBackgroundColor);
         options.add(attackIndicatorForegroundColor);
         return options;
+    }
+
+    @Override
+    public AnchorPoint getAnchor() {
+        return AnchorPoint.MIDDLE_MIDDLE;
     }
 
     @AllArgsConstructor

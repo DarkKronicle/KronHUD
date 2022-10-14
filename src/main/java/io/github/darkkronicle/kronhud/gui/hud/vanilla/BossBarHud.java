@@ -19,6 +19,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -34,7 +35,7 @@ public class BossBarHud extends TextHudEntry implements DynamicallyPositionable 
         return boss;
     });
 
-    private Map<UUID, ClientBossBar> bossBars;
+    private Map<UUID, ClientBossBar> bossBars = new HashMap<>();
     private final KronBoolean text = new KronBoolean("text", ID.getPath(), true);
     private final KronBoolean bar = new KronBoolean("bar", ID.getPath(), true);
     // TODO custom color
@@ -47,7 +48,7 @@ public class BossBarHud extends TextHudEntry implements DynamicallyPositionable 
     public void setBossBars() {
         int prevLength = bossBars.size();
         bossBars = ((AccessorBossBarHud) client.inGameHud.getBossBarHud()).getBossBars();
-        if (bossBars.size() != prevLength) {
+        if (bossBars != null && bossBars.size() != prevLength) {
             if (bossBars.size() == 0) {
                 // Just leave it alone, it's not rendering anyways
                 return;
@@ -60,7 +61,7 @@ public class BossBarHud extends TextHudEntry implements DynamicallyPositionable 
     @Override
     public void renderComponent(MatrixStack matrices, float delta) {
         setBossBars();
-        if (this.bossBars.isEmpty()) {
+        if (bossBars == null || this.bossBars.isEmpty()) {
             return;
         }
         DrawPosition scaledPos = getPos();

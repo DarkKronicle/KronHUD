@@ -162,26 +162,18 @@ public abstract class AbstractHudEntry extends DrawUtil implements HudEntry {
         int scaledX = floatToInt(x.getValue().floatValue(), client.getWindow().getScaledWidth(), 0) - offsetTrueWidth();
         int scaledY = floatToInt(y.getValue().floatValue(), client.getWindow().getScaledHeight(), 0) - offsetTrueHeight();
         if (scaledX < 0) {
-            setX(offsetTrueWidth());
-            return;
+            scaledX = 0;
         }
         if (scaledY < 0) {
-            setY(offsetTrueHeight());
-            return;
+            scaledY = 0;
         }
         int trueWidth = (int) (getWidth() * getScale());
         if (trueWidth < client.getWindow().getScaledWidth() && scaledX + trueWidth > client.getWindow().getScaledWidth()) {
             scaledX = client.getWindow().getScaledWidth() - trueWidth;
-            setX(scaledX + offsetTrueWidth());
-            // It calls this method when updated
-            return;
         }
         int trueHeight = (int) (getHeight() * getScale());
         if (trueHeight < client.getWindow().getScaledHeight() && scaledY + trueHeight > client.getWindow().getScaledHeight()) {
             scaledY = client.getWindow().getScaledHeight() - trueHeight;
-            setY(scaledY + offsetTrueHeight());
-            // It calls this method when updated
-            return;
         }
         truePosition = new DrawPosition(scaledX, scaledY);
         renderPosition = truePosition.divide(getScale());

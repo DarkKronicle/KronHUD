@@ -37,7 +37,7 @@ public class PotionsHud extends TextHudEntry implements DynamicallyPositionable 
     private final KronBoolean iconsOnly = new KronBoolean("iconsonly", ID.getPath(), false);
 
     public PotionsHud() {
-        super(60, 200, false);
+        super(50, 200, false);
     }
 
     private int calculateWidth(List<StatusEffectInstance> effects) {
@@ -45,12 +45,12 @@ public class PotionsHud extends TextHudEntry implements DynamicallyPositionable 
             if (iconsOnly.getValue()) {
                 return 20 * effects.size() + 2;
             }
-            return 60 * effects.size() + 2;
+            return 50 * effects.size() + 2;
         } else {
             if (iconsOnly.getValue()) {
                 return 20;
             }
-            return 60;
+            return 50;
         }
     }
 
@@ -96,7 +96,7 @@ public class PotionsHud extends TextHudEntry implements DynamicallyPositionable 
             StatusEffectInstance effect = effects.get(direction.getDirection() == -1 ? i : effects.size() - i - 1);
             if (direction.isXAxis()) {
                 renderPotion(matrices, effect, x + lastPos + 1, y + 1);
-                lastPos += (iconsOnly.getValue() ? 20 : 60);
+                lastPos += (iconsOnly.getValue() ? 20 : 50);
             } else {
                 renderPotion(matrices, effect, x + 1, y + 1 + lastPos);
                 lastPos += 20;
