@@ -30,6 +30,7 @@ public class CompassHud extends TextHudEntry implements DynamicallyPositionable 
     private final KronColor cardinalColor = new KronColor("cardinalcolor", ID.getPath(), new Color(0xFFFFFFFF));
     private final KronColor semiCardinalColor = new KronColor("semicardinalcolor", ID.getPath(), new Color(0xFFAAAAAA));
     private final KronBoolean invert = new KronBoolean("invert", ID.getPath(), false);
+    private final KronBoolean showDegrees = new KronBoolean("showdegrees", ID.getPath(), true);
 
     private void updateWidth(int newWidth){
         setWidth(newWidth);
@@ -78,7 +79,12 @@ public class CompassHud extends TextHudEntry implements DynamicallyPositionable 
         int x = pos.x();
         int y = pos.y() + 1;
         RenderUtil.drawRectangle(matrices, pos.x() + (int) halfWidth - 1, pos.y(), 3, 11, lookingBox.getValue());
-        DrawUtil.drawCenteredString(matrices, client.textRenderer, String.valueOf((int) degrees), x + (int) halfWidth, y + 20, degreesColor.getValue(), shadow.getValue());
+        if (showDegrees.getValue()) {
+            DrawUtil.drawCenteredString(
+                    matrices, client.textRenderer, String.valueOf((int) degrees), x + (int) halfWidth, y + 20, degreesColor.getValue(),
+                    shadow.getValue()
+            );
+        }
         float shift = (startIndicator - start) / 15f * dist;
         if (invert.getValue()) {
             shift = dist - shift;
@@ -160,6 +166,7 @@ public class CompassHud extends TextHudEntry implements DynamicallyPositionable 
     public List<KronConfig<?>> getConfigurationOptions() {
         List<KronConfig<?>> options = super.getConfigurationOptions();
         options.add(widthOption);
+        options.add(showDegrees);
         options.add(invert);
         options.add(lookingBox);
         options.add(degreesColor);

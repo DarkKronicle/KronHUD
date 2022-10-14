@@ -145,6 +145,8 @@
   "hud.kronhud.playerhud.info": "Renders a smaller version of the player model",
   "hud.kronhud.irltimehud": "IRLTime HUD",
   "hud.kronhud.reachhud": "Reach HUD",
+  "hud.kronhud.irltimehud.info": "Shows the real current time",
+  "hud.kronhud.reachhud.info": "Shows how far away your last hit was",
   "texts.kronhud.optiontype.info.hudconfig": "Enable/Disable this module from showing. Modify specific options by clicking the gear.",
   "kronhud.component.toggle.true": "&aActive",
   "kronhud.component.toggle.false": "&cDisabled",
@@ -178,5 +180,43 @@
   "kronhud.option.anchorpoint.middleright.info": "Middle right point",
   "kronhud.option.anchorpoint.bottomleft.info": "Bottom left corner",
   "kronhud.option.anchorpoint.bottommiddle.info": "Bottom middle point",
-  "kronhud.option.anchorpoint.bottomright.info": "Bottom right point"
+  "kronhud.option.anchorpoint.bottomright.info": "Bottom right point",
+
+  "hud.kronhud.compasshud": "Compass HUD",
+  "hud.kronhud.tpshud": "TPS HUD",
+  "hud.kronhud.combohud": "Combo HUD",
+
+  "hud.kronhud.compasshud.info": " Displays current looking direction",
+  "hud.kronhud.tpshud.info": "Displays the estimated server TPS",
+  "hud.kronhud.combohud.info": "Display current combo information",
+
+  "option.kronhud.minwidth.comment": "Minimum width of the component (it will automatically expand)",
+  "option.kronhud.irltimehud.dateformat.comment": "Date format to render time from. This works with any specification from the &dJava 8 Date Time Formatter\n&7https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html",
+
+  "option.kronhud.compasshud.width": "Width",
+  "option.kronhud.compasshud.invert": "Invert Direction",
+  "option.kronhud.compasshud.lookingbox": "Degrees Indicator Color",
+  "option.kronhud.compasshud.degreescolor": "Degrees Text Color",
+  "option.kronhud.compasshud.cardinalcolor": "Cardinal Direction Color",
+  "option.kronhud.compasshud.semicardinalcolor": "Intercardinal Color",
+  "option.kronhud.compasshud.majorindicator": "Major Indicator Color",
+  "option.kronhud.compasshud.minorindicator": "Minor Indicator Color",
+  "option.kronhud.compasshud.showdegrees": "Show Degrees",
+
+  "option.kronhud.compasshud.width.comment": "Width of the compass element",
+  "option.kronhud.compasshud.invert.comment": "Inverts the direction that the compass moves",
+  "option.kronhud.compasshud.lookingbox.comment": "The color of the small line on the display in the direct center",
+  "option.kronhud.compasshud.degreescolor.comment": "The color of the degrees text below the center",
+  "option.kronhud.compasshud.cardinalcolor.comment": "The color of &7N E S W",
+  "option.kronhud.compasshud.semicardinalcolor.comment": "The color of &7NE SE SW NW",
+  "option.kronhud.compasshud.majorindicator.comment": "The color of the long lines (every 90 degrees)",
+  "option.kronhud.compasshud.minorindicator.comment": "The color of the short lines (every 15 degrees)",
+  "option.kronhud.compasshud.showdegrees.comment": "Displays the current degree of rotation",
+
+  "option.kronhud.general.edithud.info": "Keybind to open the screen to edit the HUD",
+  "option.kronhud.scoreboardhud.toppadding": "Top Padding",
+  "option.kronhud.scoreboardhud.toppadding.comment": "Padding around the title component on the scoreboard",
+
+  "option.kronhud.playerhud.dynamicrotation": "Dynamic Rotation",
+  "option.kronhud.playerhud.dynamicrotation.comment": "Rotation of the player is shown and then slowly turns back to looking straight"
 }
