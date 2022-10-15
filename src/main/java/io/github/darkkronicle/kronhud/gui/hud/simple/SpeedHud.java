@@ -5,6 +5,8 @@ import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.gui.entry.SimpleTextHudEntry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 
@@ -26,9 +28,9 @@ public class SpeedHud extends SimpleTextHudEntry {
 
     @Override
     public String getValue() {
-        ClientPlayerEntity player = Objects.requireNonNull(client.player);
-        Vec3d vec = player.getVehicle() == null ? player.getVelocity() : player.getVehicle().getVelocity();
-        if (client.player.isOnGround() && vec.y < 0) {
+        Entity entity = Objects.requireNonNull(client.player).getVehicle() == null ? client.player : client.player.getVehicle();
+        Vec3d vec = entity.getVelocity();
+        if (entity.isOnGround() && vec.y < 0) {
             vec = new Vec3d(vec.x, 0, vec.z);
         }
         double speed;
