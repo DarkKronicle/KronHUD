@@ -4,12 +4,16 @@ import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.gui.entry.SimpleTextHudEntry;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
+import java.util.Objects;
 
 public class SpeedHud extends SimpleTextHudEntry {
 
@@ -24,8 +28,12 @@ public class SpeedHud extends SimpleTextHudEntry {
 
     @Override
     public String getValue() {
-        Vec3d vec = client.player.getVelocity();
-        if (client.player.isOnGround() && vec.y < 0) {
+        if (client.player == null) {
+            return getPlaceholder();
+        }
+        Entity entity = client.player.getVehicle() == null ? client.player : client.player.getVehicle();
+        Vec3d vec = entity.getVelocity();
+        if (entity.isOnGround() && vec.y < 0) {
             vec = new Vec3d(vec.x, 0, vec.z);
         }
         double speed;
