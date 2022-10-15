@@ -28,7 +28,10 @@ public class SpeedHud extends SimpleTextHudEntry {
 
     @Override
     public String getValue() {
-        Entity entity = Objects.requireNonNull(client.player).getVehicle() == null ? client.player : client.player.getVehicle();
+        if (client.player == null) {
+            return getPlaceholder();
+        }
+        Entity entity = client.player.getVehicle() == null ? client.player : client.player.getVehicle();
         Vec3d vec = entity.getVelocity();
         if (entity.isOnGround() && vec.y < 0) {
             vec = new Vec3d(vec.x, 0, vec.z);
