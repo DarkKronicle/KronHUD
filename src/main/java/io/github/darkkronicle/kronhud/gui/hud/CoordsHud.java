@@ -53,15 +53,10 @@ public class CoordsHud extends TextHudEntry {
      * @return
      */
     public static int getDirection(double yaw) {
-        yaw = yaw % 360;
-        int plzdontcrash = 0;
-        while (yaw < 0) {
-            if (plzdontcrash > 10) {
-                return 0;
-            }
-            yaw = yaw + 360;
-            plzdontcrash++;
-        }
+        yaw %= 360;
+        if (yaw < 0)
+            yaw += 360;
+        
         int[] directions = {0, 23, 68, 113, 158, 203, 248, 293, 338, 360};
         for (int i = 0; i < directions.length; i++) {
             int min = directions[i];
