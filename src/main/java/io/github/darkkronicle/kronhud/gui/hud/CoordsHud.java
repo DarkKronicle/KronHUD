@@ -253,6 +253,7 @@ public class CoordsHud extends TextHudEntry implements DynamicallyPositionable {
             currPos += textRenderer.getWidth(String.valueOf(df.format(z)));
 
             int width = currPos - pos.x() + 2;
+            boolean changed = false;
             if (getWidth() != width) {
                 setWidth(width);
                 changed = true;
