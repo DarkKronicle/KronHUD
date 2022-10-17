@@ -58,8 +58,10 @@ public class CoordsHud extends TextHudEntry implements DynamicallyPositionable {
     public static int getDirection(double yaw) {
         yaw %= 360;
 
-        if (yaw < 0)
+        if (yaw < 0) {
             yaw += 360;
+        }
+        
         int[] directions = {0, 23, 68, 113, 158, 203, 248, 293, 338, 360};
         for (int i = 0; i < directions.length; i++) {
             int min = directions[i];

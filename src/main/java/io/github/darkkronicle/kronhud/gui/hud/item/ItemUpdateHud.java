@@ -100,7 +100,6 @@ public class ItemUpdateHud extends TextHudEntry {
         int i = 0;
         for (ItemUtil.ItemStorage item : this.added) {
             if (i > 5) {
-                matrices.pop();
                 return;
             }
             TextCollector message = new TextCollector();
@@ -124,7 +123,6 @@ public class ItemUpdateHud extends TextHudEntry {
         }
         for (ItemUtil.ItemStorage item : this.removed) {
             if (i > 5) {
-                matrices.pop();
                 return;
             }
             TextCollector message = new TextCollector();
