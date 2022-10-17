@@ -253,9 +253,17 @@ public class CoordsHud extends TextHudEntry implements DynamicallyPositionable {
             currPos += textRenderer.getWidth(String.valueOf(df.format(z)));
 
             int width = currPos - pos.x() + 2;
-            if (getWidth() != width)
+            if (getWidth() != width) {
                 setWidth(width);
-            onBoundsUpdate();
+                changed = true;
+            }
+            if (getHeight() != 11) {
+                setHeight(11);
+                changed = true;
+            }
+            if (changed) {
+                onBoundsUpdate();
+            }
         } else {
             textRenderer.drawWithShadow(matrices, "X", pos.x() + 1, pos.y() + 2, firstColor.getValue().color());
             textRenderer.drawWithShadow(matrices, String.valueOf(df.format(x)), pos.x() + 11, pos.y() + 2, secondColor.getValue().color());
