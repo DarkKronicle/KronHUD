@@ -23,10 +23,10 @@ public class CoordsHud extends TextHudEntry implements DynamicallyPositionable {
     private final KronInteger decimalPlaces = new KronInteger("decimalplaces", ID.getPath(), 0, 0, 15);
     private final KronBoolean minimal = new KronBoolean("minimal", ID.getPath(), false);
 
-    private final KronOptionList<AnchorPoint> anchor = DefaultOptions.getAnchorPoint(AnchorPoint.MIDDLE_RIGHT);
+    private final KronOptionList<AnchorPoint> anchor = DefaultOptions.getAnchorPoint(AnchorPoint.MIDDLE_MIDDLE);
 
     public CoordsHud() {
-            super(79,  31, true);
+            super(79, 31, true);
     }
 
     public static String getZDir(int dir) {
@@ -203,8 +203,9 @@ public class CoordsHud extends TextHudEntry implements DynamicallyPositionable {
                 setHeight(31);
                 changed = true;
             }
-            if (changed)
+            if (changed) {
                 onBoundsUpdate();
+            }
         }
     }
 
