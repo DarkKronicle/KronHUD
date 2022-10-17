@@ -69,6 +69,8 @@
   "option.kronhud.coordshud.secondtextcolor.comment": "The color of the axis value.",
   "option.kronhud.coordshud.decimalplaces": "Decimal Places",
   "option.kronhud.coordshud.decimalplaces.comment": "The number of decimal places to round the coordinates to.",
+  "option.kronhud.coordshud.minimal": "Minimal Mode",
+  "option.kronhud.coordshud.minimal.comment": "Toggle minimalist coordinates mode. Direction not included.",
   "option.kronhud.scoreboardhud.bordercolor": "Border Color",
   "option.kronhud.scoreboardhud.topbackgroundcolor": "Top Color",
   "option.kronhud.scoreboardhud.topbackgroundcolor.comment": "The top of the scoreboard's background color.",

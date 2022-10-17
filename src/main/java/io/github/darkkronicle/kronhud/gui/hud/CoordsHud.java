@@ -1,9 +1,9 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
-import io.github.darkkronicle.kronhud.config.KronColor;
-import io.github.darkkronicle.kronhud.config.KronConfig;
-import io.github.darkkronicle.kronhud.config.KronInteger;
+import io.github.darkkronicle.kronhud.config.*;
+import io.github.darkkronicle.kronhud.gui.component.DynamicallyPositionable;
 import io.github.darkkronicle.kronhud.gui.entry.TextHudEntry;
+import io.github.darkkronicle.kronhud.gui.layout.AnchorPoint;
 import io.github.darkkronicle.kronhud.util.ColorUtil;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import net.minecraft.client.font.TextRenderer;
@@ -14,16 +14,19 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
 
-public class CoordsHud extends TextHudEntry {
+public class CoordsHud extends TextHudEntry implements DynamicallyPositionable {
 
     public static final Identifier ID = new Identifier("kronhud", "coordshud");
 
     private final KronColor firstColor = new KronColor("firsttextcolor", ID.getPath(), ColorUtil.SELECTOR_BLUE);
     private final KronColor secondColor = new KronColor("secondtextcolor", ID.getPath(), ColorUtil.WHITE);
     private final KronInteger decimalPlaces = new KronInteger("decimalplaces", ID.getPath(), 0, 0, 15);
+    private final KronBoolean minimal = new KronBoolean("minimal", ID.getPath(), false);
+
+    private final KronOptionList<AnchorPoint> anchor = DefaultOptions.getAnchorPoint(AnchorPoint.MIDDLE_RIGHT);
 
     public CoordsHud() {
-        super(79, 31, true);
+            super(79,  31, true);
     }
 
     public static String getZDir(int dir) {
@@ -53,15 +56,10 @@ public class CoordsHud extends TextHudEntry {
      * @return
      */
     public static int getDirection(double yaw) {
-        yaw = yaw % 360;
-        int plzdontcrash = 0;
-        while (yaw < 0) {
-            if (plzdontcrash > 10) {
-                return 0;
-            }
-            yaw = yaw + 360;
-            plzdontcrash++;
-        }
+        yaw %= 360;
+
+        if (yaw < 0)
+            yaw += 360;
         int[] directions = {0, 23, 68, 113, 158, 203, 248, 293, 338, 360};
         for (int i = 0; i < directions.length; i++) {
             int min = directions[i];
@@ -98,55 +96,114 @@ public class CoordsHud extends TextHudEntry {
         int dir = getDirection(yaw);
         String direction = getWordedDirection(dir);
         TextRenderer textRenderer = client.textRenderer;
-        drawString(
-                matrices, textRenderer, "X",
-                pos.x() + 1, pos.y() + 2,
-                firstColor.getValue().color(), shadow.getValue()
-        );
-        drawString(
-                matrices, textRenderer, String.valueOf(df.format(x)),
-                pos.x() + 11, pos.y() + 2,
-                secondColor.getValue().color(), shadow.getValue()
-        );
 
-        drawString(
-                matrices, textRenderer, "Y",
-                pos.x() + 1, pos.y() + 12,
-                firstColor.getValue().color(), shadow.getValue()
-        );
-        drawString(
-                matrices, textRenderer, String.valueOf(df.format(y)),
-                pos.x() + 11, pos.y() + 12,
-                secondColor.getValue().color(), shadow.getValue()
-        );
+        if (minimal.getValue()) {
+            int currPos = pos.x() + 1;
+            String separator = ", ";
+            drawString(
+                    matrices, textRenderer, "XYZ: ",
+                    currPos, pos.y() + 2,
+                    firstColor.getValue().color(), shadow.getValue()
+            );
+            currPos += textRenderer.getWidth("XYZ: ");
+            drawString(
+                    matrices, textRenderer, String.valueOf(df.format(x)),
+                    currPos, pos.y() + 2,
+                    secondColor.getValue().color(), shadow.getValue()
+            );
+            currPos += textRenderer.getWidth(String.valueOf(df.format(x)));
+            drawString(
+                    matrices, textRenderer, separator,
+                    currPos, pos.y() + 2,
+                    firstColor.getValue().color(), shadow.getValue()
+            );
+            currPos += textRenderer.getWidth(separator);
+            drawString(
+                    matrices, textRenderer, String.valueOf(df.format(y)),
+                    currPos, pos.y() + 2,
+                    secondColor.getValue().color(), shadow.getValue()
+            );
+            currPos += textRenderer.getWidth(String.valueOf(df.format(y)));
+            drawString(
+                    matrices, textRenderer, separator,
+                    currPos, pos.y() + 2,
+                    firstColor.getValue().color(), shadow.getValue()
+            );
+            currPos += textRenderer.getWidth(separator);
+            drawString(
+                    matrices, textRenderer, String.valueOf(df.format(z)),
+                    currPos, pos.y() + 2,
+                    secondColor.getValue().color(), shadow.getValue()
+            );
+            currPos += textRenderer.getWidth(String.valueOf(df.format(z)));
+            int width = currPos - pos.x() + 2;
+            if (getWidth() != width)
+                setWidth(width);
+            if (getHeight() != 11)
+                setHeight(11);
+            onBoundsUpdate();
+        } else {
+            drawString(
+                    matrices, textRenderer, "X",
+                    pos.x() + 1, pos.y() + 2,
+                    firstColor.getValue().color(), shadow.getValue()
+            );
+            drawString(
+                    matrices, textRenderer, String.valueOf(df.format(x)),
+                    pos.x() + 11, pos.y() + 2,
+                    secondColor.getValue().color(), shadow.getValue()
+            );
 
-        drawString(
-                matrices, textRenderer, "Z",
-                pos.x() + 1, pos.y() + 22,
-                firstColor.getValue().color(), shadow.getValue()
-        );
+            drawString(
+                    matrices, textRenderer, "Y",
+                    pos.x() + 1, pos.y() + 12,
+                    firstColor.getValue().color(), shadow.getValue()
+            );
+            drawString(
+                    matrices, textRenderer, String.valueOf(df.format(y)),
+                    pos.x() + 11, pos.y() + 12,
+                    secondColor.getValue().color(), shadow.getValue()
+            );
 
-        drawString(
-                matrices, textRenderer, String.valueOf(df.format(z)), pos.x() + 11, pos.y() + 22, secondColor.getValue().color(),
-                shadow.getValue()
-        );
+            drawString(
+                    matrices, textRenderer, "Z",
+                    pos.x() + 1, pos.y() + 22,
+                    firstColor.getValue().color(), shadow.getValue()
+            );
 
-        drawString(
-                matrices, textRenderer, direction,
-                pos.x() + 60, pos.y() + 12,
-                firstColor.getValue().color(), shadow.getValue()
-        );
+            drawString(
+                    matrices, textRenderer, String.valueOf(df.format(z)), pos.x() + 11, pos.y() + 22, secondColor.getValue().color(),
+                    shadow.getValue()
+            );
 
-        drawString(
-                matrices, textRenderer, getXDir(dir),
-                pos.x() + 60, pos.y() + 2,
-                secondColor.getValue().color(), shadow.getValue()
-        );
-        textRenderer.drawWithShadow(
-                matrices, getZDir(dir),
-                pos.x() + 60, pos.y() + 22,
-                secondColor.getValue().color(), shadow.getValue()
-        );
+            drawString(
+                    matrices, textRenderer, direction,
+                    pos.x() + 60, pos.y() + 12,
+                    firstColor.getValue().color(), shadow.getValue()
+            );
+
+            drawString(
+                    matrices, textRenderer, getXDir(dir),
+                    pos.x() + 60, pos.y() + 2,
+                    secondColor.getValue().color(), shadow.getValue()
+            );
+            textRenderer.drawWithShadow(
+                    matrices, getZDir(dir),
+                    pos.x() + 60, pos.y() + 22,
+                    secondColor.getValue().color(), shadow.getValue()
+            );
+            boolean changed = false;
+            if (getWidth() != 79) {
+                setWidth(79);
+                changed = true;
+            }
+            if (getHeight() != 31) {
+                setHeight(31);
+                changed = true;
+            }
+            if (changed)
+                onBoundsUpdate();
+        }
     }
 
     @Override
@@ -167,15 +224,39 @@ public class CoordsHud extends TextHudEntry {
         int dir = getDirection(yaw);
         String direction = getWordedDirection(dir);
         TextRenderer textRenderer = client.textRenderer;
-        textRenderer.drawWithShadow(matrices, "X", pos.x() + 1, pos.y() + 2, firstColor.getValue().color());
-        textRenderer.drawWithShadow(matrices, String.valueOf(df.format(x)), pos.x() + 11, pos.y() + 2, secondColor.getValue().color());
-        textRenderer.drawWithShadow(matrices, "Y", pos.x() + 1, pos.y() + 12, firstColor.getValue().color());
-        textRenderer.drawWithShadow(matrices, String.valueOf(df.format(y)), pos.x() + 11, pos.y() + 12, secondColor.getValue().color());
-        textRenderer.drawWithShadow(matrices, "Z", pos.x() + 1, pos.y() + 22, firstColor.getValue().color());
-        textRenderer.drawWithShadow(matrices, String.valueOf(df.format(z)), pos.x() + 11, pos.y() + 22, secondColor.getValue().color());
-        textRenderer.drawWithShadow(matrices, direction, pos.x() + 60, pos.y() + 12, firstColor.getValue().color());
-        textRenderer.drawWithShadow(matrices, getXDir(dir), pos.x() + 60, pos.y() + 2, secondColor.getValue().color());
-        textRenderer.drawWithShadow(matrices, getZDir(dir), pos.x() + 60, pos.y() + 22, secondColor.getValue().color());
+
+        if (minimal.getValue()) {
+            int currPos = pos.x() + 1;
+            String separator = ", ";
+
+            textRenderer.drawWithShadow(matrices, "XYZ: ", currPos, pos.y() + 2, firstColor.getValue().color());
+            currPos += textRenderer.getWidth("XYZ: ");
+            textRenderer.drawWithShadow(matrices, String.valueOf(df.format(x)), currPos, pos.y() + 2, secondColor.getValue().color(), shadow.getValue());
+            currPos += textRenderer.getWidth(String.valueOf(df.format(x)));
+            textRenderer.drawWithShadow(matrices, separator, currPos, pos.y() + 2, firstColor.getValue().color(), shadow.getValue());
+            currPos += textRenderer.getWidth(separator);
+            textRenderer.drawWithShadow(matrices, String.valueOf(df.format(y)), currPos, pos.y() + 2, secondColor.getValue().color(), shadow.getValue());
+            currPos += textRenderer.getWidth(String.valueOf(df.format(y)));
+            textRenderer.drawWithShadow(matrices, separator, currPos, pos.y() + 2, firstColor.getValue().color(), shadow.getValue() );
+            currPos += textRenderer.getWidth(separator);
+            textRenderer.drawWithShadow(matrices, String.valueOf(df.format(z)), currPos, pos.y() + 2, secondColor.getValue().color(), shadow.getValue());
+            currPos += textRenderer.getWidth(String.valueOf(df.format(z)));
+
+            int width = currPos - pos.x() + 2;
+            if (getWidth() != width)
+                setWidth(width);
+            onBoundsUpdate();
+        } else {
+            textRenderer.drawWithShadow(matrices, "X", pos.x() + 1, pos.y() + 2, firstColor.getValue().color());
+            textRenderer.drawWithShadow(matrices, String.valueOf(df.format(x)), pos.x() + 11, pos.y() + 2, secondColor.getValue().color());
+            textRenderer.drawWithShadow(matrices, "Y", pos.x() + 1, pos.y() + 12, firstColor.getValue().color());
+            textRenderer.drawWithShadow(matrices, String.valueOf(df.format(y)), pos.x() + 11, pos.y() + 12, secondColor.getValue().color());
+            textRenderer.drawWithShadow(matrices, "Z", pos.x() + 1, pos.y() + 22, firstColor.getValue().color());
+            textRenderer.drawWithShadow(matrices, String.valueOf(df.format(z)), pos.x() + 11, pos.y() + 22, secondColor.getValue().color());
+            textRenderer.drawWithShadow(matrices, direction, pos.x() + 60, pos.y() + 12, firstColor.getValue().color());
+            textRenderer.drawWithShadow(matrices, getXDir(dir), pos.x() + 60, pos.y() + 2, secondColor.getValue().color());
+            textRenderer.drawWithShadow(matrices, getZDir(dir), pos.x() + 60, pos.y() + 22, secondColor.getValue().color());
+        }
     }
 
     public String getWordedDirection(int dir) {
@@ -199,12 +280,18 @@ public class CoordsHud extends TextHudEntry {
         options.add(firstColor);
         options.add(secondColor);
         options.add(decimalPlaces);
+        options.add(minimal);
         return options;
     }
 
     @Override
     public Identifier getId() {
         return ID;
+    }
+
+    @Override
+    public AnchorPoint getAnchor() {
+        return anchor.getValue();
     }
 
 }
