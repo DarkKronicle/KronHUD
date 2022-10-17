@@ -139,11 +139,18 @@ public class CoordsHud extends TextHudEntry implements DynamicallyPositionable {
             );
             currPos += textRenderer.getWidth(String.valueOf(df.format(z)));
             int width = currPos - pos.x() + 2;
-            if (getWidth() != width)
+            boolean changed = false;
+            if (getWidth() != width) {
                 setWidth(width);
-            if (getHeight() != 11)
+                changed = true;
+            }
+            if (getHeight() != 11) {
                 setHeight(11);
-            onBoundsUpdate();
+                changed = true;
+            }
+            if (changed) {
+                onBoundsUpdate();
+            }
         } else {
             drawString(
                     matrices, textRenderer, "X",
