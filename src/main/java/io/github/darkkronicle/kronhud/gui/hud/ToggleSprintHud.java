@@ -56,9 +56,9 @@ public class ToggleSprintHud extends SimpleTextHudEntry {
         try {
             BufferedReader bufferedReader = new BufferedReader(
                     new InputStreamReader(MinecraftClient.getInstance()
-                                                         .getResourceManager()
-                                                         .getResourceOrThrow(new Identifier("texts/splashes.txt"))
-                                                         .getInputStream(), StandardCharsets.UTF_8)
+                            .getResourceManager()
+                            .getResourceOrThrow(new Identifier("texts/splashes.txt"))
+                            .getInputStream(), StandardCharsets.UTF_8)
             );
             String string;
             while ((string = bufferedReader.readLine()) != null) {
@@ -98,20 +98,18 @@ public class ToggleSprintHud extends SimpleTextHudEntry {
 
     @Override
     public String getValue() {
-
-        if (client.options.sneakKey.isPressed()) {
-            return I18n.translate("texts.kronhud.togglesprint.sneaking_pressed");
-        }
-        if (client.options.sprintKey.isPressed()) {
-            return I18n.translate("texts.kronhud.togglesprint.sprinting_pressed");
-        }
-
         if (toggleSneak.getValue() && sneakToggled.getValue()) {
             return I18n.translate("texts.kronhud.togglesprint.sneaking_toggled");
+        } else if (client.player.isSneaking()) {
+            return I18n.translate("texts.kronhud.togglesprint.sneaking");
         }
+
         if (toggleSprint.getValue() && sprintToggled.getValue()) {
             return I18n.translate("texts.kronhud.togglesprint.sprinting_toggled");
+        } else if (client.player.isSprinting()) {
+            return I18n.translate("texts.kronhud.togglesprint.sprinting");
         }
+
         return getPlaceholder();
     }
 
