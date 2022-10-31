@@ -90,7 +90,7 @@ public class CoordsHud extends TextHudEntry implements DynamicallyPositionable {
             format.append("0".repeat(Math.max(0, decimalPlaces.getValue())));
         }
         DecimalFormat df = new DecimalFormat(format.toString());
-        df.setRoundingMode(RoundingMode.CEILING);
+        df.setRoundingMode(RoundingMode.FLOOR);
         double x = client.player.getX();
         double y = client.player.getY();
         double z = client.player.getZ();
