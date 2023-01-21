@@ -22,6 +22,14 @@ if (file("extra.properties").exists()) {
 repositories {
     maven { url "https://jitpack.io" }
     maven { url "https://maven.terraformersmc.com/releases" }
+    maven {
+        name = 'Ladysnake Mods'
+        url = 'https://ladysnake.jfrog.io/artifactory/mods'
+        content {
+            includeGroup 'io.github.ladysnake'
+            includeGroupByRegex 'io\\.github\\.onyxstudios.*'
+        }
+    }
 }
 
 dependencies {

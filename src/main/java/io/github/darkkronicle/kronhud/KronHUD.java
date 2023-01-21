@@ -19,11 +19,14 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Environment(EnvType.CLIENT)
 public class KronHUD implements ClientModInitializer {
 
     public static final String MOD_ID = "kronhud";
+    public static Logger LOGGER = LogManager.getLogger("kronhud");
 
     @Override
     public void onInitializeClient() {

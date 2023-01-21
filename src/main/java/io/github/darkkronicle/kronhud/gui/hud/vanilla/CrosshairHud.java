@@ -14,18 +14,22 @@ import io.github.darkkronicle.kronhud.util.DrawPosition;
 import io.github.darkkronicle.kronhud.util.Rectangle;
 import lombok.AllArgsConstructor;
 import net.minecraft.block.AbstractChestBlock;
+import net.minecraft.client.Keyboard;
 import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.option.AttackIndicator;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.debug.DebugRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3f;
+import net.minecraft.util.math.RotationAxis;
 import net.minecraft.world.World;
+import org.joml.Vector3f;
 
 import java.util.List;
 
@@ -78,8 +82,8 @@ public class CrosshairHud extends AbstractHudEntry implements DynamicallyPositio
             MatrixStack matrixStack = RenderSystem.getModelViewStack();
             matrixStack.push();
             matrixStack.translate(getRawX() + ((float) getWidth() / 2), getRawY() + ((float) getHeight() / 2), 0);
-            matrixStack.multiply(Vec3f.NEGATIVE_X.getDegreesQuaternion(camera.getPitch()));
-            matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(camera.getYaw()));
+            matrixStack.multiply(RotationAxis.NEGATIVE_X.rotationDegrees(camera.getPitch()));
+            matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(camera.getYaw()));
             matrixStack.scale(-getScale(), -getScale(), getScale());
             RenderSystem.applyModelViewMatrix();
             RenderSystem.renderCrosshair(10);
@@ -87,7 +91,7 @@ public class CrosshairHud extends AbstractHudEntry implements DynamicallyPositio
             RenderSystem.applyModelViewMatrix();
         } else if (type.getValue() == Crosshair.TEXTURE) {
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
+            RenderSystem.setShader(GameRenderer::getPositionTexProgram);
             RenderSystem.setShaderTexture(0, DrawableHelper.GUI_ICONS_TEXTURE);
 
             // Draw crosshair

@@ -75,7 +75,7 @@ public class ItemUtil {
         ItemStack compare = item.copy();
         compare.setCount(1);
         for (ItemUtil.ItemStorage storage : list) {
-            if (storage.stack.isItemEqualIgnoreDamage(compare)) {
+            if (storage.stack.isItemEqual(compare)) {
                 return Optional.of(storage);
             }
         }
@@ -86,7 +86,7 @@ public class ItemUtil {
         ItemStack compare = item.copy();
         compare.setCount(1);
         for (ItemUtil.TimedItemStorage storage : list) {
-            if (storage.stack.isItemEqualIgnoreDamage(compare)) {
+            if (storage.stack.isItemEqual(compare)) {
                 return Optional.of(storage);
             }
         }

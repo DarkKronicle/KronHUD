@@ -42,20 +42,19 @@ public class HudEditScreen extends Screen {
     @Override
     public void init() {
         super.init();
-        addDrawableChild(new ButtonWidget(width / 2 - 50, height - 50 - 22, 100, 20,
-                getSnappingButtonText(), (button) -> {
+        addDrawableChild(new ButtonWidget.Builder(getSnappingButtonText(),
+                (button) -> {
             snapEnabled = !snapEnabled;
             updateSnapState();
             button.setMessage(getSnappingButtonText());
-        }));
+        }).dimensions(width / 2 - 50, height - 50 - 22, 100, 20).build());
         addDrawableChild(
-                new ButtonWidget(width / 2 - 50, height - 50 , 100, 20,
-                Text.translatable("button.kronhud.configuration"),
+                new ButtonWidget.Builder(Text.translatable("button.kronhud.configuration"),
                 (button) -> {
                     HudConfigScreen screen = new HudConfigScreen();
                     screen.setParent(this);
                     client.setScreen(screen);
-                }));
+                }).dimensions(width / 2 - 50, height - 50 , 100, 20).build());
     }
 
     private Text getSnappingButtonText() {

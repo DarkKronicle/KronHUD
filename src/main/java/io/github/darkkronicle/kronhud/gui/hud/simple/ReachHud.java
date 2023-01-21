@@ -1,6 +1,7 @@
 package io.github.darkkronicle.kronhud.gui.hud.simple;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import io.github.darkkronicle.kronhud.KronHUD;
 import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.config.KronInteger;
 import io.github.darkkronicle.kronhud.gui.entry.SimpleTextHudEntry;
@@ -85,7 +86,13 @@ public class ReachHud extends SimpleTextHudEntry {
     }
 
     public void updateDistance(Entity attacking, Entity receiving) {
-        double distance = getAttackDistance(attacking, receiving);
+        double distance;
+        try {
+            distance = getAttackDistance(attacking, receiving);
+        } catch (Exception e) {
+            KronHUD.LOGGER.warn("Couldn't compute attack distance: ", e);
+            return;
+        }
         if (distance < 0) {
             // This should not happen...
             currentDist = "NaN";
