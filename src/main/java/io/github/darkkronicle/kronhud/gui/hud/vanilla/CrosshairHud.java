@@ -140,7 +140,9 @@ public class CrosshairHud extends AbstractHudEntry implements DynamicallyPositio
 
     public Color getColor() {
         HitResult hit = client.crosshairTarget;
-        if (hit.getType() == null) {
+        if (hit == null) {
+            return defaultColor.getValue();
+        } else if (hit.getType() == null) {
             return defaultColor.getValue();
         } else if (hit.getType() == HitResult.Type.ENTITY) {
             return entityColor.getValue();
