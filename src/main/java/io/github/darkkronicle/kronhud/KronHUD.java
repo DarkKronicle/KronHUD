@@ -3,7 +3,6 @@ package io.github.darkkronicle.kronhud;
 import io.github.darkkronicle.darkkore.config.ConfigurationManager;
 import io.github.darkkronicle.darkkore.intialization.InitializationHandler;
 import io.github.darkkronicle.kronhud.config.ConfigHandler;
-import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.gui.HudManager;
 import io.github.darkkronicle.kronhud.gui.component.HudEntry;
 import io.github.darkkronicle.kronhud.gui.hud.*;

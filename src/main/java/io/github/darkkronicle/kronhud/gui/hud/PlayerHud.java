@@ -7,17 +7,14 @@ import io.github.darkkronicle.kronhud.config.KronDouble;
 import io.github.darkkronicle.kronhud.gui.entry.BoxHudEntry;
 import io.github.darkkronicle.kronhud.hooks.KronHudHooks;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 import java.util.List;
 

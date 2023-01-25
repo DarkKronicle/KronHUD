@@ -8,7 +8,6 @@ import net.minecraft.util.Identifier;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 
 public class IRLTimeHud extends SimpleTextHudEntry {

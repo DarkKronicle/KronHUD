@@ -1,12 +1,9 @@
 
 package io.github.darkkronicle.kronhud.gui.screen;
 
-import io.github.darkkronicle.darkkore.config.options.Option;
-import io.github.darkkronicle.darkkore.gui.Tab;
 import io.github.darkkronicle.darkkore.settings.DarkKoreConfig;
 import io.github.darkkronicle.darkkore.util.render.RenderUtil;
 import io.github.darkkronicle.kronhud.config.ConfigHandler;
-import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.gui.HudManager;
 import io.github.darkkronicle.kronhud.gui.component.HudEntry;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
@@ -18,10 +15,8 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class HudEditScreen extends Screen {
     private boolean mouseDown = false;

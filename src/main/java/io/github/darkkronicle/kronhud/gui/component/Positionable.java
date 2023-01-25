@@ -124,7 +124,7 @@ public interface Positionable {
     }
 
     /**
-     * The scale to render this object in. By default it is one
+     * The scale to render this object in. By default, it is one
      *
      * @return The scale
      */
