@@ -1,5 +1,6 @@
 package io.github.darkkronicle.kronhud.gui.hud.item;
 
+import io.github.darkkronicle.darkkore.util.render.RenderUtil;
 import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.gui.entry.TextHudEntry;
@@ -34,27 +35,28 @@ public class ArmorHud extends TextHudEntry {
     }
 
     public void renderItem(MatrixStack matrices, ItemStack stack, int x, int y) {
-        ItemUtil.renderGuiItemModel(getScale(), stack, x, y);
-        ItemUtil.renderGuiItemOverlay(matrices, client.textRenderer, stack, x, y, null, textColor.getValue().color(), shadow.getValue());
+        RenderUtil.drawItem(matrices, stack, x, y);
+        ItemUtil.renderGuiItemOverlay(matrices, client.textRenderer, stack, x, y, null, textColor.getValue().color(),
+                shadow.getValue(), client.getTickDelta());
     }
 
     public void renderMainItem(MatrixStack matrices, ItemStack stack, int x, int y) {
-        ItemUtil.renderGuiItemModel(getScale(), stack, x, y);
+        RenderUtil.drawItem(matrices, stack, x, y);
         String total = String.valueOf(ItemUtil.getTotal(client, stack));
         if (total.equals("1")) {
             total = null;
         }
-        ItemUtil.renderGuiItemOverlay(matrices, client.textRenderer, stack, x, y, total, textColor.getValue().color(), shadow.getValue());
+        ItemUtil.renderGuiItemOverlay(matrices, client.textRenderer, stack, x, y, total, textColor.getValue().color(),
+                shadow.getValue(), client.getTickDelta());
     }
 
     @Override
     public void renderPlaceholderComponent(MatrixStack matrices, float delta) {
         DrawPosition pos = getPos();
         int lastY = 2 + (4 * 20);
-        ItemUtil.renderGuiItemModel(getScale(), new ItemStack(Items.GRASS_BLOCK), pos.x() + 2, pos.y() + lastY);
-        ItemUtil.renderGuiItemOverlay(matrices, client.textRenderer, new ItemStack(Items.GRASS_BLOCK), pos.x() + 2, pos.y() + lastY, "90",
-                textColor.getValue().color(), shadow.getValue()
-        );
+        RenderUtil.drawItem(matrices, new ItemStack(Items.GRASS_BLOCK), pos.x() + 2, pos.y() + lastY);
+        ItemUtil.renderGuiItemOverlay(matrices, client.textRenderer, new ItemStack(Items.GRASS_BLOCK), pos.x() + 2,
+                pos.y() + lastY, "90", textColor.getValue().color(), shadow.getValue(), delta);
     }
 
     @Override
@@ -72,5 +74,4 @@ public class ArmorHud extends TextHudEntry {
         List<KronConfig<?>> options = super.getConfigurationOptions();
         return options;
     }
-
 }

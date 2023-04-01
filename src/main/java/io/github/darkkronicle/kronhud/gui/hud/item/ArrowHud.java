@@ -1,11 +1,13 @@
 package io.github.darkkronicle.kronhud.gui.hud.item;
 
+import io.github.darkkronicle.darkkore.util.render.RenderUtil;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.gui.entry.BoxHudEntry;
 import io.github.darkkronicle.kronhud.gui.entry.TextHudEntry;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
+import io.github.darkkronicle.kronhud.util.DrawUtil;
 import io.github.darkkronicle.kronhud.util.ItemUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -13,6 +15,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.RangedWeaponItem;
+import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 
@@ -48,10 +51,10 @@ public class ArrowHud extends TextHudEntry {
     public void renderComponent(MatrixStack matrices, float delta) {
         DrawPosition pos = getPos();
         drawCenteredString(
-                matrices, client.textRenderer, String.valueOf(arrows), pos.x() + getWidth() / 2, pos.y() + getHeight() - 10,
+                matrices, client.textRenderer, Text.literal(Integer.toString(arrows)), pos.x() + getWidth() / 2, pos.y() + getHeight() - 10,
                 textColor.getValue(), shadow.getValue()
         );
-        ItemUtil.renderGuiItemModel(getScale(), currentArrow, pos.x() + 2, pos.y() + 2);
+        RenderUtil.drawItem(matrices, currentArrow, pos.x() + 2, pos.y() + 2);
     }
 
     @Override
@@ -71,7 +74,7 @@ public class ArrowHud extends TextHudEntry {
             return;
         }
         if (!allArrowTypes.getValue()) {
-            currentArrow = client.player.getArrowType(Items.BOW.getDefaultStack());
+            currentArrow = client.player.getProjectileType(Items.BOW.getDefaultStack());
         } else {
             currentArrow = new ItemStack(Items.ARROW);
         }
@@ -81,10 +84,10 @@ public class ArrowHud extends TextHudEntry {
     public void renderPlaceholderComponent(MatrixStack matrices, float delta) {
         DrawPosition pos = getPos();
         drawCenteredString(
-                matrices, client.textRenderer, "64", pos.x() + getWidth() / 2, pos.y() + getHeight() - 10, textColor.getValue(),
+                matrices, client.textRenderer, Text.literal("64"), pos.x() + getWidth() / 2, pos.y() + getHeight() - 10, textColor.getValue(),
                 shadow.getValue()
         );
-        ItemUtil.renderGuiItemModel(getScale(), new ItemStack(Items.ARROW), pos.x() + 2, pos.y() + 2);
+        RenderUtil.drawItem(matrices, new ItemStack(Items.ARROW), pos.x() + 2, pos.y() + 2);
     }
 
     @Override

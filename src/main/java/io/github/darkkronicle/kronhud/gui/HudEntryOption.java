@@ -4,7 +4,10 @@ import io.github.darkkronicle.darkkore.config.impl.ConfigObject;
 import io.github.darkkronicle.darkkore.config.options.BasicOption;
 import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.gui.component.HudEntry;
+import net.minecraft.client.resource.language.I18n;
 
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.Optional;
 
 public class HudEntryOption extends BasicOption<HudEntry> {
