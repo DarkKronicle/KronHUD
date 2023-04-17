@@ -3,7 +3,6 @@ package io.github.darkkronicle.kronhud.gui.screen;
 import io.github.darkkronicle.darkkore.gui.ConfigScreen;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.gui.component.HudEntry;
-import net.minecraft.client.gui.screen.Screen;
 
 import java.util.List;
 

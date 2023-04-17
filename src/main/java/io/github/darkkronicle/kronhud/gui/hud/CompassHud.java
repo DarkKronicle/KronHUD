@@ -13,6 +13,7 @@ import io.github.darkkronicle.kronhud.gui.layout.AnchorPoint;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import io.github.darkkronicle.kronhud.util.DrawUtil;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import java.util.List;
@@ -81,7 +82,7 @@ public class CompassHud extends TextHudEntry implements DynamicallyPositionable 
         RenderUtil.drawRectangle(matrices, pos.x() + (int) halfWidth - 1, pos.y(), 3, 11, lookingBox.getValue());
         if (showDegrees.getValue()) {
             DrawUtil.drawCenteredString(
-                    matrices, client.textRenderer, String.valueOf((int) degrees), x + (int) halfWidth, y + 20, degreesColor.getValue(),
+                    matrices, client.textRenderer, Text.literal(Integer.toString((int) degrees)), x + (int) halfWidth, y + 20, degreesColor.getValue(),
                     shadow.getValue()
             );
         }
@@ -115,14 +116,14 @@ public class CompassHud extends TextHudEntry implements DynamicallyPositionable 
                 color = color.withAlpha((int) (color.alpha() * targetOpacity));
                 if (color.alpha() > 0) {
                     DrawUtil.drawCenteredString(
-                            matrices, client.textRenderer, getCardString(indicator, d), innerX + 1, y + 10, color, shadow.getValue());
+                            matrices, client.textRenderer, Text.literal(getCardString(indicator, d)), innerX + 1, y + 10, color, shadow.getValue());
                 }
             } else if (indicator == Indicator.SEMI_CARDINAL) {
                 Color color = semiCardinalColor.getValue();
                 color = color.withAlpha((int) (color.alpha() * targetOpacity));
                 if (color.alpha() > 0) {
                     DrawUtil.drawCenteredString(
-                            matrices, client.textRenderer, getCardString(indicator, d), innerX + 1, y + 1, color, shadow.getValue());
+                            matrices, client.textRenderer, Text.literal(getCardString(indicator, d)), innerX + 1, y + 1, color, shadow.getValue());
                 }
             } else {
                 // We have to call .color() here so that transparency stays

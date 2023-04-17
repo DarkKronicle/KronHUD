@@ -11,6 +11,8 @@ import io.github.darkkronicle.kronhud.gui.layout.AnchorPoint;
 import io.github.darkkronicle.kronhud.gui.layout.Justification;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.Text;
+
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
@@ -39,7 +41,6 @@ public abstract class SimpleTextHudEntry extends TextHudEntry implements Dynamic
     public void renderComponent(MatrixStack matrices, float delta) {
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        RenderSystem.disableTexture();
         DrawPosition pos = getPos();
         String value = getValue();
 
@@ -57,12 +58,11 @@ public abstract class SimpleTextHudEntry extends TextHudEntry implements Dynamic
             onBoundsUpdate();
         }
         drawString(
-                matrices, client.textRenderer, value,
+                matrices, client.textRenderer, Text.literal(value),
                 pos.x() + justification.getValue().getXOffset(valueWidth, getWidth() - 4) + 2,
                 pos.y() + (Math.round((float) getHeight() / 2)) - 4,
                 getTextColor().color(), shadow.getValue()
         );
-        RenderSystem.enableTexture();
         RenderSystem.disableBlend();
     }
 
@@ -75,7 +75,7 @@ public abstract class SimpleTextHudEntry extends TextHudEntry implements Dynamic
         DrawPosition pos = getPos();
         String value = getPlaceholder();
         drawString(
-                matrices, client.textRenderer, value,
+                matrices, client.textRenderer, Text.literal(value),
                 pos.x() + justification.getValue().getXOffset(value, getWidth() - 4) + 2,
                 pos.y() + (Math.round((float) getHeight() / 2)) - 4,
                 textColor.getValue().color(), shadow.getValue()

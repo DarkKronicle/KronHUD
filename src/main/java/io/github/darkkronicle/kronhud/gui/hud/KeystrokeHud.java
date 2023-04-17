@@ -16,6 +16,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
@@ -201,7 +202,7 @@ public class KeystrokeHud extends TextHudEntry {
                     ((float) client.textRenderer.getWidth(word) / 2);
             float y = strokeBounds.y() + stroke.offset.y() + ((float) strokeBounds.height() / 2) - 4;
 
-            drawString(matrices, client.textRenderer, word, x, y, stroke.getFGColor().color(), shadow.getValue());
+            drawString(matrices, client.textRenderer, Text.literal(word), x, y, stroke.getFGColor().color(), shadow.getValue());
         });
     }
 

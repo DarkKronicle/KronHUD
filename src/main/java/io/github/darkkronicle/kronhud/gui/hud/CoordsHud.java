@@ -8,6 +8,7 @@ import io.github.darkkronicle.kronhud.util.ColorUtil;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import java.math.RoundingMode;
@@ -61,7 +62,7 @@ public class CoordsHud extends TextHudEntry implements DynamicallyPositionable {
         if (yaw < 0) {
             yaw += 360;
         }
-        
+
         int[] directions = {0, 23, 68, 113, 158, 203, 248, 293, 338, 360};
         for (int i = 0; i < directions.length; i++) {
             int min = directions[i];
@@ -96,24 +97,24 @@ public class CoordsHud extends TextHudEntry implements DynamicallyPositionable {
         double z = client.player.getZ();
         double yaw = client.player.getYaw(0) + 180;
         int dir = getDirection(yaw);
-        String direction = getWordedDirection(dir);
+        Text direction = Text.literal(getWordedDirection(dir));
         TextRenderer textRenderer = client.textRenderer;
 
         if (minimal.getValue()) {
             int currPos = pos.x() + 1;
-            String separator = ", ";
+            Text separator = Text.literal(", ");
             drawString(
-                    matrices, textRenderer, "XYZ: ",
+                    matrices, textRenderer, Text.literal("XYZ: "),
                     currPos, pos.y() + 2,
                     firstColor.getValue().color(), shadow.getValue()
             );
             currPos += textRenderer.getWidth("XYZ: ");
             drawString(
-                    matrices, textRenderer, String.valueOf(df.format(x)),
+                    matrices, textRenderer, Text.literal(df.format(x)),
                     currPos, pos.y() + 2,
                     secondColor.getValue().color(), shadow.getValue()
             );
-            currPos += textRenderer.getWidth(String.valueOf(df.format(x)));
+            currPos += textRenderer.getWidth(df.format(x));
             drawString(
                     matrices, textRenderer, separator,
                     currPos, pos.y() + 2,
@@ -121,7 +122,7 @@ public class CoordsHud extends TextHudEntry implements DynamicallyPositionable {
             );
             currPos += textRenderer.getWidth(separator);
             drawString(
-                    matrices, textRenderer, String.valueOf(df.format(y)),
+                    matrices, textRenderer, Text.literal(df.format(y)),
                     currPos, pos.y() + 2,
                     secondColor.getValue().color(), shadow.getValue()
             );
@@ -133,11 +134,11 @@ public class CoordsHud extends TextHudEntry implements DynamicallyPositionable {
             );
             currPos += textRenderer.getWidth(separator);
             drawString(
-                    matrices, textRenderer, String.valueOf(df.format(z)),
+                    matrices, textRenderer, Text.literal(df.format(z)),
                     currPos, pos.y() + 2,
                     secondColor.getValue().color(), shadow.getValue()
             );
-            currPos += textRenderer.getWidth(String.valueOf(df.format(z)));
+            currPos += textRenderer.getWidth(Text.literal(df.format(z)));
             int width = currPos - pos.x() + 2;
             boolean changed = false;
             if (getWidth() != width) {
@@ -153,35 +154,35 @@ public class CoordsHud extends TextHudEntry implements DynamicallyPositionable {
             }
         } else {
             drawString(
-                    matrices, textRenderer, "X",
+                    matrices, textRenderer, Text.literal("X"),
                     pos.x() + 1, pos.y() + 2,
                     firstColor.getValue().color(), shadow.getValue()
             );
             drawString(
-                    matrices, textRenderer, String.valueOf(df.format(x)),
+                    matrices, textRenderer, Text.literal(df.format(x)),
                     pos.x() + 11, pos.y() + 2,
                     secondColor.getValue().color(), shadow.getValue()
             );
 
             drawString(
-                    matrices, textRenderer, "Y",
+                    matrices, textRenderer, Text.literal("Y"),
                     pos.x() + 1, pos.y() + 12,
                     firstColor.getValue().color(), shadow.getValue()
             );
             drawString(
-                    matrices, textRenderer, String.valueOf(df.format(y)),
+                    matrices, textRenderer, Text.literal(df.format(y)),
                     pos.x() + 11, pos.y() + 12,
                     secondColor.getValue().color(), shadow.getValue()
             );
 
             drawString(
-                    matrices, textRenderer, "Z",
+                    matrices, textRenderer, Text.literal("Z"),
                     pos.x() + 1, pos.y() + 22,
                     firstColor.getValue().color(), shadow.getValue()
             );
 
             drawString(
-                    matrices, textRenderer, String.valueOf(df.format(z)), pos.x() + 11, pos.y() + 22, secondColor.getValue().color(),
+                    matrices, textRenderer, Text.literal(df.format(z)), pos.x() + 11, pos.y() + 22, secondColor.getValue().color(),
                     shadow.getValue()
             );
 
@@ -192,7 +193,7 @@ public class CoordsHud extends TextHudEntry implements DynamicallyPositionable {
             );
 
             drawString(
-                    matrices, textRenderer, getXDir(dir),
+                    matrices, textRenderer, Text.of(getXDir(dir)),
                     pos.x() + 60, pos.y() + 2,
                     secondColor.getValue().color(), shadow.getValue()
             );

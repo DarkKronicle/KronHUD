@@ -185,7 +185,7 @@ public class ScoreboardHud extends TextHudEntry implements DynamicallyPositionab
                 client.textRenderer.draw(matrices, scoreText, (float) scoreX, (float) relativeY, -1);
             }
             if (this.scores.getValue()) {
-                drawString(matrices, client.textRenderer, score,
+                drawString(matrices, client.textRenderer, Text.literal(score),
                         (float) (scoreX + maxWidth - client.textRenderer.getWidth(score) - 6), (float) relativeY,
                         scoreColor.getValue().color(), shadow.getValue());
             }

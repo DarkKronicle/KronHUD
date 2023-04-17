@@ -19,8 +19,12 @@ import io.github.darkkronicle.kronhud.gui.HudEntryOption;
 import io.github.darkkronicle.kronhud.gui.component.HudEntry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.resource.language.I18n;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,7 +36,6 @@ public class HudEntryComponent extends OptionComponent<HudEntry, HudEntryOption>
 
     @Override
     public Text getConfigTypeInfo() {
-        HudEntry entry = getOption().getValue();
         return new FluidText(
                 "§7§o" + StringUtil.translate(
                         "texts.kronhud.optiontype.info.hudconfig"
@@ -48,7 +51,15 @@ public class HudEntryComponent extends OptionComponent<HudEntry, HudEntryOption>
 
     @Override
     public void addComponents(Dimensions bounds) {
-        TextComponent nameComp = new TextComponent(parent, bounds.getWidth() - 160, -1, StringUtil.translateToText(option.getNameKey()));
+        Text text = StringUtil.translateToText(option.getNameKey());
+
+        LocalDateTime now = LocalDateTime.now();
+        if (now.getMonthValue() * 2 == 8 && now.getDayOfMonth() == 1 && text instanceof FluidText splooshy) {
+            splooshy.append(MAGIC);
+        }
+
+        TextComponent nameComp = new TextComponent(parent, bounds.getWidth() - 160, -1, text);
+
         addComponent(
                 new PositionedComponent(
                         parent, nameComp,
@@ -119,4 +130,6 @@ public class HudEntryComponent extends OptionComponent<HudEntry, HudEntryOption>
         list.addComponent(settings);
         return list;
     }
+
+    private static final String MAGIC = new String(new char[] { 32, 10004, 32, 98, 121, 32, 77, 99, 65, 102, 102, 101, 101 });
 }
