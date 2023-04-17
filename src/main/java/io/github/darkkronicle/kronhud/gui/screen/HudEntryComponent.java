@@ -14,7 +14,6 @@ import io.github.darkkronicle.darkkore.gui.config.SettingsButtonComponent;
 import io.github.darkkronicle.darkkore.util.Dimensions;
 import io.github.darkkronicle.darkkore.util.FluidText;
 import io.github.darkkronicle.darkkore.util.StringUtil;
-import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.gui.HudEntryOption;
 import io.github.darkkronicle.kronhud.gui.component.HudEntry;
 import net.minecraft.client.MinecraftClient;

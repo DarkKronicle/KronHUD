@@ -1,8 +1,6 @@
 package io.github.darkkronicle.kronhud.config;
 
 import io.github.darkkronicle.darkkore.config.options.DoubleOption;
-import io.github.darkkronicle.kronhud.KronHUD;
-import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.gui.component.HudEntry;
 import org.jetbrains.annotations.Nullable;
 

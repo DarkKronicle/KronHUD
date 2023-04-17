@@ -4,7 +4,6 @@ import io.github.darkkronicle.kronhud.gui.entry.SimpleTextHudEntry;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.util.Identifier;
 
-
 public class PingHud extends SimpleTextHudEntry {
     public static final Identifier ID = new Identifier("kronhud", "pinghud");
 

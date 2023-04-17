@@ -1,6 +1,5 @@
 package io.github.darkkronicle.kronhud.gui.component;
 
-import io.github.darkkronicle.kronhud.util.DrawPosition;
 import net.minecraft.client.util.math.MatrixStack;
 
 public interface HudEntry extends Identifiable, Configurable, Positionable {

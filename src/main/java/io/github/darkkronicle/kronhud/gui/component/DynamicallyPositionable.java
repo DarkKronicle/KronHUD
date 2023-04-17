@@ -3,7 +3,7 @@ package io.github.darkkronicle.kronhud.gui.component;
 import io.github.darkkronicle.kronhud.gui.layout.AnchorPoint;
 
 /**
- * Represents an object that width/height can change and it can react accordingly
+ * Represents an object that width/height can change, and it can react accordingly
  */
 public interface DynamicallyPositionable extends Positionable {
 
