@@ -107,6 +107,8 @@
   "option.kronhud.togglesprint.placeholder.comment": "The Placeholder to use when no keys are pressed/toggled.",
   "option.kronhud.playerhud.rotation": "Model Rotation",
   "option.kronhud.playerhud.rotation.comment": "The rotation of the model.",
+  "option.kronhud.playerhud.boatfacing": "Boat Faces Camera",
+  "option.kronhud.playerhud.boatfacing.comment": "If enabled, the boat faces towards the camera instead of the player when the player rides in a boat.",
   "option.kronhud.minwidth": "Minimum Width",
   "option.kronhud.irltimehud.dateformat": "Time Format",
   "option.kronhud.gametimehud.is12hour": "12-hour Format",
