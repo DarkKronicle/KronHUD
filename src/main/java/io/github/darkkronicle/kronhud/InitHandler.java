@@ -10,6 +10,7 @@ import io.github.darkkronicle.kronhud.gui.HudManager;
 import io.github.darkkronicle.kronhud.gui.screen.HudEditScreen;
 import io.github.darkkronicle.kronhud.gui.screen.HudEntryComponent;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.util.Identifier;
 
 import java.util.List;
 import java.util.Optional;
