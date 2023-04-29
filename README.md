@@ -31,6 +31,8 @@ Currenty KronHUD has:
 - Server IP
 - Speedometer
 - Player Model
+- Game Clock
+- IRL Clock
 
 All modules can be moved around freely, and have snapable movement so you can get everything in line!
 
