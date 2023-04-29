@@ -228,5 +228,10 @@
   "option.kronhud.scoreboardhud.toppadding.comment": "Padding around the title component on the scoreboard",
 
   "option.kronhud.playerhud.dynamicrotation": "Dynamic Rotation",
-  "option.kronhud.playerhud.dynamicrotation.comment": "Rotation of the player is shown and then slowly turns back to looking straight"
+  "option.kronhud.playerhud.dynamicrotation.comment": "Rotation of the player is shown and then slowly turns back to looking straight",
+
+  "option.kronhud.potionshud.potionblacklist": "Effect Blacklist",
+  "option.kronhud.potionshud.iconsonly": "Icons Only",
+  "option.kronhud.potionshud.potionblacklist.comment": "Blacklist potions by translation key (usually effect.minecraft.[effect id]).\nEnter keys as a comma-separated list.",
+  "option.kronhud.potionshud.iconsonly.comment": "Only display potions as icons (don't show durations)"
 }

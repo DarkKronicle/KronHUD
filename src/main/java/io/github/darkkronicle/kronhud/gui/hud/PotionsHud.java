@@ -1,10 +1,7 @@
 package io.github.darkkronicle.kronhud.gui.hud;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import io.github.darkkronicle.kronhud.config.DefaultOptions;
-import io.github.darkkronicle.kronhud.config.KronBoolean;
-import io.github.darkkronicle.kronhud.config.KronConfig;
-import io.github.darkkronicle.kronhud.config.KronOptionList;
+import io.github.darkkronicle.kronhud.config.*;
 import io.github.darkkronicle.kronhud.gui.component.DynamicallyPositionable;
 import io.github.darkkronicle.kronhud.gui.entry.TextHudEntry;
 import io.github.darkkronicle.kronhud.gui.layout.AnchorPoint;
@@ -21,6 +18,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PotionsHud extends TextHudEntry implements DynamicallyPositionable {
@@ -30,6 +28,7 @@ public class PotionsHud extends TextHudEntry implements DynamicallyPositionable 
     private final KronOptionList<AnchorPoint> anchor = DefaultOptions.getAnchorPoint(AnchorPoint.TOP_LEFT);
 
     private final KronOptionList<CardinalOrder> order = DefaultOptions.getCardinalOrder(CardinalOrder.TOP_DOWN);
+    private final KronString potionBlacklist = new KronString("potionblacklist",ID.getPath(),"");
 
     private final KronBoolean iconsOnly = new KronBoolean("iconsonly", ID.getPath(), false);
 
@@ -62,10 +61,16 @@ public class PotionsHud extends TextHudEntry implements DynamicallyPositionable 
     @Override
     public void renderComponent(MatrixStack matrices, float delta) {
         List<StatusEffectInstance> effects = new ArrayList<>(client.player.getStatusEffects());
-        if (effects.isEmpty()) {
+        List<String> blacklist = Arrays.asList(
+                potionBlacklist.getValue().replace(" ","").split(",")
+        );
+        List<StatusEffectInstance> filteredEffects = effects.stream()
+                .filter(effect -> !blacklist.contains(effect.getEffectType().getTranslationKey()))
+                .toList();
+        if (filteredEffects.isEmpty()) {
             return;
         }
-        renderEffects(matrices, effects);
+        renderEffects(matrices, filteredEffects);
     }
 
     private void renderEffects(MatrixStack matrices, List<StatusEffectInstance> effects) {
@@ -129,6 +134,7 @@ public class PotionsHud extends TextHudEntry implements DynamicallyPositionable 
         options.add(anchor);
         options.add(order);
         options.add(iconsOnly);
+        options.add(potionBlacklist);
         return options;
     }
 
