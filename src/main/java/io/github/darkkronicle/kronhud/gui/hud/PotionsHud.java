@@ -28,12 +28,9 @@ public class PotionsHud extends TextHudEntry implements DynamicallyPositionable 
     private final KronOptionList<AnchorPoint> anchor = DefaultOptions.getAnchorPoint(AnchorPoint.TOP_LEFT);
 
     private final KronOptionList<CardinalOrder> order = DefaultOptions.getCardinalOrder(CardinalOrder.TOP_DOWN);
-
     private final KronString potionBlacklist = new KronString("potionblacklist",ID.getPath(),"");
 
     private final KronBoolean iconsOnly = new KronBoolean("iconsonly", ID.getPath(), false);
-
-    private KronBoolean background = new KronBoolean("background",null,false);
 
     public PotionsHud() {
         super(50, 200, false);
