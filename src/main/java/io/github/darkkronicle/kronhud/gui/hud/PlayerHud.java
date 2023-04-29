@@ -12,6 +12,8 @@ import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -54,6 +56,26 @@ public class PlayerHud extends BoxHudEntry {
             return;
         }
 
+        float scale = getScale() * 40;
+        if (client.player.hasVehicle()) {
+            Entity vehicle = client.player.getVehicle();
+            if (vehicle.getType() == EntityType.HORSE
+                    || vehicle.getType() == EntityType.SKELETON_HORSE
+                    || vehicle.getType() == EntityType.ZOMBIE_HORSE
+                    || vehicle.getType() == EntityType.DONKEY
+                    || vehicle.getType() == EntityType.MULE
+            ) { // horses are too big normally, need to be scaled and moved to center
+                float scaleSub = scale * 0.25f;
+                y -= 86 * scaleSub / 40.0;
+                scale -= scaleSub;
+            }
+            if (vehicle.getType() == EntityType.PIG) { // pigs are too big too, but only slightly
+                float scaleSub = scale * 0.1f;
+                y -= 86 * scaleSub / 40.0;
+                scale -= scaleSub;
+            }
+        }
+
         float lerpY = (lastYOffset + ((yOffset - lastYOffset) * delta));
 
         MatrixStack matrixStack = RenderSystem.getModelViewStack();
@@ -64,7 +86,6 @@ public class PlayerHud extends BoxHudEntry {
         RenderSystem.applyModelViewMatrix();
         MatrixStack nextStack = new MatrixStack();
         nextStack.translate(0, 0, 1000);
-        float scale = getScale() * 40;
         nextStack.scale(scale, scale, scale);
         Quaternionf quaternion = RotationAxis.POSITIVE_Z.rotationDegrees(180);
 
@@ -85,15 +106,78 @@ public class PlayerHud extends BoxHudEntry {
         renderer.setRotation(quaternion);
         renderer.setRenderShadows(false);
 
+        Entity player = client.player;
         VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
-
-        renderer.render(client.player, 0, 0, 0, 0, delta, nextStack, immediate, 15728880);
+        if (player.hasVehicle()) {
+            Entity vehicle = client.player.getVehicle();
+            if (vehicle.getType() == EntityType.BOAT || vehicle.getType() == EntityType.CHEST_BOAT) { // boats are special for some reason
+                renderer.render(
+                        vehicle,
+                        vehicle.getX() - player.getX(),
+                        vehicle.getY() - player.getY(),
+                        vehicle.getZ() - player.getZ(),
+                        vehicle.prevYaw,
+                        delta,
+                        nextStack,
+                        immediate,
+                        15728880
+                );
+                for (Entity otherRider : vehicle.getPassengerList()) {
+                    if (otherRider == player) {
+                        continue;
+                    }
+                    renderer.render(
+                            otherRider,
+                            otherRider.getX() - player.getX(),
+                            otherRider.getY() - player.getY(),
+                            otherRider.getZ() - player.getZ(),
+                            otherRider.prevYaw,
+                            delta,
+                            nextStack,
+                            immediate,
+                            15728880
+                    );
+                }
+                renderer.render(player, 0, 0, 0, -pastYaw, delta, nextStack, immediate, 15728880);
+            } else { // every other vehicle allows the player to rotate their body
+                renderer.render(
+                        vehicle,
+                        vehicle.getX() - player.getX(),
+                        vehicle.getY() - player.getY(),
+                        vehicle.getZ() - player.getZ(),
+                        0,
+                        delta,
+                        nextStack,
+                        immediate,
+                        15728880
+                );
+                for (Entity otherRider : vehicle.getPassengerList()) {
+                    if (otherRider == player) {
+                        continue;
+                    }
+                    renderer.render(
+                            otherRider,
+                            otherRider.getX() - player.getX(),
+                            otherRider.getY() - player.getY(),
+                            otherRider.getZ() - player.getZ(),
+                            0,
+                            delta,
+                            nextStack,
+                            immediate,
+                            15728880
+                    );
+                }
+                renderer.render(player, 0, 0, 0, pastYaw, delta, nextStack, immediate, 15728880);
+            }
+        } else {
+            renderer.render(player, 0, 0, 0, 0, delta, nextStack, immediate, 15728880);
+        }
         immediate.draw();
         renderer.setRenderShadows(true);
         matrixStack.pop();
 
-        client.player.setYaw(pastYaw);
-        client.player.prevYaw = pastPrevYaw;
+        player.setYaw(pastYaw);
+        player.prevYaw = pastPrevYaw;
 
         RenderSystem.applyModelViewMatrix();
         DiffuseLighting.enableGuiDepthLighting();
