@@ -26,6 +26,14 @@ public class KronHudHooks {
             }
     ));
 
+    public static final Event<EntityYawCallback> MOUNT_DIRECTION_CHANGE = EventFactory.createArrayBacked(EntityYawCallback.class, listeners -> (
+            (yaw) -> {
+                for (EntityYawCallback listener : listeners) {
+                    listener.onChange(yaw);
+                }
+            }
+            ));
+
     public static final Event<KeyBindingCallback.ChangeBind> KEYBIND_CHANGE = EventFactory.createArrayBacked(
             KeyBindingCallback.ChangeBind.class, listeners -> (
                     (key) -> {
@@ -45,6 +53,5 @@ public class KronHudHooks {
                     }
             )
     );
-
 
 }

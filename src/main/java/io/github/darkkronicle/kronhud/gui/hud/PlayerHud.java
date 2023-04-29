@@ -37,10 +37,15 @@ public class PlayerHud extends BoxHudEntry {
     private float lastYOffset = 0;
     private float yOffset = 0;
 
+    // this is for smoothing on boats, since boats don't have a yaw delta
+    private float currentYaw = 0;
+    private float lastYaw = 0;
+
 
     public PlayerHud() {
         super(62, 94, true);
         KronHudHooks.PLAYER_DIRECTION_CHANGE.register(this::onPlayerDirectionChange);
+        KronHudHooks.MOUNT_DIRECTION_CHANGE.register(this::onMountDirectionChange);
     }
 
     @Override
@@ -99,7 +104,9 @@ public class PlayerHud extends BoxHudEntry {
                 && boatFacing.getValue()
         ) { // the camera faces the boat if the boat is the focus
             float deltaYaw = client.player.getVehicle().getYaw(delta);
-            // smoothing isn't possible without a complicated mixin probably
+            if (dynamicRotation.getValue()) {
+                deltaYaw -= (lastYawOffset + ((yawOffset - lastYawOffset) * delta));
+            }
             nextStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(deltaYaw - 180 + rotation.getValue().floatValue()));
         } else { // regular player-facing camera
             float deltaYaw = client.player.getYaw(delta);
@@ -127,7 +134,7 @@ public class PlayerHud extends BoxHudEntry {
                         vehicle.getX() - player.getX(),
                         vehicle.getY() - player.getY(),
                         vehicle.getZ() - player.getZ(),
-                        vehicle.getYaw(),
+                        boatFacing.getValue() ? vehicle.getYaw(delta) : vehicle.getYaw(),
                         delta,
                         nextStack,
                         immediate,
@@ -142,7 +149,7 @@ public class PlayerHud extends BoxHudEntry {
                             otherRider.getX() - player.getX(),
                             otherRider.getY() - player.getY(),
                             otherRider.getZ() - player.getZ(),
-                            otherRider.prevYaw,
+                            otherRider.getYaw(delta),
                             delta,
                             nextStack,
                             immediate,
@@ -207,7 +214,22 @@ public class PlayerHud extends BoxHudEntry {
     }
 
     public void onPlayerDirectionChange(float prevPitch, float prevYaw, float pitch, float yaw) {
-        yawOffset += (yaw - prevYaw) / 2;
+        if (!boatFacing.getValue()) {
+            yawOffset += (yaw - prevYaw) / 2;
+        }
+    }
+
+    private float mod (float a, float b) {
+        return a - (float)Math.floor(a / b) * b;
+    }
+
+    public void onMountDirectionChange(float yaw) {
+        if (boatFacing.getValue()) {
+            lastYaw = currentYaw;
+            currentYaw = yaw;
+            float difference = mod((currentYaw - lastYaw + 180), 360) - 180;
+            yawOffset += difference / 2;
+        }
     }
 
     @Override
