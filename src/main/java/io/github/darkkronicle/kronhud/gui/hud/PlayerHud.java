@@ -62,26 +62,14 @@ public class PlayerHud extends BoxHudEntry {
         if (client.player == null) {
             return;
         }
+        Entity player  = client.player;
+        Entity baseVehicle = getBaseVehicle(player);
 
+        float scaleFraction = 1 / Math.max(getRenderWidth(baseVehicle), getRenderHeight(baseVehicle) / 2.5f);
         float scale = getScale() * 40;
-        if (client.player.hasVehicle()) {
-            Entity vehicle = client.player.getVehicle();
-            if (vehicle.getType() == EntityType.HORSE
-                    || vehicle.getType() == EntityType.SKELETON_HORSE
-                    || vehicle.getType() == EntityType.ZOMBIE_HORSE
-                    || vehicle.getType() == EntityType.DONKEY
-                    || vehicle.getType() == EntityType.MULE
-            ) { // horses are too big normally, need to be scaled and moved to center
-                float scaleSub = scale * 0.25f;
-                y -= 86 * scaleSub / 40.0;
-                scale -= scaleSub;
-            }
-            if (vehicle.getType() == EntityType.PIG) { // pigs are too big too, but only slightly
-                float scaleSub = scale * 0.1f;
-                y -= 86 * scaleSub / 40.0;
-                scale -= scaleSub;
-            }
-        }
+        float scaleSub = scale * (1 - scaleFraction);
+        y -= 86 * scaleSub / 80.0;
+        scale -= scaleSub;
 
         float lerpY = (lastYOffset + ((yOffset - lastYOffset) * delta));
 
@@ -98,12 +86,8 @@ public class PlayerHud extends BoxHudEntry {
 
         nextStack.multiply(quaternion);
         // Rotate to whatever is wanted. Also make sure to offset the yaw
-        if (client.player.hasVehicle()
-                && (client.player.getVehicle().getType() == EntityType.BOAT
-                || client.player.getVehicle().getType() == EntityType.CHEST_BOAT)
-                && boatFacing.getValue()
-        ) { // the camera faces the boat if the boat is the focus
-            float deltaYaw = client.player.getVehicle().getYaw(delta);
+        if (isInBoat(player) && boatFacing.getValue()) { // the camera faces the boat if the boat is the focus
+            float deltaYaw = player.getVehicle().getYaw(delta);
             if (dynamicRotation.getValue()) {
                 deltaYaw -= (lastYawOffset + ((yawOffset - lastYawOffset) * delta));
             }
@@ -124,84 +108,18 @@ public class PlayerHud extends BoxHudEntry {
         renderer.setRotation(quaternion);
         renderer.setRenderShadows(false);
 
-        Entity player = client.player;
         VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
-        if (player.hasVehicle()) {
-            Entity vehicle = client.player.getVehicle();
-            if (vehicle.getType() == EntityType.BOAT || vehicle.getType() == EntityType.CHEST_BOAT) { // boats are special for some reason
-                renderer.render(
-                        vehicle,
-                        vehicle.getX() - player.getX(),
-                        vehicle.getY() - player.getY(),
-                        vehicle.getZ() - player.getZ(),
-                        boatFacing.getValue() ? vehicle.getYaw(delta) : vehicle.getYaw(),
-                        delta,
-                        nextStack,
-                        immediate,
-                        15728880
-                );
-                for (Entity otherRider : vehicle.getPassengerList()) {
-                    if (otherRider == player && !boatFacing.getValue()) {
-                        continue;
-                    }
-                    renderer.render(
-                            otherRider,
-                            otherRider.getX() - player.getX(),
-                            otherRider.getY() - player.getY(),
-                            otherRider.getZ() - player.getZ(),
-                            otherRider.getYaw(delta),
-                            delta,
-                            nextStack,
-                            immediate,
-                            15728880
-                    );
-                }
-                if (!boatFacing.getValue()) { // the player renders as a passenger if the boat is the focus
-                    renderer.render(
-                            player,
-                            0,
-                            0,
-                            0,
-                            -pastYaw,
-                            delta,
-                            nextStack,
-                            immediate,
-                            15728880
-                    );
-                }
-            } else { // every other vehicle allows the player to rotate their body
-                renderer.render(
-                        vehicle,
-                        vehicle.getX() - player.getX(),
-                        vehicle.getY() - player.getY(),
-                        vehicle.getZ() - player.getZ(),
-                        0,
-                        delta,
-                        nextStack,
-                        immediate,
-                        15728880
-                );
-                for (Entity otherRider : vehicle.getPassengerList()) {
-                    if (otherRider == player) {
-                        continue;
-                    }
-                    renderer.render(
-                            otherRider,
-                            otherRider.getX() - player.getX(),
-                            otherRider.getY() - player.getY(),
-                            otherRider.getZ() - player.getZ(),
-                            0,
-                            delta,
-                            nextStack,
-                            immediate,
-                            15728880
-                    );
-                }
-                renderer.render(player, 0, 0, 0, pastYaw, delta, nextStack, immediate, 15728880);
-            }
-        } else {
-            renderer.render(player, 0, 0, 0, 0, delta, nextStack, immediate, 15728880);
-        }
+        renderMounts(
+                baseVehicle,
+                baseVehicle.getX() - player.getX(),
+                baseVehicle.getY() - player.getY(),
+                baseVehicle.getZ() - player.getZ(),
+                delta,
+                renderer,
+                nextStack,
+                immediate
+        );
+
         immediate.draw();
         renderer.setRenderShadows(true);
         matrixStack.pop();
@@ -213,8 +131,91 @@ public class PlayerHud extends BoxHudEntry {
         DiffuseLighting.enableGuiDepthLighting();
     }
 
+    private Entity getBaseVehicle(Entity entity) {
+        if (entity.hasVehicle()) {
+            return getBaseVehicle(entity.getVehicle());
+        } else {
+            return entity;
+        }
+    }
+
+    private boolean isInBoat(Entity entity) {
+        if (entity.hasVehicle()) {
+            Entity vehicle = entity.getVehicle();
+            return vehicle.getType() == EntityType.BOAT || vehicle.getType() == EntityType.CHEST_BOAT;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * This returns the stack height (in blocks) of the mounted entity stack this entity is the base of
+     * (or just the height of the entity if they aren't part of any stack)
+     */
+    private float getRenderHeight(Entity entity) {
+        float renderHeight;
+        if (entity == client.player && !client.player.hasVehicle()) {
+            renderHeight = 2.5f;
+        } else {
+            renderHeight = (float) entity.getVisibilityBoundingBox().getYLength();
+        }
+        if (entity.hasPassengers()) {
+            float maxPassengerHeight = Float.NEGATIVE_INFINITY;
+            for (Entity other : entity.getPassengerList()) {
+                double relativeY = other.getY() - entity.getY();
+                maxPassengerHeight = Math.max(getRenderHeight(other) + (float) relativeY, maxPassengerHeight);
+            }
+            renderHeight += maxPassengerHeight;
+        }
+        return renderHeight;
+    }
+
+    /**
+     * Same as getRenderHeight, but for width
+     */
+    private float getRenderWidth(Entity entity) {
+        float renderWidth = (float)Math.max(
+                entity.getVisibilityBoundingBox().getXLength(),
+                entity.getVisibilityBoundingBox().getZLength()
+        );
+        for (Entity other : entity.getPassengerList()) {
+            renderWidth = Math.max(getRenderWidth(other),renderWidth);
+        }
+        return renderWidth;
+    }
+
+    /**
+     * Recursively render everything in the entity stack rooted at this entity
+     */
+    private void renderMounts(Entity entity, double xOffset, double yOffset, double zOffset, float delta, EntityRenderDispatcher renderer, MatrixStack nextStack, VertexConsumerProvider.Immediate immediate) {
+        boolean isBoat = (entity.getType() == EntityType.BOAT || entity.getType() == EntityType.CHEST_BOAT);
+        renderer.render(
+                entity,
+                xOffset,
+                yOffset,
+                zOffset,
+                isBoat ? entity.getYaw(delta) : 0,
+                delta,
+                nextStack,
+                immediate,
+                15728880
+        );
+        for (Entity other : entity.getPassengerList()) {
+            renderMounts(
+                    other,
+                    xOffset + (other.getX() - entity.getX()),
+                    yOffset + (other.getY() - entity.getY()),
+                    zOffset + (other.getZ() - entity.getZ()),
+                    delta,
+                    renderer,
+                    nextStack,
+                    immediate
+            );
+        }
+    }
+
     public void onPlayerDirectionChange(float prevPitch, float prevYaw, float pitch, float yaw) {
-        if (!boatFacing.getValue()) {
+        if (!(boatFacing.getValue() && isInBoat(client.player))) {
             yawOffset += (yaw - prevYaw) / 2;
         }
     }
@@ -224,7 +225,7 @@ public class PlayerHud extends BoxHudEntry {
     }
 
     public void onMountDirectionChange(float yaw) {
-        if (boatFacing.getValue()) {
+        if (boatFacing.getValue() && isInBoat(client.player)) {
             lastYaw = currentYaw;
             currentYaw = yaw;
             float difference = mod((currentYaw - lastYaw + 180), 360) - 180;
