@@ -30,6 +30,8 @@ public class PlayerHud extends BoxHudEntry {
     private final KronDouble rotation = new KronDouble("rotation", ID.getPath(), 0, 0, 360);
     private final KronBoolean dynamicRotation = new KronBoolean("dynamicrotation", ID.getPath(), true);
 
+    private final KronBoolean boatFacing = new KronBoolean("boatfacing", ID.getPath(), false);
+
     private float lastYawOffset = 0;
     private float yawOffset = 0;
     private float lastYOffset = 0;
@@ -91,12 +93,21 @@ public class PlayerHud extends BoxHudEntry {
 
         nextStack.multiply(quaternion);
         // Rotate to whatever is wanted. Also make sure to offset the yaw
-        float deltaYaw = client.player.getYaw(delta);
-        if (dynamicRotation.getValue()) {
-            deltaYaw -= (lastYawOffset + ((yawOffset - lastYawOffset) * delta));
+        if (client.player.hasVehicle()
+                && (client.player.getVehicle().getType() == EntityType.BOAT
+                || client.player.getVehicle().getType() == EntityType.CHEST_BOAT)
+                && boatFacing.getValue()
+        ) { // the camera faces the boat if the boat is the focus
+            float deltaYaw = client.player.getVehicle().getYaw(delta);
+            // smoothing isn't possible without a complicated mixin probably
+            nextStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(deltaYaw - 180 + rotation.getValue().floatValue()));
+        } else { // regular player-facing camera
+            float deltaYaw = client.player.getYaw(delta);
+            if (dynamicRotation.getValue()) {
+                deltaYaw -= (lastYawOffset + ((yawOffset - lastYawOffset) * delta));
+            }
+            nextStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(deltaYaw - 180 + rotation.getValue().floatValue()));
         }
-        nextStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(deltaYaw - 180 + rotation.getValue().floatValue()));
-
         // Save these to set them back later
         float pastYaw = client.player.getYaw();
         float pastPrevYaw = client.player.prevYaw;
@@ -116,14 +127,14 @@ public class PlayerHud extends BoxHudEntry {
                         vehicle.getX() - player.getX(),
                         vehicle.getY() - player.getY(),
                         vehicle.getZ() - player.getZ(),
-                        vehicle.prevYaw,
+                        vehicle.getYaw(),
                         delta,
                         nextStack,
                         immediate,
                         15728880
                 );
                 for (Entity otherRider : vehicle.getPassengerList()) {
-                    if (otherRider == player) {
+                    if (otherRider == player && !boatFacing.getValue()) {
                         continue;
                     }
                     renderer.render(
@@ -138,7 +149,19 @@ public class PlayerHud extends BoxHudEntry {
                             15728880
                     );
                 }
-                renderer.render(player, 0, 0, 0, -pastYaw, delta, nextStack, immediate, 15728880);
+                if (!boatFacing.getValue()) { // the player renders as a passenger if the boat is the focus
+                    renderer.render(
+                            player,
+                            0,
+                            0,
+                            0,
+                            -pastYaw,
+                            delta,
+                            nextStack,
+                            immediate,
+                            15728880
+                    );
+                }
             } else { // every other vehicle allows the player to rotate their body
                 renderer.render(
                         vehicle,
@@ -237,6 +260,7 @@ public class PlayerHud extends BoxHudEntry {
     public List<KronConfig<?>> getConfigurationOptions() {
         List<KronConfig<?>> options = super.getConfigurationOptions();
         options.add(dynamicRotation);
+        options.add(boatFacing);
         options.add(rotation);
         options.add(background);
         options.add(backgroundColor);
