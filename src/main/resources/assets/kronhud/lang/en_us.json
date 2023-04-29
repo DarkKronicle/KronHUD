@@ -107,6 +107,8 @@
   "option.kronhud.togglesprint.placeholder.comment": "The Placeholder to use when no keys are pressed/toggled.",
   "option.kronhud.playerhud.rotation": "Model Rotation",
   "option.kronhud.playerhud.rotation.comment": "The rotation of the model.",
+  "option.kronhud.playerhud.boatfacing": "Boat Faces Camera",
+  "option.kronhud.playerhud.boatfacing.comment": "If enabled, the boat faces towards the camera instead of the player when the player rides in a boat.",
   "option.kronhud.minwidth": "Minimum Width",
   "option.kronhud.irltimehud.dateformat": "Time Format",
   "option.kronhud.gametimehud.is12hour": "12-hour Format",
@@ -228,5 +230,10 @@
   "option.kronhud.scoreboardhud.toppadding.comment": "Padding around the title component on the scoreboard",
 
   "option.kronhud.playerhud.dynamicrotation": "Dynamic Rotation",
-  "option.kronhud.playerhud.dynamicrotation.comment": "Rotation of the player is shown and then slowly turns back to looking straight"
+  "option.kronhud.playerhud.dynamicrotation.comment": "Rotation of the player is shown and then slowly turns back to looking straight",
+
+  "option.kronhud.potionshud.potionblacklist": "Effect Blacklist",
+  "option.kronhud.potionshud.iconsonly": "Icons Only",
+  "option.kronhud.potionshud.potionblacklist.comment": "Blacklist potions by translation key (usually effect.minecraft.[effect id]).\nEnter keys as a comma-separated list.",
+  "option.kronhud.potionshud.iconsonly.comment": "Only display potions as icons (don't show durations)"
 }

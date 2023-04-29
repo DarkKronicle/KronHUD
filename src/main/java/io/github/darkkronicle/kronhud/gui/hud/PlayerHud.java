@@ -12,6 +12,8 @@ import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -28,15 +30,22 @@ public class PlayerHud extends BoxHudEntry {
     private final KronDouble rotation = new KronDouble("rotation", ID.getPath(), 0, 0, 360);
     private final KronBoolean dynamicRotation = new KronBoolean("dynamicrotation", ID.getPath(), true);
 
+    private final KronBoolean boatFacing = new KronBoolean("boatfacing", ID.getPath(), false);
+
     private float lastYawOffset = 0;
     private float yawOffset = 0;
     private float lastYOffset = 0;
     private float yOffset = 0;
 
+    // this is for smoothing on boats, since boats don't have a yaw delta
+    private float currentYaw = 0;
+    private float lastYaw = 0;
+
 
     public PlayerHud() {
         super(62, 94, true);
         KronHudHooks.PLAYER_DIRECTION_CHANGE.register(this::onPlayerDirectionChange);
+        KronHudHooks.MOUNT_DIRECTION_CHANGE.register(this::onMountDirectionChange);
     }
 
     @Override
@@ -53,6 +62,14 @@ public class PlayerHud extends BoxHudEntry {
         if (client.player == null) {
             return;
         }
+        Entity player  = client.player;
+        Entity baseVehicle = getBaseVehicle(player);
+
+        float scaleFraction = 1 / Math.max(getRenderWidth(baseVehicle), getRenderHeight(baseVehicle) / 2.5f);
+        float scale = getScale() * 40;
+        float scaleSub = scale * (1 - scaleFraction);
+        y -= 86 * scaleSub / 80.0;
+        scale -= scaleSub;
 
         float lerpY = (lastYOffset + ((yOffset - lastYOffset) * delta));
 
@@ -64,18 +81,24 @@ public class PlayerHud extends BoxHudEntry {
         RenderSystem.applyModelViewMatrix();
         MatrixStack nextStack = new MatrixStack();
         nextStack.translate(0, 0, 1000);
-        float scale = getScale() * 40;
         nextStack.scale(scale, scale, scale);
         Quaternionf quaternion = RotationAxis.POSITIVE_Z.rotationDegrees(180);
 
         nextStack.multiply(quaternion);
         // Rotate to whatever is wanted. Also make sure to offset the yaw
-        float deltaYaw = client.player.getYaw(delta);
-        if (dynamicRotation.getValue()) {
-            deltaYaw -= (lastYawOffset + ((yawOffset - lastYawOffset) * delta));
+        if (isInBoat(player) && boatFacing.getValue()) { // the camera faces the boat if the boat is the focus
+            float deltaYaw = player.getVehicle().getYaw(delta);
+            if (dynamicRotation.getValue()) {
+                deltaYaw -= (lastYawOffset + ((yawOffset - lastYawOffset) * delta));
+            }
+            nextStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(deltaYaw - 180 + rotation.getValue().floatValue()));
+        } else { // regular player-facing camera
+            float deltaYaw = client.player.getYaw(delta);
+            if (dynamicRotation.getValue()) {
+                deltaYaw -= (lastYawOffset + ((yawOffset - lastYawOffset) * delta));
+            }
+            nextStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(deltaYaw - 180 + rotation.getValue().floatValue()));
         }
-        nextStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(deltaYaw - 180 + rotation.getValue().floatValue()));
-
         // Save these to set them back later
         float pastYaw = client.player.getYaw();
         float pastPrevYaw = client.player.prevYaw;
@@ -86,21 +109,128 @@ public class PlayerHud extends BoxHudEntry {
         renderer.setRenderShadows(false);
 
         VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+        renderMounts(
+                baseVehicle,
+                baseVehicle.getX() - player.getX(),
+                baseVehicle.getY() - player.getY(),
+                baseVehicle.getZ() - player.getZ(),
+                delta,
+                renderer,
+                nextStack,
+                immediate
+        );
 
-        renderer.render(client.player, 0, 0, 0, 0, delta, nextStack, immediate, 15728880);
         immediate.draw();
         renderer.setRenderShadows(true);
         matrixStack.pop();
 
-        client.player.setYaw(pastYaw);
-        client.player.prevYaw = pastPrevYaw;
+        player.setYaw(pastYaw);
+        player.prevYaw = pastPrevYaw;
 
         RenderSystem.applyModelViewMatrix();
         DiffuseLighting.enableGuiDepthLighting();
     }
 
+    private Entity getBaseVehicle(Entity entity) {
+        if (entity.hasVehicle()) {
+            return getBaseVehicle(entity.getVehicle());
+        } else {
+            return entity;
+        }
+    }
+
+    private boolean isInBoat(Entity entity) {
+        if (entity.hasVehicle()) {
+            Entity vehicle = entity.getVehicle();
+            return vehicle.getType() == EntityType.BOAT || vehicle.getType() == EntityType.CHEST_BOAT;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * This returns the stack height (in blocks) of the mounted entity stack this entity is the base of
+     * (or just the height of the entity if they aren't part of any stack)
+     */
+    private float getRenderHeight(Entity entity) {
+        float renderHeight;
+        if (entity == client.player && !client.player.hasVehicle()) {
+            renderHeight = 2.5f;
+        } else {
+            renderHeight = (float) entity.getVisibilityBoundingBox().getYLength();
+        }
+        if (entity.hasPassengers()) {
+            float maxPassengerHeight = Float.NEGATIVE_INFINITY;
+            for (Entity other : entity.getPassengerList()) {
+                double relativeY = other.getY() - entity.getY();
+                maxPassengerHeight = Math.max(getRenderHeight(other) + (float) relativeY, maxPassengerHeight);
+            }
+            renderHeight += maxPassengerHeight;
+        }
+        return renderHeight;
+    }
+
+    /**
+     * Same as getRenderHeight, but for width
+     */
+    private float getRenderWidth(Entity entity) {
+        float renderWidth = (float)Math.max(
+                entity.getVisibilityBoundingBox().getXLength(),
+                entity.getVisibilityBoundingBox().getZLength()
+        );
+        for (Entity other : entity.getPassengerList()) {
+            renderWidth = Math.max(getRenderWidth(other),renderWidth);
+        }
+        return renderWidth;
+    }
+
+    /**
+     * Recursively render everything in the entity stack rooted at this entity
+     */
+    private void renderMounts(Entity entity, double xOffset, double yOffset, double zOffset, float delta, EntityRenderDispatcher renderer, MatrixStack nextStack, VertexConsumerProvider.Immediate immediate) {
+        boolean isBoat = (entity.getType() == EntityType.BOAT || entity.getType() == EntityType.CHEST_BOAT);
+        renderer.render(
+                entity,
+                xOffset,
+                yOffset,
+                zOffset,
+                isBoat ? entity.getYaw(delta) : 0,
+                delta,
+                nextStack,
+                immediate,
+                15728880
+        );
+        for (Entity other : entity.getPassengerList()) {
+            renderMounts(
+                    other,
+                    xOffset + (other.getX() - entity.getX()),
+                    yOffset + (other.getY() - entity.getY()),
+                    zOffset + (other.getZ() - entity.getZ()),
+                    delta,
+                    renderer,
+                    nextStack,
+                    immediate
+            );
+        }
+    }
+
     public void onPlayerDirectionChange(float prevPitch, float prevYaw, float pitch, float yaw) {
-        yawOffset += (yaw - prevYaw) / 2;
+        if (!(boatFacing.getValue() && isInBoat(client.player))) {
+            yawOffset += (yaw - prevYaw) / 2;
+        }
+    }
+
+    private float mod (float a, float b) {
+        return a - (float)Math.floor(a / b) * b;
+    }
+
+    public void onMountDirectionChange(float yaw) {
+        if (boatFacing.getValue() && isInBoat(client.player)) {
+            lastYaw = currentYaw;
+            currentYaw = yaw;
+            float difference = mod((currentYaw - lastYaw + 180), 360) - 180;
+            yawOffset += difference / 2;
+        }
     }
 
     @Override
@@ -123,7 +253,7 @@ public class PlayerHud extends BoxHudEntry {
         } else if (client.player != null && client.player.isFallFlying()) {
             // Elytra!
 
-            float j = (float)client.player.getRoll() + 1;
+            float j = (float) client.player.getRoll() + 1;
             float k = MathHelper.clamp(j * j / 100.0F, 0.0F, 1.0F);
 
             float pitch = k * (-90.0F - client.player.getPitch()) + 90;
@@ -153,6 +283,7 @@ public class PlayerHud extends BoxHudEntry {
     public List<KronConfig<?>> getConfigurationOptions() {
         List<KronConfig<?>> options = super.getConfigurationOptions();
         options.add(dynamicRotation);
+        options.add(boatFacing);
         options.add(rotation);
         options.add(background);
         options.add(backgroundColor);
