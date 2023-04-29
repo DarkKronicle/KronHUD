@@ -28,15 +28,15 @@ import java.util.List;
 
 public class GameTimeHud extends TextHudEntry {
 
-    public static final Identifier ID = new Identifier("kronhud","gametimehud");
-    private final KronBoolean isAmPm = new KronBoolean("is12hour",ID.getPath(),true,this::updateFormatter);
-    private final KronBoolean sleepDisplay = new KronBoolean("showsleep",ID.getPath(),false);
-    private final KronBoolean clockDisplay = new KronBoolean("showclock",ID.getPath(),false);
-    private final Identifier bedTexture = Identifier.of("kronhud","textures/gui/icons/classic_red_bed.png");
+    public static final Identifier ID = new Identifier("kronhud", "gametimehud");
+    private final KronBoolean isAmPm = new KronBoolean("is12hour", ID.getPath(), true, this::updateFormatter);
+    private final KronBoolean sleepDisplay = new KronBoolean("showsleep", ID.getPath(), false);
+    private final KronBoolean clockDisplay = new KronBoolean("showclock", ID.getPath(), false);
+    private final Identifier bedTexture = Identifier.of("kronhud", "textures/gui/icons/classic_red_bed.png");
     private DateFormat formatter;
 
     public GameTimeHud() {
-        super(79,20,true);
+        super(79, 20, true);
     }
 
     private int calculateWidth() {
@@ -75,7 +75,7 @@ public class GameTimeHud extends TextHudEntry {
                 matrices,
                 client.textRenderer,
                 time,
-                pos.x() + Justification.RIGHT.getXOffset(time,getWidth()-2),
+                pos.x() + Justification.RIGHT.getXOffset(time, getWidth() - 2),
                 pos.y() + 6,
                 textColor.getValue().color(),
                 shadow.getValue()
@@ -94,16 +94,17 @@ public class GameTimeHud extends TextHudEntry {
                 offset += 16;
             }
             RenderSystem.enableBlend();
-            RenderSystem.setShaderColor(1,1,1,
+            RenderSystem.setShaderColor(1, 1, 1,
                     canPlayerSleep() ? 1 : 0.5f
             );
-            RenderSystem.setShaderTexture(0,bedTexture);
+            RenderSystem.setShaderTexture(0, bedTexture);
             DrawableHelper.drawTexture(
                     matrices,
-                    pos.x() + offset + 1 + Justification.LEFT.getXOffset(16,getWidth()-2),
-                    pos.y()+2,
-                    0,0, 16,16,16,16);
-            RenderSystem.setShaderColor(1,1,1,1);
+                    pos.x() + offset + 1 + Justification.LEFT.getXOffset(16, getWidth() - 2),
+                    pos.y() + 2,
+                    0, 0, 16, 16, 16, 16
+            );
+            RenderSystem.setShaderColor(1, 1, 1, 1);
             RenderSystem.disableBlend();
         }
     }
@@ -117,7 +118,7 @@ public class GameTimeHud extends TextHudEntry {
                 matrices,
                 client.textRenderer,
                 time,
-                pos.x() + Justification.RIGHT.getXOffset(time,getWidth()-2),
+                pos.x() + Justification.RIGHT.getXOffset(time, getWidth() - 2),
                 pos.y() + 6,
                 textColor.getValue().color(),
                 shadow.getValue()
@@ -132,25 +133,28 @@ public class GameTimeHud extends TextHudEntry {
         }
         if (sleepDisplay.getValue()) {
             int offset = 0;
-            if (clockDisplay.getValue())
+            if (clockDisplay.getValue()) {
                 offset += 16;
-            RenderSystem.setShaderTexture(0,bedTexture);
+            }
+            RenderSystem.setShaderTexture(0, bedTexture);
             DrawableHelper.drawTexture(
                     matrices,
-                    pos.x() + offset + 1 + Justification.LEFT.getXOffset(16,getWidth()-4),
-                    pos.y()+2,
-                    0,0, 16,16,16,16);
+                    pos.x() + offset + 1 + Justification.LEFT.getXOffset(16, getWidth() - 4),
+                    pos.y() + 2,
+                    0, 0, 16, 16, 16, 16
+            );
         }
     }
 
     private String formatTime(long currentTick) {
-        if (formatter == null)
+        if (formatter == null) {
             updateFormatter(isAmPm.getValue());
-        int hour = (int)(24 * (currentTick / 24000.0));
+        }
+        int hour = (int) (24 * (currentTick / 24000.0));
         hour = (hour + 6) % 24;
-        int minute = (int)(60 * ((currentTick % 1000) / 1000.0));
+        int minute = (int) (60 * ((currentTick % 1000) / 1000.0));
         Date time = new Calendar.Builder()
-                .setTimeOfDay(hour,minute,0)
+                .setTimeOfDay(hour, minute, 0)
                 .build()
                 .getTime();
         return formatter.format(time);
