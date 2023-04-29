@@ -207,7 +207,7 @@ public class PlayerHud extends BoxHudEntry {
         } else if (client.player != null && client.player.isFallFlying()) {
             // Elytra!
 
-            float j = (float)client.player.getRoll() + 1;
+            float j = (float) client.player.getRoll() + 1;
             float k = MathHelper.clamp(j * j / 100.0F, 0.0F, 1.0F);
 
             float pitch = k * (-90.0F - client.player.getPitch()) + 90;
