@@ -55,8 +55,8 @@ public class GameTimeHud extends TextHudEntry
 		drawString(matrices,
 				client.textRenderer,
 				Text.literal(getValue()),
-				pos.x() + getWidth() - 42,
-				pos.y() + getHeight() / 2 - 8,
+				pos.x() + getWidth() - 44,
+				pos.y() + 8,
 				textColor.getValue().color(),
 				shadow.getValue()
 		);
@@ -65,12 +65,15 @@ public class GameTimeHud extends TextHudEntry
 		boolean canSleep = (MinecraftClient.getInstance().world.isThundering()
 				|| getDayTicks() >= 12542)
 				&& MinecraftClient.getInstance().world.getRegistryKey() == World.OVERWORLD;
+		RenderSystem.enableBlend();
 		RenderSystem.setShaderColor(1,1,1,
 				canSleep ? 1 : 0.5f
 		);
-		client.getTextureManager().bindTexture(bedTexture);
+		RenderSystem.setShaderTexture(0,bedTexture);
+		//client.getTextureManager().bindTexture(bedTexture);
 		DrawableHelper.drawTexture(matrices,pos.x()+18,pos.y()+2,0,0,16,16,16,16);
 		RenderSystem.setShaderColor(1,1,1,1);
+		RenderSystem.disableBlend();
 	}
 
 	@Override
