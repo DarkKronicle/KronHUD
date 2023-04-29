@@ -6,6 +6,7 @@ import io.github.darkkronicle.kronhud.KronHUD;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.gui.entry.TextHudEntry;
+import io.github.darkkronicle.kronhud.gui.layout.Justification;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
@@ -25,12 +26,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class GameTimeHud extends TextHudEntry
-{
+public class GameTimeHud extends TextHudEntry {
+
 	public static final Identifier ID = new Identifier("kronhud","gametimehud");
 
 	private final KronBoolean isAmPm = new KronBoolean("is12hour",ID.getPath(),true,this::updateFormatter);
-
+	private final KronBoolean sleepDisplay = new KronBoolean("showsleep",ID.getPath(),false);
+	private final KronBoolean clockDisplay = new KronBoolean("showclock",ID.getPath(),false);
 	private final long dayTicks = 24000;
 
 	private final Identifier bedTexture = Identifier.of("kronhud","textures/gui/icons/classic_red_bed.png");
@@ -41,63 +43,108 @@ public class GameTimeHud extends TextHudEntry
 		super(79,20,true);
 	}
 
+	private int calculateWidth() {
+		int width;
+		if (sleepDisplay.getValue() && clockDisplay.getValue())
+			width = 79;
+		else if (sleepDisplay.getValue() || clockDisplay.getValue())
+			width = 79 - 16;
+		else
+			width = 79 - 32;
+		if (!isAmPm.getValue()) {
+			width -= 16;
+		}
+		return width;
+	}
+
+	private void updateWidth() {
+		int calcWidth = calculateWidth();
+		if (calcWidth != getWidth()) {
+			setWidth(calcWidth);
+			onBoundsUpdate();
+		}
+	}
+
 	public Identifier getId() {
 		return ID;
 	}
 
-	public String getValue() {
-		return formatTime(getDayTicks());
-	}
-
 	@Override
 	public void renderComponent(MatrixStack matrices, float delta) {
+		updateWidth();
 		DrawPosition pos = getPos();
+		Text time = Text.literal(formatTime(getDayTicks()));
 		drawString(matrices,
 				client.textRenderer,
-				Text.literal(getValue()),
-				pos.x() + getWidth() - 44,
-				pos.y() + 8,
+				time,
+				pos.x() + Justification.RIGHT.getXOffset(time,getWidth()-2),
+				pos.y() + 6,
 				textColor.getValue().color(),
 				shadow.getValue()
 		);
-		RenderUtil.drawItem(matrices, new ItemStack(Items.CLOCK), pos.x()+2, pos.y()+2);
-		// sleep condition (thunderstorms can also allow sleep)
-		boolean canSleep = (MinecraftClient.getInstance().world.isThundering()
-				|| getDayTicks() >= 12542)
-				&& MinecraftClient.getInstance().world.getRegistryKey() == World.OVERWORLD;
-		RenderSystem.enableBlend();
-		RenderSystem.setShaderColor(1,1,1,
-				canSleep ? 1 : 0.5f
-		);
-		RenderSystem.setShaderTexture(0,bedTexture);
-		//client.getTextureManager().bindTexture(bedTexture);
-		DrawableHelper.drawTexture(matrices,pos.x()+18,pos.y()+2,0,0,16,16,16,16);
-		RenderSystem.setShaderColor(1,1,1,1);
-		RenderSystem.disableBlend();
+		if (clockDisplay.getValue())
+			RenderUtil.drawItem(matrices,
+					new ItemStack(Items.CLOCK),
+					pos.x() + 1 + Justification.LEFT.getXOffset(16,getWidth()-2),
+					pos.y() + 2
+			);
+		if (sleepDisplay.getValue()) {
+			int offset = 0;
+			if (clockDisplay.getValue())
+				offset += 16;
+			RenderSystem.enableBlend();
+			RenderSystem.setShaderColor(1,1,1,
+					canPlayerSleep() ? 1 : 0.5f
+			);
+			RenderSystem.setShaderTexture(0,bedTexture);
+			DrawableHelper.drawTexture(matrices,
+					pos.x() + offset + 1 + Justification.LEFT.getXOffset(16,getWidth()-2),
+					pos.y()+2,
+					0,0, 16,16,16,16);
+			RenderSystem.setShaderColor(1,1,1,1);
+			RenderSystem.disableBlend();
+		}
 	}
 
 	@Override
 	public void renderPlaceholderComponent(MatrixStack matrices, float delta) {
+		updateWidth();
 		DrawPosition pos = getPos();
+		Text time = Text.literal(formatTime(0));
 		drawString(matrices,
 				client.textRenderer,
-				Text.literal(formatTime(0)),
-				pos.x() + getWidth() - 42,
-				pos.y()+ getHeight() / 2 - 8,
+				time,
+				pos.x() + Justification.RIGHT.getXOffset(time,getWidth()-2),
+				pos.y() + 6,
 				textColor.getValue().color(),
 				shadow.getValue()
 		);
-		RenderUtil.drawItem(matrices, new ItemStack(Items.CLOCK), pos.x()+2, pos.y()+2);
-		RenderUtil.drawItem(matrices, new ItemStack(Items.RED_BED), pos.x()+18, pos.y()+2);
+		if (clockDisplay.getValue())
+			RenderUtil.drawItem(matrices,
+					new ItemStack(Items.CLOCK),
+					pos.x() + 1 + Justification.LEFT.getXOffset(16,getWidth()-2),
+					pos.y()+2
+			);
+		if (sleepDisplay.getValue()) {
+			int offset = 0;
+			if (clockDisplay.getValue())
+				offset += 16;
+			RenderSystem.setShaderTexture(0,bedTexture);
+			DrawableHelper.drawTexture(matrices,
+					pos.x() + offset + 1 + Justification.LEFT.getXOffset(16,getWidth()-4),
+					pos.y()+2,
+					0,0, 16,16,16,16);
+		}
 	}
 
 	private String formatTime(long currentTick) {
 		if (formatter == null)
 			updateFormatter(isAmPm.getValue());
-		long hour = (currentTick / (dayTicks / 24) + 6) % 24; // Minecraft Wiki says time 0 is effectively 6:00
-		long minute = (currentTick / (dayTicks / (24 * 60))) % 60;
+		int hour = (int)(24 * (currentTick / 24000.0));
+		hour = (hour + 6) % 24;
+		int minute = (int)(60 * ((currentTick % 1000) / 1000.0));
 		Date time = new Calendar.Builder()
-				.setTimeOfDay((int)hour,(int)minute,0)
+				.setTimeOfDay(hour,minute,0)
 				.build()
 				.getTime();
 		return formatter.format(time);
@@ -115,9 +162,23 @@ public class GameTimeHud extends TextHudEntry
 		}
 	}
 
+	private boolean canPlayerSleep() {
+		if (MinecraftClient.getInstance().world.getRegistryKey() != World.OVERWORLD)
+			return false;
+		if (MinecraftClient.getInstance().world.isThundering())
+			return true;
+		if (getDayTicks() >= 12542)
+			return true;
+		if (getDayTicks() >= 12010 && MinecraftClient.getInstance().world.isRaining())
+			return true;
+		return false;
+	}
+
 	public List<KronConfig<?>> getConfigurationOptions() {
 		List<KronConfig<?>> options = super.getConfigurationOptions();
 		options.add(isAmPm);
+		options.add(clockDisplay);
+		options.add(sleepDisplay);
 		return options;
 	}
 }
