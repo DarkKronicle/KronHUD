@@ -228,5 +228,8 @@
   "option.kronhud.scoreboardhud.toppadding.comment": "Padding around the title component on the scoreboard",
 
   "option.kronhud.playerhud.dynamicrotation": "Dynamic Rotation",
-  "option.kronhud.playerhud.dynamicrotation.comment": "Rotation of the player is shown and then slowly turns back to looking straight"
+  "option.kronhud.playerhud.dynamicrotation.comment": "Rotation of the player is shown and then slowly turns back to looking straight",
+
+  "option.kronhud.potionshud.showname": "Show Name",
+  "option.kronhud.potionshud.showname.comment": "Whether to show the name and amplifier of the potion effect."
 }
