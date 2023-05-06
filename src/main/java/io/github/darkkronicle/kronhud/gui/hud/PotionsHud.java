@@ -11,6 +11,7 @@ import io.github.darkkronicle.kronhud.gui.layout.AnchorPoint;
 import io.github.darkkronicle.kronhud.gui.layout.CardinalOrder;
 import io.github.darkkronicle.kronhud.util.Rectangle;
 import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.effect.StatusEffect;
@@ -33,6 +34,8 @@ public class PotionsHud extends TextHudEntry implements DynamicallyPositionable 
 
     private final KronBoolean iconsOnly = new KronBoolean("iconsonly", ID.getPath(), false);
 
+    private final KronBoolean showName = new KronBoolean("showname", ID.getPath(), false);
+
     public PotionsHud() {
         super(50, 200, false);
     }
@@ -42,10 +45,26 @@ public class PotionsHud extends TextHudEntry implements DynamicallyPositionable 
             if (iconsOnly.getValue()) {
                 return 20 * effects.size() + 2;
             }
+            if (showName.getValue()) {
+                float totalWidth = 0;
+                for (StatusEffectInstance effect : effects) {
+                    int potionWidth = client.textRenderer.getWidth(generatePotionText(effect));
+                    totalWidth += potionWidth / 1.25f + 22;
+                }
+                return (int)Math.floor(totalWidth + 2);
+            }
             return 50 * effects.size() + 2;
         } else {
             if (iconsOnly.getValue()) {
                 return 20;
+            }
+            if (showName.getValue()) {
+                int maxWidth = 0;
+                for (StatusEffectInstance effect : effects) {
+                    int potionWidth = client.textRenderer.getWidth(generatePotionText(effect));
+                    if (maxWidth < potionWidth) maxWidth = potionWidth;
+                }
+                return (int)Math.floor(maxWidth / 1.25f + 24);
             }
             return 50;
         }
@@ -92,8 +111,8 @@ public class PotionsHud extends TextHudEntry implements DynamicallyPositionable 
         for (int i = 0; i < effects.size(); i++) {
             StatusEffectInstance effect = effects.get(direction.getDirection() == -1 ? i : effects.size() - i - 1);
             if (direction.isXAxis()) {
-                renderPotion(matrices, effect, x + lastPos + 1, y + 1);
-                lastPos += (iconsOnly.getValue() ? 20 : 50);
+                int potionWidth = renderPotion(matrices, effect, x + lastPos + 1, y + 1);
+                lastPos += (iconsOnly.getValue() ? 20 : showName.getValue() ? potionWidth / 1.25f + 22 : 50);
             } else {
                 renderPotion(matrices, effect, x + 1, y + 1 + lastPos);
                 lastPos += 20;
@@ -101,17 +120,47 @@ public class PotionsHud extends TextHudEntry implements DynamicallyPositionable 
         }
     }
 
-    private void renderPotion(MatrixStack matrices, StatusEffectInstance effect, int x, int y) {
+    private int renderPotion(MatrixStack matrices, StatusEffectInstance effect, int x, int y) {
         StatusEffect type = effect.getEffectType();
         Sprite sprite = client.getStatusEffectSpriteManager().getSprite(type);
+        int renderWidth = 0;
 
         RenderSystem.setShaderTexture(0, sprite.getAtlasId());
         RenderSystem.setShaderColor(1, 1, 1, 1);
         DrawableHelper.drawSprite(matrices, x, y, 0, 18, 18, sprite);
+
         if (!iconsOnly.getValue()) {
-            drawString(matrices, client.textRenderer, StatusEffectUtil.durationToString(effect, 1), x + 19, y + 5,
-                    textColor.getValue().color(), shadow.getValue()
-            );
+            if (showName.getValue()) {
+                String potionTexts = generatePotionText(effect);
+
+                MatrixStack textMatrix = new MatrixStack();
+
+                textMatrix.scale(getScale() / 1.25f, getScale() / 1.25f, 1);
+
+                drawString(textMatrix, client.textRenderer, Text.of(potionTexts), (x + 19) * 1.25f, (y + 2) * 1.25f, textColor.getValue().color(), shadow.getValue());
+                renderWidth = client.textRenderer.getWidth(Text.of(potionTexts));
+
+                drawString(textMatrix, client.textRenderer, StatusEffectUtil.durationToString(effect, 1), (x + 19) * 1.25f, (y + 10) * 1.25f,
+                        textColor.getValue().color(), shadow.getValue()
+                );
+            } else {
+                drawString(matrices, client.textRenderer, StatusEffectUtil.durationToString(effect, 1), x + 19, showName.getValue() ? y + 10 : y + 5,
+                        textColor.getValue().color(), shadow.getValue()
+                );
+            }
+        }
+        return renderWidth;
+    }
+
+    private String generatePotionText(StatusEffectInstance effect) {
+        StatusEffect type = effect.getEffectType();
+        String potionName = I18n.translate(type.getTranslationKey());
+        int amplifier = effect.getAmplifier();
+        if (I18n.hasTranslation("potion.potency." + amplifier)) {
+            String translation = I18n.translate("potion.potency." + amplifier);
+            return potionName + " " + translation;
+        } else {
+            return potionName;
         }
     }
 
@@ -129,6 +178,7 @@ public class PotionsHud extends TextHudEntry implements DynamicallyPositionable 
         options.add(anchor);
         options.add(order);
         options.add(iconsOnly);
+        options.add(showName);
         return options;
     }
 
