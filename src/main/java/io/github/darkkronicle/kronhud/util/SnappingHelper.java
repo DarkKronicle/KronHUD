@@ -3,7 +3,7 @@ package io.github.darkkronicle.kronhud.util;
 import io.github.darkkronicle.darkkore.util.Color;
 import lombok.Setter;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 
 import java.util.HashSet;
 import java.util.List;
@@ -46,27 +46,27 @@ public class SnappingHelper {
         y.add(rect.y() + rect.height());
     }
 
-    public void renderSnaps(MatrixStack matrices) {
+    public void renderSnaps(DrawContext context) {
         Integer curx, cury;
         if ((curx = getRawXSnap()) != null) {
-            DrawUtil.fillRect(matrices, new Rectangle(curx, 0, 1, client.getWindow().getScaledHeight()),
+            DrawUtil.fillRect(context, new Rectangle(curx, 0, 1, client.getWindow().getScaledHeight()),
                     LINE_COLOR);
         }
         if ((cury = getRawYSnap()) != null) {
-            DrawUtil.fillRect(matrices, new Rectangle(0, cury, client.getWindow().getScaledWidth(), 1),
+            DrawUtil.fillRect(context, new Rectangle(0, cury, client.getWindow().getScaledWidth(), 1),
                     LINE_COLOR);
         }
-        // renderAll(matrices);
+        // renderAll(context);
 
     }
 
-    public void renderAll(MatrixStack matrices) {
+    public void renderAll(DrawContext context) {
         for (Integer xval : x) {
-            DrawUtil.fillRect(matrices, new Rectangle(xval, 0, 1, client.getWindow().getScaledHeight()),
+            DrawUtil.fillRect(context, new Rectangle(xval, 0, 1, client.getWindow().getScaledHeight()),
                     ColorUtil.WHITE);
         }
         for (Integer yval : y) {
-            DrawUtil.fillRect(matrices, new Rectangle(0, yval, client.getWindow().getScaledWidth(), 1), ColorUtil.WHITE);
+            DrawUtil.fillRect(context, new Rectangle(0, yval, client.getWindow().getScaledWidth(), 1), ColorUtil.WHITE);
         }
     }
 

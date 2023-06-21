@@ -2,11 +2,12 @@ package io.github.darkkronicle.kronhud.gui.hud.item;
 
 import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.config.KronInteger;
-import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.gui.entry.TextHudEntry;
-import io.github.darkkronicle.kronhud.util.*;
+import io.github.darkkronicle.kronhud.util.ColorUtil;
+import io.github.darkkronicle.kronhud.util.DrawPosition;
+import io.github.darkkronicle.kronhud.util.ItemUtil;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.TextCollector;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.OrderedText;
@@ -94,7 +95,7 @@ public class ItemUpdateHud extends TextHudEntry {
     }
 
     @Override
-    public void renderComponent(MatrixStack matrices, float delta) {
+    public void renderComponent(DrawContext context, float delta) {
         DrawPosition pos = getPos();
         int lastY = 1;
         int i = 0;
@@ -110,12 +111,12 @@ public class ItemUpdateHud extends TextHudEntry {
             message.add(item.stack.getName());
             OrderedText text = Language.getInstance().reorder(message.getCombined());
             if (shadow.getValue()) {
-                client.textRenderer.drawWithShadow(
-                        matrices, text, pos.x(), pos.y() + lastY, ColorUtil.SELECTOR_GREEN.color()
+                context.drawTextWithShadow(
+                        client.textRenderer, text, pos.x(), pos.y() + lastY, ColorUtil.SELECTOR_GREEN.color()
                 );
             } else {
-                client.textRenderer.draw(
-                        matrices, text, pos.x(), pos.y() + lastY, ColorUtil.SELECTOR_GREEN.color()
+                context.drawTextWithShadow(
+                        client.textRenderer, text, pos.x(), pos.y() + lastY, ColorUtil.SELECTOR_GREEN.color()
                 );
             }
             lastY = lastY + client.textRenderer.fontHeight + 2;
@@ -133,12 +134,12 @@ public class ItemUpdateHud extends TextHudEntry {
             message.add(item.stack.getName());
             OrderedText text = Language.getInstance().reorder(message.getCombined());
             if (shadow.getValue()) {
-                client.textRenderer.drawWithShadow(
-                        matrices, text, pos.x(), pos.y() + lastY, Formatting.RED.getColorValue()
+                context.drawTextWithShadow(
+                        client.textRenderer, text, pos.x(), pos.y() + lastY, Formatting.RED.getColorValue()
                 );
             } else {
-                client.textRenderer.draw(
-                        matrices, text, pos.x(), pos.y() + lastY, Formatting.RED.getColorValue()
+                context.drawTextWithShadow(
+                        client.textRenderer, text, pos.x(), pos.y() + lastY, Formatting.RED.getColorValue()
                 );
             }
             lastY = lastY + client.textRenderer.fontHeight + 2;
@@ -147,7 +148,7 @@ public class ItemUpdateHud extends TextHudEntry {
     }
 
     @Override
-    public void renderPlaceholderComponent(MatrixStack matrices, float delta) {
+    public void renderPlaceholderComponent(DrawContext context, float delta) {
         DrawPosition pos = getPos();
         TextCollector addM = new TextCollector();
         addM.add(Text.literal("+ "));
@@ -157,12 +158,12 @@ public class ItemUpdateHud extends TextHudEntry {
         addM.add(new ItemStack(Items.DIRT).getName());
         OrderedText addText = Language.getInstance().reorder(addM.getCombined());
         if (shadow.getValue()) {
-            client.textRenderer.drawWithShadow(
-                    matrices, addText, pos.x(), pos.y(), Formatting.RED.getColorValue()
+            context.drawTextWithShadow(
+                    client.textRenderer, addText, pos.x(), pos.y(), Formatting.RED.getColorValue()
             );
         } else {
-            client.textRenderer.draw(
-                    matrices, addText, pos.x(), pos.y() + client.textRenderer.fontHeight + 2, Formatting.RED.getColorValue()
+            context.drawTextWithShadow(
+                    client.textRenderer, addText, pos.x(), pos.y() + client.textRenderer.fontHeight + 2, Formatting.RED.getColorValue()
             );
         }
         TextCollector removeM = new TextCollector();
@@ -173,11 +174,13 @@ public class ItemUpdateHud extends TextHudEntry {
         removeM.add(new ItemStack(Items.GRASS).getName());
         OrderedText removeText = Language.getInstance().reorder(removeM.getCombined());
         if (shadow.getValue()) {
-            client.textRenderer.drawWithShadow(matrices, removeText, pos.x(), pos.y() + client.textRenderer.fontHeight + 2,
+            context.drawTextWithShadow(
+                    client.textRenderer, removeText, pos.x(), pos.y() + client.textRenderer.fontHeight + 2,
                     Formatting.RED.getColorValue()
             );
         } else {
-            client.textRenderer.draw(matrices, removeText, pos.x(), pos.y() + client.textRenderer.fontHeight + 3,
+            context.drawTextWithShadow(
+                    client.textRenderer, removeText, pos.x(), pos.y() + client.textRenderer.fontHeight + 3,
                     Formatting.RED.getColorValue()
             );
         }

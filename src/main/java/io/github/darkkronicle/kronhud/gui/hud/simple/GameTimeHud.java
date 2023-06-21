@@ -2,20 +2,15 @@ package io.github.darkkronicle.kronhud.gui.hud.simple;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.darkkronicle.darkkore.util.render.RenderUtil;
-import io.github.darkkronicle.kronhud.KronHUD;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.gui.entry.TextHudEntry;
 import io.github.darkkronicle.kronhud.gui.layout.Justification;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.texture.AbstractTexture;
-import net.minecraft.client.texture.atlas.Sprite;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.resource.Resource;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
@@ -67,12 +62,12 @@ public class GameTimeHud extends TextHudEntry {
     }
 
     @Override
-    public void renderComponent(MatrixStack matrices, float delta) {
+    public void renderComponent(DrawContext context, float delta) {
         updateWidth();
         DrawPosition pos = getPos();
         Text time = Text.literal(formatTime(getDayTicks()));
         drawString(
-                matrices,
+                context,
                 client.textRenderer,
                 time,
                 pos.x() + Justification.RIGHT.getXOffset(time, getWidth() - 2),
@@ -82,7 +77,7 @@ public class GameTimeHud extends TextHudEntry {
         );
         if (clockDisplay.getValue()) {
             RenderUtil.drawItem(
-                    matrices,
+                    context,
                     new ItemStack(Items.CLOCK),
                     pos.x() + 1 + Justification.LEFT.getXOffset(16, getWidth() - 2),
                     pos.y() + 2
@@ -97,9 +92,8 @@ public class GameTimeHud extends TextHudEntry {
             RenderSystem.setShaderColor(1, 1, 1,
                     canPlayerSleep() ? 1 : 0.5f
             );
-            RenderSystem.setShaderTexture(0, bedTexture);
-            DrawableHelper.drawTexture(
-                    matrices,
+            context.drawTexture(
+                    bedTexture,
                     pos.x() + offset + 1 + Justification.LEFT.getXOffset(16, getWidth() - 2),
                     pos.y() + 2,
                     0, 0, 16, 16, 16, 16
@@ -110,12 +104,12 @@ public class GameTimeHud extends TextHudEntry {
     }
 
     @Override
-    public void renderPlaceholderComponent(MatrixStack matrices, float delta) {
+    public void renderPlaceholderComponent(DrawContext context, float delta) {
         updateWidth();
         DrawPosition pos = getPos();
         Text time = Text.literal(formatTime(0));
         drawString(
-                matrices,
+                context,
                 client.textRenderer,
                 time,
                 pos.x() + Justification.RIGHT.getXOffset(time, getWidth() - 2),
@@ -125,7 +119,7 @@ public class GameTimeHud extends TextHudEntry {
         );
         if (clockDisplay.getValue()) {
             RenderUtil.drawItem(
-                    matrices,
+                    context,
                     new ItemStack(Items.CLOCK),
                     pos.x() + 1 + Justification.LEFT.getXOffset(16, getWidth() - 2),
                     pos.y() + 2
@@ -136,9 +130,8 @@ public class GameTimeHud extends TextHudEntry {
             if (clockDisplay.getValue()) {
                 offset += 16;
             }
-            RenderSystem.setShaderTexture(0, bedTexture);
-            DrawableHelper.drawTexture(
-                    matrices,
+            context.drawTexture(
+                    bedTexture,
                     pos.x() + offset + 1 + Justification.LEFT.getXOffset(16, getWidth() - 4),
                     pos.y() + 2,
                     0, 0, 16, 16, 16, 16

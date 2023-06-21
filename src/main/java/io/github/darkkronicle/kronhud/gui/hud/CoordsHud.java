@@ -7,7 +7,7 @@ import io.github.darkkronicle.kronhud.gui.layout.AnchorPoint;
 import io.github.darkkronicle.kronhud.util.ColorUtil;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -83,7 +83,7 @@ public class CoordsHud extends TextHudEntry implements DynamicallyPositionable {
     }
 
     @Override
-    public void renderComponent(MatrixStack matrices, float delta) {
+    public void renderComponent(DrawContext context, float delta) {
         DrawPosition pos = getPos();
         StringBuilder format = new StringBuilder("#");
         if (decimalPlaces.getValue() > 0) {
@@ -104,37 +104,37 @@ public class CoordsHud extends TextHudEntry implements DynamicallyPositionable {
             int currPos = pos.x() + 1;
             Text separator = Text.literal(", ");
             drawString(
-                    matrices, textRenderer, Text.literal("XYZ: "),
+                    context, textRenderer, Text.literal("XYZ: "),
                     currPos, pos.y() + 2,
                     firstColor.getValue().color(), shadow.getValue()
             );
             currPos += textRenderer.getWidth("XYZ: ");
             drawString(
-                    matrices, textRenderer, Text.literal(df.format(x)),
+                    context, textRenderer, Text.literal(df.format(x)),
                     currPos, pos.y() + 2,
                     secondColor.getValue().color(), shadow.getValue()
             );
             currPos += textRenderer.getWidth(df.format(x));
             drawString(
-                    matrices, textRenderer, separator,
+                    context, textRenderer, separator,
                     currPos, pos.y() + 2,
                     firstColor.getValue().color(), shadow.getValue()
             );
             currPos += textRenderer.getWidth(separator);
             drawString(
-                    matrices, textRenderer, Text.literal(df.format(y)),
+                    context, textRenderer, Text.literal(df.format(y)),
                     currPos, pos.y() + 2,
                     secondColor.getValue().color(), shadow.getValue()
             );
             currPos += textRenderer.getWidth(String.valueOf(df.format(y)));
             drawString(
-                    matrices, textRenderer, separator,
+                    context, textRenderer, separator,
                     currPos, pos.y() + 2,
                     firstColor.getValue().color(), shadow.getValue()
             );
             currPos += textRenderer.getWidth(separator);
             drawString(
-                    matrices, textRenderer, Text.literal(df.format(z)),
+                    context, textRenderer, Text.literal(df.format(z)),
                     currPos, pos.y() + 2,
                     secondColor.getValue().color(), shadow.getValue()
             );
@@ -154,51 +154,51 @@ public class CoordsHud extends TextHudEntry implements DynamicallyPositionable {
             }
         } else {
             drawString(
-                    matrices, textRenderer, Text.literal("X"),
+                    context, textRenderer, Text.literal("X"),
                     pos.x() + 1, pos.y() + 2,
                     firstColor.getValue().color(), shadow.getValue()
             );
             drawString(
-                    matrices, textRenderer, Text.literal(df.format(x)),
+                    context, textRenderer, Text.literal(df.format(x)),
                     pos.x() + 11, pos.y() + 2,
                     secondColor.getValue().color(), shadow.getValue()
             );
 
             drawString(
-                    matrices, textRenderer, Text.literal("Y"),
+                    context, textRenderer, Text.literal("Y"),
                     pos.x() + 1, pos.y() + 12,
                     firstColor.getValue().color(), shadow.getValue()
             );
             drawString(
-                    matrices, textRenderer, Text.literal(df.format(y)),
+                    context, textRenderer, Text.literal(df.format(y)),
                     pos.x() + 11, pos.y() + 12,
                     secondColor.getValue().color(), shadow.getValue()
             );
 
             drawString(
-                    matrices, textRenderer, Text.literal("Z"),
+                    context, textRenderer, Text.literal("Z"),
                     pos.x() + 1, pos.y() + 22,
                     firstColor.getValue().color(), shadow.getValue()
             );
 
             drawString(
-                    matrices, textRenderer, Text.literal(df.format(z)), pos.x() + 11, pos.y() + 22, secondColor.getValue().color(),
+                    context, textRenderer, Text.literal(df.format(z)), pos.x() + 11, pos.y() + 22, secondColor.getValue().color(),
                     shadow.getValue()
             );
 
             drawString(
-                    matrices, textRenderer, direction,
+                    context, textRenderer, direction,
                     pos.x() + 60, pos.y() + 12,
                     firstColor.getValue().color(), shadow.getValue()
             );
 
             drawString(
-                    matrices, textRenderer, Text.of(getXDir(dir)),
+                    context, textRenderer, Text.of(getXDir(dir)),
                     pos.x() + 60, pos.y() + 2,
                     secondColor.getValue().color(), shadow.getValue()
             );
-            textRenderer.drawWithShadow(
-                    matrices, getZDir(dir),
+            context.drawText(
+                    client.textRenderer, getZDir(dir),
                     pos.x() + 60, pos.y() + 22,
                     secondColor.getValue().color(), shadow.getValue()
             );
@@ -218,7 +218,7 @@ public class CoordsHud extends TextHudEntry implements DynamicallyPositionable {
     }
 
     @Override
-    public void renderPlaceholderComponent(MatrixStack matrices, float delta) {
+    public void renderPlaceholderComponent(DrawContext context, float delta) {
         DrawPosition pos = getPos();
         StringBuilder format = new StringBuilder("#");
         if (decimalPlaces.getValue() > 0) {
@@ -240,17 +240,17 @@ public class CoordsHud extends TextHudEntry implements DynamicallyPositionable {
             int currPos = pos.x() + 1;
             String separator = ", ";
 
-            textRenderer.drawWithShadow(matrices, "XYZ: ", currPos, pos.y() + 2, firstColor.getValue().color());
+            context.drawTextWithShadow(client.textRenderer, "XYZ: ", currPos, pos.y() + 2, firstColor.getValue().color());
             currPos += textRenderer.getWidth("XYZ: ");
-            textRenderer.drawWithShadow(matrices, String.valueOf(df.format(x)), currPos, pos.y() + 2, secondColor.getValue().color(), shadow.getValue());
+            context.drawText(client.textRenderer, String.valueOf(df.format(x)), currPos, pos.y() + 2, secondColor.getValue().color(), shadow.getValue());
             currPos += textRenderer.getWidth(String.valueOf(df.format(x)));
-            textRenderer.drawWithShadow(matrices, separator, currPos, pos.y() + 2, firstColor.getValue().color(), shadow.getValue());
+            context.drawText(client.textRenderer, separator, currPos, pos.y() + 2, firstColor.getValue().color(), shadow.getValue());
             currPos += textRenderer.getWidth(separator);
-            textRenderer.drawWithShadow(matrices, String.valueOf(df.format(y)), currPos, pos.y() + 2, secondColor.getValue().color(), shadow.getValue());
+            context.drawText(client.textRenderer, String.valueOf(df.format(y)), currPos, pos.y() + 2, secondColor.getValue().color(), shadow.getValue());
             currPos += textRenderer.getWidth(String.valueOf(df.format(y)));
-            textRenderer.drawWithShadow(matrices, separator, currPos, pos.y() + 2, firstColor.getValue().color(), shadow.getValue() );
+            context.drawText(client.textRenderer, separator, currPos, pos.y() + 2, firstColor.getValue().color(), shadow.getValue() );
             currPos += textRenderer.getWidth(separator);
-            textRenderer.drawWithShadow(matrices, String.valueOf(df.format(z)), currPos, pos.y() + 2, secondColor.getValue().color(), shadow.getValue());
+            context.drawText(client.textRenderer, String.valueOf(df.format(z)), currPos, pos.y() + 2, secondColor.getValue().color(), shadow.getValue());
             currPos += textRenderer.getWidth(String.valueOf(df.format(z)));
 
             int width = currPos - pos.x() + 2;
@@ -267,15 +267,15 @@ public class CoordsHud extends TextHudEntry implements DynamicallyPositionable {
                 onBoundsUpdate();
             }
         } else {
-            textRenderer.drawWithShadow(matrices, "X", pos.x() + 1, pos.y() + 2, firstColor.getValue().color());
-            textRenderer.drawWithShadow(matrices, String.valueOf(df.format(x)), pos.x() + 11, pos.y() + 2, secondColor.getValue().color());
-            textRenderer.drawWithShadow(matrices, "Y", pos.x() + 1, pos.y() + 12, firstColor.getValue().color());
-            textRenderer.drawWithShadow(matrices, String.valueOf(df.format(y)), pos.x() + 11, pos.y() + 12, secondColor.getValue().color());
-            textRenderer.drawWithShadow(matrices, "Z", pos.x() + 1, pos.y() + 22, firstColor.getValue().color());
-            textRenderer.drawWithShadow(matrices, String.valueOf(df.format(z)), pos.x() + 11, pos.y() + 22, secondColor.getValue().color());
-            textRenderer.drawWithShadow(matrices, direction, pos.x() + 60, pos.y() + 12, firstColor.getValue().color());
-            textRenderer.drawWithShadow(matrices, getXDir(dir), pos.x() + 60, pos.y() + 2, secondColor.getValue().color());
-            textRenderer.drawWithShadow(matrices, getZDir(dir), pos.x() + 60, pos.y() + 22, secondColor.getValue().color());
+            context.drawTextWithShadow(client.textRenderer, "X", pos.x() + 1, pos.y() + 2, firstColor.getValue().color());
+            context.drawTextWithShadow(client.textRenderer, String.valueOf(df.format(x)), pos.x() + 11, pos.y() + 2, secondColor.getValue().color());
+            context.drawTextWithShadow(client.textRenderer, "Y", pos.x() + 1, pos.y() + 12, firstColor.getValue().color());
+            context.drawTextWithShadow(client.textRenderer, String.valueOf(df.format(y)), pos.x() + 11, pos.y() + 12, secondColor.getValue().color());
+            context.drawTextWithShadow(client.textRenderer, "Z", pos.x() + 1, pos.y() + 22, firstColor.getValue().color());
+            context.drawTextWithShadow(client.textRenderer, String.valueOf(df.format(z)), pos.x() + 11, pos.y() + 22, secondColor.getValue().color());
+            context.drawTextWithShadow(client.textRenderer, direction, pos.x() + 60, pos.y() + 12, firstColor.getValue().color());
+            context.drawTextWithShadow(client.textRenderer, getXDir(dir), pos.x() + 60, pos.y() + 2, secondColor.getValue().color());
+            context.drawTextWithShadow(client.textRenderer, getZDir(dir), pos.x() + 60, pos.y() + 22, secondColor.getValue().color());
         }
     }
 

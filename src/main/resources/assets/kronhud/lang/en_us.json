@@ -132,7 +132,7 @@
   "texts.kronhud.togglesprint.sneaking": "Sneaking",
   "texts.kronhud.togglesprint.sneaking_toggled": "Sneaking [Toggled]",
   "hud.kronhud.armorhud.info": "A HUD component to show held items and armor",
-  "hud.kronhud.arrowhead.info": "A HUD component to show the amount of arrows in your inventory",
+  "hud.kronhud.arrowhud.info": "A HUD component to show the amount of arrows in your inventory",
   "hud.kronhud.cpshud.info": "A simple text component to show CPS. Right/left click can be enabled",
   "hud.kronhud.crosshairhud.info": "Modify the Vanilla Crosshair",
   "hud.kronhud.fpshud.info": "A simple text component to show FPS",

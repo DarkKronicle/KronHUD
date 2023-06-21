@@ -7,7 +7,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
 
 import java.util.*;
@@ -72,20 +72,20 @@ public class HudManager {
         return entries.get(identifier);
     }
 
-    public void render(MatrixStack matrices, float delta) {
+    public void render(DrawContext context, float delta) {
         if (!(client.currentScreen instanceof HudEditScreen) && !client.options.debugEnabled) {
             for (HudEntry hud : getEntries()) {
                 if (hud.isEnabled()) {
-                    hud.render(matrices, delta);
+                    hud.render(context, delta);
                 }
             }
         }
     }
 
-    public void renderPlaceholder(MatrixStack matrices, float delta) {
+    public void renderPlaceholder(DrawContext context, float delta) {
         for (HudEntry hud : getEntries()) {
             if (hud.isEnabled()) {
-                hud.renderPlaceholder(matrices, delta);
+                hud.renderPlaceholder(context, delta);
             }
         }
     }

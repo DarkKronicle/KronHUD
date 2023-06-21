@@ -1,25 +1,13 @@
 package io.github.darkkronicle.kronhud.util;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
-import io.github.darkkronicle.darkkore.util.Color;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.font.TextRenderer.TextLayerType;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.render.*;
-import net.minecraft.client.render.VertexConsumerProvider.Immediate;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat.DrawMode;
-import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.json.ModelTransformation;
-import net.minecraft.client.texture.SpriteAtlasTexture;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
 import net.minecraft.util.Util;
-import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +66,7 @@ public class ItemUtil {
         ItemStack compare = item.copy();
         compare.setCount(1);
         for (ItemUtil.ItemStorage storage : list) {
-            if (storage.stack.isItemEqual(compare)) {
+            if (storage.stack.isOf(compare.getItem())) {
                 return Optional.of(storage);
             }
         }
@@ -90,7 +78,7 @@ public class ItemUtil {
         ItemStack compare = item.copy();
         compare.setCount(1);
         for (ItemUtil.TimedItemStorage storage : list) {
-            if (storage.stack.isItemEqual(compare)) {
+            if (storage.stack.isOf(compare.getItem())) {
                 return Optional.of(storage);
             }
         }
@@ -197,43 +185,6 @@ public class ItemUtil {
 
         public void refresh() {
             start = Util.getMeasuringTimeMs();
-        }
-    }
-
-    public static void renderGuiItemOverlay(MatrixStack matrices, TextRenderer text, ItemStack stack, int x, int y,
-            String countLabel, int color, boolean shadow, float delta) {
-        if (!stack.isEmpty()) {
-            matrices.push();
-            if (stack.getCount() != 1 || countLabel != null) {
-                matrices.translate(0, 0, 200);
-                String string = countLabel == null ? String.valueOf(stack.getCount()) : countLabel;
-                DrawUtil.drawString(matrices, text, Text.literal(string), (float) (x + 19 - 2 - text.getWidth(string)),
-                        (float) (y + 6 + 3), color, shadow);
-            }
-
-            if (stack.isItemBarVisible()) {
-                RenderSystem.disableDepthTest();
-                int step = stack.getItemBarStep();
-                int barColor = stack.getItemBarColor();
-                int left = x + 2;
-                int top = y + 13;
-                DrawableHelper.fill(matrices, left, top, left + 13, top + 2, -16777216);
-                DrawableHelper.fill(matrices, left, top, left + step, top + 1, barColor | -16777216);
-                RenderSystem.enableDepthTest();
-            }
-
-            ClientPlayerEntity player = MinecraftClient.getInstance().player;
-            float cooldown = player == null ? 0.0F
-                    : player.getItemCooldownManager().getCooldownProgress(stack.getItem(), delta);
-            if (cooldown > 0.0F) {
-                RenderSystem.disableDepthTest();
-                int top = y + MathHelper.floor(16 * (1 - cooldown));
-                int bottom = top + MathHelper.ceil(16 * cooldown);
-                DrawableHelper.fill(matrices, x, top, x + 16, bottom, Integer.MAX_VALUE);
-                RenderSystem.enableDepthTest();
-            }
-
-            matrices.pop();
         }
     }
 }

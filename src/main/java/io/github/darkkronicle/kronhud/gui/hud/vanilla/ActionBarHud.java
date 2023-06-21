@@ -4,10 +4,8 @@ import io.github.darkkronicle.darkkore.util.Color;
 import io.github.darkkronicle.kronhud.config.KronBoolean;
 import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.config.KronInteger;
-import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.gui.entry.TextHudEntry;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -35,7 +33,7 @@ public class ActionBarHud extends TextHudEntry {
     }
 
     @Override
-    public void renderComponent(MatrixStack matrices, float delta) {
+    public void renderComponent(DrawContext context, float delta) {
         if (ticksShown >= timeShown.getValue()) {
             this.actionBar = null;
         }
@@ -43,9 +41,10 @@ public class ActionBarHud extends TextHudEntry {
         if (this.actionBar != null) {
 
             if (shadow.getValue()) {
-                client.textRenderer.drawWithShadow(matrices, actionBar,
-                        (float) getPos().x() + Math.round((float) getWidth() / 2) - (float) client.textRenderer.getWidth(actionBar) / 2,
-                        (float) getPos().y() + 3,
+                context.drawTextWithShadow(
+                        client.textRenderer, actionBar,
+                        getPos().x() + Math.round(getWidth() / 2F) - client.textRenderer.getWidth(actionBar) / 2,
+                        getPos().y() + 3,
                         customTextColor.getValue() ? (
                                 textColor.getValue().alpha() == 255 ?
                                 new Color(
@@ -60,9 +59,10 @@ public class ActionBarHud extends TextHudEntry {
                 );
             } else {
 
-                client.textRenderer.draw(matrices, actionBar,
-                        (float) getPos().x() + Math.round((float) getWidth() / 2) - ((float) client.textRenderer.getWidth(actionBar) / 2),
-                        (float) getPos().y() + 3,
+                context.drawText(
+                        client.textRenderer, actionBar,
+                        getPos().x() + Math.round(getWidth() / 2F) - (client.textRenderer.getWidth(actionBar) / 2),
+                        getPos().y() + 3,
                         customTextColor.getValue() ? (
                                 textColor.getValue().alpha() == 255 ?
                                 new Color(
@@ -73,7 +73,7 @@ public class ActionBarHud extends TextHudEntry {
                                 ).color() :
                                 textColor.getValue().color()
                         ) :
-                        color
+                        color, false
                 );
             }
             ticksShown++;
@@ -83,11 +83,12 @@ public class ActionBarHud extends TextHudEntry {
     }
 
     @Override
-    public void renderPlaceholderComponent(MatrixStack matrices, float delta) {
-        client.textRenderer.draw(
-                matrices, placeholder,
-                (float) getPos().x() + Math.round((float) getWidth() / 2) - (float) client.textRenderer.getWidth(placeholder) / 2,
-                (float) getPos().y() + 3, -1
+    public void renderPlaceholderComponent(DrawContext context, float delta) {
+        context.drawText(
+                client.textRenderer,
+                placeholder,
+                getPos().x() + Math.round(getWidth() / 2F) - client.textRenderer.getWidth(placeholder) / 2,
+                getPos().y() + 3, -1, false
         );
     }
 

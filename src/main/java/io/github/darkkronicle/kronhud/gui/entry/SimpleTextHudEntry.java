@@ -10,6 +10,7 @@ import io.github.darkkronicle.kronhud.gui.component.DynamicallyPositionable;
 import io.github.darkkronicle.kronhud.gui.layout.AnchorPoint;
 import io.github.darkkronicle.kronhud.gui.layout.Justification;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
@@ -38,7 +39,7 @@ public abstract class SimpleTextHudEntry extends TextHudEntry implements Dynamic
     }
 
     @Override
-    public void renderComponent(MatrixStack matrices, float delta) {
+    public void renderComponent(DrawContext context, float delta) {
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         DrawPosition pos = getPos();
@@ -58,7 +59,7 @@ public abstract class SimpleTextHudEntry extends TextHudEntry implements Dynamic
             onBoundsUpdate();
         }
         drawString(
-                matrices, client.textRenderer, Text.literal(value),
+                context, client.textRenderer, Text.literal(value),
                 pos.x() + justification.getValue().getXOffset(valueWidth, getWidth() - 4) + 2,
                 pos.y() + (Math.round((float) getHeight() / 2)) - 4,
                 getTextColor().color(), shadow.getValue()
@@ -71,11 +72,11 @@ public abstract class SimpleTextHudEntry extends TextHudEntry implements Dynamic
     }
 
     @Override
-    public void renderPlaceholderComponent(MatrixStack matrices, float delta) {
+    public void renderPlaceholderComponent(DrawContext context, float delta) {
         DrawPosition pos = getPos();
         String value = getPlaceholder();
         drawString(
-                matrices, client.textRenderer, Text.literal(value),
+                context, client.textRenderer, Text.literal(value),
                 pos.x() + justification.getValue().getXOffset(value, getWidth() - 4) + 2,
                 pos.y() + (Math.round((float) getHeight() / 2)) - 4,
                 textColor.getValue().color(), shadow.getValue()

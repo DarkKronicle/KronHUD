@@ -6,6 +6,7 @@ import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.config.KronExtendedColor;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.util.ColorUtil;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 import java.util.List;
@@ -44,35 +45,35 @@ public abstract class BoxHudEntry extends AbstractHudEntry {
     }
 
     @Override
-    public void render(MatrixStack matrices, float delta) {
-        matrices.push();
-        scale(matrices);
+    public void render(DrawContext context, float delta) {
+        context.getMatrices().push();
+        scale(context);
         if (backgroundAllowed) {
             if (background.getValue() && backgroundColor.getValue().alpha() > 0) {
-                fillRect(matrices, getBounds(), backgroundColor.getValue());
+                fillRect(context, getBounds(), backgroundColor.getValue());
             }
             if (outline.getValue() && outlineColor.getValue().alpha() > 0) {
-                outlineRect(matrices, getBounds(), outlineColor.getValue());
+                outlineRect(context, getBounds(), outlineColor.getValue());
             }
         }
-        renderComponent(matrices, delta);
-        matrices.pop();
+        renderComponent(context, delta);
+        context.getMatrices().pop();
     }
 
-    public abstract void renderComponent(MatrixStack matrices, float delta);
+    public abstract void renderComponent(DrawContext context, float delta);
 
     @Override
-    public void renderPlaceholder(MatrixStack matrices, float delta) {
-        matrices.push();
-        renderPlaceholderBackground(matrices);
-        outlineRect(matrices, getTrueBounds(), ColorUtil.BLACK);
-        scale(matrices);
-        renderPlaceholderComponent(matrices, delta);
-        matrices.pop();
+    public void renderPlaceholder(DrawContext context, float delta) {
+        context.getMatrices().push();
+        renderPlaceholderBackground(context);
+        outlineRect(context, getTrueBounds(), ColorUtil.BLACK);
+        scale(context);
+        renderPlaceholderComponent(context, delta);
+        context.getMatrices().pop();
         hovered = false;
     }
 
-    public abstract void renderPlaceholderComponent(MatrixStack matrices, float delta);
+    public abstract void renderPlaceholderComponent(DrawContext context, float delta);
 
     @Override
     public boolean movable() {
