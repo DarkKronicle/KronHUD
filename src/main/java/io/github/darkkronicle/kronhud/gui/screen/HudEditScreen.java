@@ -1,27 +1,22 @@
 
 package io.github.darkkronicle.kronhud.gui.screen;
 
-import io.github.darkkronicle.darkkore.config.options.Option;
-import io.github.darkkronicle.darkkore.gui.Tab;
 import io.github.darkkronicle.darkkore.settings.DarkKoreConfig;
 import io.github.darkkronicle.darkkore.util.render.RenderUtil;
 import io.github.darkkronicle.kronhud.config.ConfigHandler;
-import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.gui.HudManager;
 import io.github.darkkronicle.kronhud.gui.component.HudEntry;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import io.github.darkkronicle.kronhud.util.Rectangle;
 import io.github.darkkronicle.kronhud.util.SnappingHelper;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class HudEditScreen extends Screen {
     private boolean mouseDown = false;
@@ -62,14 +57,14 @@ public class HudEditScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        RenderUtil.fill(matrices, 0, 0, width, height, DarkKoreConfig.getInstance().screenBackgroundColor.getValue());
-        super.render(matrices, mouseX, mouseY, delta);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        RenderUtil.fill(context, 0, 0, width, height, DarkKoreConfig.getInstance().screenBackgroundColor.getValue());
+        super.render(context, mouseX, mouseY, delta);
         Optional<HudEntry> entry = HudManager.getInstance().getEntryXY(mouseX, mouseY);
         entry.ifPresent(abstractHudEntry -> abstractHudEntry.setHovered(true));
-        HudManager.getInstance().renderPlaceholder(matrices, delta);
+        HudManager.getInstance().renderPlaceholder(context, delta);
         if (mouseDown && snap != null) {
-            snap.renderSnaps(matrices);
+            snap.renderSnaps(context);
         }
     }
 

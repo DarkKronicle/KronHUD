@@ -7,6 +7,7 @@ import io.github.darkkronicle.kronhud.config.KronDouble;
 import io.github.darkkronicle.kronhud.gui.entry.BoxHudEntry;
 import io.github.darkkronicle.kronhud.hooks.KronHudHooks;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -40,12 +41,12 @@ public class PlayerHud extends BoxHudEntry {
     }
 
     @Override
-    public void renderComponent(MatrixStack matrices, float delta) {
+    public void renderComponent(DrawContext context, float delta) {
         renderPlayer(getTruePos().x() + 31 * getScale(), getTruePos().y() + 86 * getScale(), delta);
     }
 
     @Override
-    public void renderPlaceholderComponent(MatrixStack matrices, float delta) {
+    public void renderPlaceholderComponent(DrawContext context, float delta) {
         renderPlayer(getTruePos().x() + 31 * getScale(), getTruePos().y() + 86 * getScale(), 0); // If delta was delta, it would start jittering
     }
 

@@ -5,7 +5,10 @@ import io.github.darkkronicle.darkkore.colors.ExtendedColor;
 import io.github.darkkronicle.darkkore.config.options.OptionListEntry;
 import io.github.darkkronicle.darkkore.util.Color;
 import io.github.darkkronicle.darkkore.util.render.RenderUtil;
-import io.github.darkkronicle.kronhud.config.*;
+import io.github.darkkronicle.kronhud.config.KronBoolean;
+import io.github.darkkronicle.kronhud.config.KronConfig;
+import io.github.darkkronicle.kronhud.config.KronExtendedColor;
+import io.github.darkkronicle.kronhud.config.KronOptionList;
 import io.github.darkkronicle.kronhud.gui.AbstractHudEntry;
 import io.github.darkkronicle.kronhud.gui.component.DynamicallyPositionable;
 import io.github.darkkronicle.kronhud.gui.layout.AnchorPoint;
@@ -14,13 +17,10 @@ import io.github.darkkronicle.kronhud.util.DrawPosition;
 import io.github.darkkronicle.kronhud.util.Rectangle;
 import lombok.AllArgsConstructor;
 import net.minecraft.block.AbstractChestBlock;
-import net.minecraft.client.Keyboard;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.gui.hud.InGameHud;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.AttackIndicator;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.debug.DebugRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
@@ -29,12 +29,12 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.world.World;
-import org.joml.Vector3f;
 
 import java.util.List;
 
 public class CrosshairHud extends AbstractHudEntry implements DynamicallyPositionable {
     public static final Identifier ID = new Identifier("kronhud", "crosshairhud");
+    private static final Identifier ICONS_TEXTURE = new Identifier("textures/gui/icons.png");
 
     private final KronOptionList<Crosshair> type = new KronOptionList<>("type", ID.getPath(), Crosshair.CROSS);
     private final KronBoolean showInF5 = new KronBoolean("showInF5", ID.getPath(), false);
@@ -59,24 +59,24 @@ public class CrosshairHud extends AbstractHudEntry implements DynamicallyPositio
     }
 
     @Override
-    public void render(MatrixStack matrices, float delta) {
+    public void render(DrawContext context, float delta) {
         if (!client.options.getPerspective().isFirstPerson() && !showInF5.getValue()) {
             return;
         }
 
-        matrices.push();
-        scale(matrices);
+        context.getMatrices().push();
+        scale(context);
         DrawPosition pos = getPos().subtract(0, -1);
         Color color = getColor();
         AttackIndicator indicator = this.client.options.getAttackIndicator().getValue();
 
         if (type.getValue() == Crosshair.DOT) {
-            fillRect(matrices, new Rectangle(pos.x() + (getWidth() / 2) - 2, pos.y() + (getHeight() / 2) - 2, 3, 3), color);
+            fillRect(context, new Rectangle(pos.x() + (getWidth() / 2) - 2, pos.y() + (getHeight() / 2) - 2, 3, 3), color);
         } else if (type.getValue() == Crosshair.CROSS) {
-            fillRect(matrices, new Rectangle(pos.x() + (getWidth() / 2) - 6, pos.y() + (getHeight() / 2) - 1, 6, 1), color);
-            fillRect(matrices, new Rectangle(pos.x() + (getWidth() / 2), pos.y() + (getHeight() / 2) - 1, 5, 1), color);
-            fillRect(matrices, new Rectangle(pos.x() + (getWidth() / 2) - 1, pos.y() + (getHeight() / 2) - 6, 1, 6), color);
-            fillRect(matrices, new Rectangle(pos.x() + (getWidth() / 2) - 1, pos.y() + (getHeight() / 2), 1, 5), color);
+            fillRect(context, new Rectangle(pos.x() + (getWidth() / 2) - 6, pos.y() + (getHeight() / 2) - 1, 6, 1), color);
+            fillRect(context, new Rectangle(pos.x() + (getWidth() / 2), pos.y() + (getHeight() / 2) - 1, 5, 1), color);
+            fillRect(context, new Rectangle(pos.x() + (getWidth() / 2) - 1, pos.y() + (getHeight() / 2) - 6, 1, 6), color);
+            fillRect(context, new Rectangle(pos.x() + (getWidth() / 2) - 1, pos.y() + (getHeight() / 2), 1, 5), color);
         } else if (type.getValue() == Crosshair.DIRECTION) {
             Camera camera = this.client.gameRenderer.getCamera();
             MatrixStack matrixStack = RenderSystem.getModelViewStack();
@@ -92,13 +92,12 @@ public class CrosshairHud extends AbstractHudEntry implements DynamicallyPositio
         } else if (type.getValue() == Crosshair.TEXTURE) {
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-            RenderSystem.setShaderTexture(0, DrawableHelper.GUI_ICONS_TEXTURE);
 
             // Draw crosshair
             RenderSystem.setShaderColor(
                     (float) color.red() / 255, (float) color.green() / 255, (float) color.blue() / 255, (float) color.alpha() / 255);
-            client.inGameHud.drawTexture(
-                    matrices, (int) (((client.getWindow().getScaledWidth() / getScale()) - 15) / 2),
+            context.drawTexture(
+                    ICONS_TEXTURE, (int) (((client.getWindow().getScaledWidth() / getScale()) - 15) / 2),
                     (int) (((client.getWindow().getScaledHeight() / getScale()) - 15) / 2), 0, 0, 15, 15
             );
             RenderSystem.setShaderColor(1, 1, 1, 1);
@@ -119,11 +118,11 @@ public class CrosshairHud extends AbstractHudEntry implements DynamicallyPositio
                 int y = (int) ((client.getWindow().getScaledHeight() / getScale()) / 2 - 7 + 16);
 
                 if (targetingEntity) {
-                    client.inGameHud.drawTexture(matrices, x, y, 68, 94, 16, 16);
+                    context.drawTexture(ICONS_TEXTURE, x, y, 68, 94, 16, 16);
                 } else if (progress < 1.0F) {
                     int k = (int) (progress * 17.0F);
-                    client.inGameHud.drawTexture(matrices, x, y, 36, 94, 16, 4);
-                    client.inGameHud.drawTexture(matrices, x, y, 52, 94, k, 4);
+                    context.drawTexture(ICONS_TEXTURE, x, y, 36, 94, 16, 4);
+                    context.drawTexture(ICONS_TEXTURE, x, y, 52, 94, k, 4);
                 }
             }
         }
@@ -131,16 +130,16 @@ public class CrosshairHud extends AbstractHudEntry implements DynamicallyPositio
             float progress = this.client.player.getAttackCooldownProgress(0.0F);
             if (progress != 1.0F) {
                 RenderUtil.drawRectangle(
-                        matrices, pos.x() + (getWidth() / 2) - 6, pos.y() + (getHeight() / 2) + 9, 11, 1,
+                        context, pos.x() + (getWidth() / 2) - 6, pos.y() + (getHeight() / 2) + 9, 11, 1,
                         attackIndicatorBackgroundColor.getValue()
                 );
                 RenderUtil.drawRectangle(
-                        matrices, pos.x() + (getWidth() / 2) - 6, pos.y() + (getHeight() / 2) + 9,
+                        context, pos.x() + (getWidth() / 2) - 6, pos.y() + (getHeight() / 2) + 9,
                         (int) (progress * 11), 1, attackIndicatorForegroundColor.getValue()
                 );
             }
         }
-        matrices.pop();
+        context.getMatrices().pop();
     }
 
     public Color getColor() {
@@ -163,7 +162,7 @@ public class CrosshairHud extends AbstractHudEntry implements DynamicallyPositio
     }
 
     @Override
-    public void renderPlaceholder(MatrixStack matrices, float delta) {
+    public void renderPlaceholder(DrawContext context, float delta) {
         // Shouldn't need this...
     }
 

@@ -12,6 +12,7 @@ import io.github.darkkronicle.kronhud.gui.entry.TextHudEntry;
 import io.github.darkkronicle.kronhud.gui.layout.AnchorPoint;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import io.github.darkkronicle.kronhud.util.DrawUtil;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -48,16 +49,16 @@ public class CompassHud extends TextHudEntry implements DynamicallyPositionable 
     }
 
     @Override
-    public void renderComponent(MatrixStack matrices, float delta) {
-        renderCompass(matrices, delta);
+    public void renderComponent(DrawContext context, float delta) {
+        renderCompass(context, delta);
     }
 
     @Override
-    public void renderPlaceholderComponent(MatrixStack matrices, float delta) {
-        renderCompass(matrices, delta);
+    public void renderPlaceholderComponent(DrawContext context, float delta) {
+        renderCompass(context, delta);
     }
 
-    public void renderCompass(MatrixStack matrices, float delta) {
+    public void renderCompass(DrawContext context, float delta) {
         // N = 0
         // E = 90
         // S = 180
@@ -79,10 +80,10 @@ public class CompassHud extends TextHudEntry implements DynamicallyPositionable 
         DrawPosition pos = getPos();
         int x = pos.x();
         int y = pos.y() + 1;
-        RenderUtil.drawRectangle(matrices, pos.x() + (int) halfWidth - 1, pos.y(), 3, 11, lookingBox.getValue());
+        RenderUtil.drawRectangle(context, pos.x() + (int) halfWidth - 1, pos.y(), 3, 11, lookingBox.getValue());
         if (showDegrees.getValue()) {
             DrawUtil.drawCenteredString(
-                    matrices, client.textRenderer, Text.literal(Integer.toString((int) degrees)), x + (int) halfWidth, y + 20, degreesColor.getValue(),
+                    context, client.textRenderer, Text.literal(Integer.toString((int) degrees)), x + (int) halfWidth, y + 20, degreesColor.getValue(),
                     shadow.getValue()
             );
         }
@@ -90,7 +91,7 @@ public class CompassHud extends TextHudEntry implements DynamicallyPositionable 
         if (invert.getValue()) {
             shift = dist - shift;
         }
-        matrices.translate(shift, 0, 0);
+        context.getMatrices().translate(shift, 0, 0);
         for (int i = 0; i < amount; i++) {
             int d;
             if (invert.getValue()) {
@@ -111,27 +112,27 @@ public class CompassHud extends TextHudEntry implements DynamicallyPositionable 
             RenderSystem.setShaderColor(1, 1, 1, targetOpacity);
             if (indicator == Indicator.CARDINAL) {
                 // We have to call .color() here so that transparency stays
-                RenderUtil.drawRectangle(matrices, innerX, y, 1, 9, majorIndicatorColor.getValue().color());
+                RenderUtil.drawRectangle(context, innerX, y, 1, 9, majorIndicatorColor.getValue().color());
                 Color color = cardinalColor.getValue();
                 color = color.withAlpha((int) (color.alpha() * targetOpacity));
                 if (color.alpha() > 0) {
                     DrawUtil.drawCenteredString(
-                            matrices, client.textRenderer, Text.literal(getCardString(indicator, d)), innerX + 1, y + 10, color, shadow.getValue());
+                            context, client.textRenderer, Text.literal(getCardString(indicator, d)), innerX + 1, y + 10, color, shadow.getValue());
                 }
             } else if (indicator == Indicator.SEMI_CARDINAL) {
                 Color color = semiCardinalColor.getValue();
                 color = color.withAlpha((int) (color.alpha() * targetOpacity));
                 if (color.alpha() > 0) {
                     DrawUtil.drawCenteredString(
-                            matrices, client.textRenderer, Text.literal(getCardString(indicator, d)), innerX + 1, y + 1, color, shadow.getValue());
+                            context, client.textRenderer, Text.literal(getCardString(indicator, d)), innerX + 1, y + 1, color, shadow.getValue());
                 }
             } else {
                 // We have to call .color() here so that transparency stays
-                RenderUtil.drawRectangle(matrices, innerX, y, 1, 5, minorIndicatorColor.getValue().color());
+                RenderUtil.drawRectangle(context, innerX, y, 1, 5, minorIndicatorColor.getValue().color());
             }
         }
         RenderSystem.setShaderColor(1, 1, 1, 1);
-        matrices.translate(-shift, 0, 0);
+        context.getMatrices().translate(-shift, 0, 0);
     }
 
     private static Indicator getIndicator(int degrees) {

@@ -2,7 +2,10 @@ package io.github.darkkronicle.kronhud.gui;
 
 import io.github.darkkronicle.darkkore.config.options.Option;
 import io.github.darkkronicle.darkkore.gui.Tab;
-import io.github.darkkronicle.kronhud.config.*;
+import io.github.darkkronicle.kronhud.config.DefaultOptions;
+import io.github.darkkronicle.kronhud.config.KronBoolean;
+import io.github.darkkronicle.kronhud.config.KronConfig;
+import io.github.darkkronicle.kronhud.config.KronDouble;
 import io.github.darkkronicle.kronhud.gui.component.HudEntry;
 import io.github.darkkronicle.kronhud.util.ColorUtil;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
@@ -11,7 +14,7 @@ import io.github.darkkronicle.kronhud.util.Rectangle;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
@@ -54,13 +57,13 @@ public abstract class AbstractHudEntry extends DrawUtil implements HudEntry {
 
     public void init() {}
 
-    public void renderPlaceholderBackground(MatrixStack matrices) {
+    public void renderPlaceholderBackground(DrawContext context) {
         if (hovered) {
-            fillRect(matrices, getTrueBounds(), ColorUtil.SELECTOR_BLUE.withAlpha(100));
+            fillRect(context, getTrueBounds(), ColorUtil.SELECTOR_BLUE.withAlpha(100));
         } else {
-            fillRect(matrices, getTrueBounds(), ColorUtil.WHITE.withAlpha(50));
+            fillRect(context, getTrueBounds(), ColorUtil.WHITE.withAlpha(50));
         }
-        outlineRect(matrices, getTrueBounds(), ColorUtil.BLACK);
+        outlineRect(context, getTrueBounds(), ColorUtil.BLACK);
     }
 
     public int getRawX() {
@@ -101,9 +104,9 @@ public abstract class AbstractHudEntry extends DrawUtil implements HudEntry {
         return scale.getValue().floatValue();
     }
 
-    public void scale(MatrixStack matrices) {
+    public void scale(DrawContext context) {
         float scale = getScale();
-        matrices.scale(scale, scale, 1);
+        context.getMatrices().scale(scale, scale, 1);
     }
 
     @Override

@@ -10,14 +10,12 @@ import io.github.darkkronicle.kronhud.gui.entry.TextHudEntry;
 import io.github.darkkronicle.kronhud.gui.layout.AnchorPoint;
 import io.github.darkkronicle.kronhud.gui.layout.CardinalOrder;
 import io.github.darkkronicle.kronhud.util.Rectangle;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffectUtil;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
@@ -60,15 +58,15 @@ public class PotionsHud extends TextHudEntry implements DynamicallyPositionable 
     }
 
     @Override
-    public void renderComponent(MatrixStack matrices, float delta) {
+    public void renderComponent(DrawContext context, float delta) {
         List<StatusEffectInstance> effects = new ArrayList<>(client.player.getStatusEffects());
         if (effects.isEmpty()) {
             return;
         }
-        renderEffects(matrices, effects);
+        renderEffects(context, effects);
     }
 
-    private void renderEffects(MatrixStack matrices, List<StatusEffectInstance> effects) {
+    private void renderEffects(DrawContext context, List<StatusEffectInstance> effects) {
         int calcWidth = calculateWidth(effects);
         int calcHeight = calculateHeight(effects);
         boolean changed = false;
@@ -92,35 +90,34 @@ public class PotionsHud extends TextHudEntry implements DynamicallyPositionable 
         for (int i = 0; i < effects.size(); i++) {
             StatusEffectInstance effect = effects.get(direction.getDirection() == -1 ? i : effects.size() - i - 1);
             if (direction.isXAxis()) {
-                renderPotion(matrices, effect, x + lastPos + 1, y + 1);
+                renderPotion(context, effect, x + lastPos + 1, y + 1);
                 lastPos += (iconsOnly.getValue() ? 20 : 50);
             } else {
-                renderPotion(matrices, effect, x + 1, y + 1 + lastPos);
+                renderPotion(context, effect, x + 1, y + 1 + lastPos);
                 lastPos += 20;
             }
         }
     }
 
-    private void renderPotion(MatrixStack matrices, StatusEffectInstance effect, int x, int y) {
+    private void renderPotion(DrawContext context, StatusEffectInstance effect, int x, int y) {
         StatusEffect type = effect.getEffectType();
         Sprite sprite = client.getStatusEffectSpriteManager().getSprite(type);
 
-        RenderSystem.setShaderTexture(0, sprite.getAtlasId());
         RenderSystem.setShaderColor(1, 1, 1, 1);
-        DrawableHelper.drawSprite(matrices, x, y, 0, 18, 18, sprite);
+        context.drawSprite(x, y, 0, 18, 18, sprite);
         if (!iconsOnly.getValue()) {
-            drawString(matrices, client.textRenderer, StatusEffectUtil.durationToString(effect, 1), x + 19, y + 5,
+            drawString(context, client.textRenderer, StatusEffectUtil.getDurationText(effect, 1), x + 19, y + 5,
                     textColor.getValue().color(), shadow.getValue()
             );
         }
     }
 
     @Override
-    public void renderPlaceholderComponent(MatrixStack matrices, float delta) {
+    public void renderPlaceholderComponent(DrawContext context, float delta) {
         StatusEffectInstance effect = new StatusEffectInstance(StatusEffects.SPEED);
         StatusEffectInstance jump = new StatusEffectInstance(StatusEffects.JUMP_BOOST);
         StatusEffectInstance haste = new StatusEffectInstance(StatusEffects.HASTE);
-        renderEffects(matrices, List.of(effect, jump, haste));
+        renderEffects(context, List.of(effect, jump, haste));
     }
 
     @Override

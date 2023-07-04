@@ -13,9 +13,9 @@ import io.github.darkkronicle.kronhud.util.ColorUtil;
 import io.github.darkkronicle.kronhud.util.DrawPosition;
 import io.github.darkkronicle.kronhud.util.Rectangle;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
@@ -84,15 +84,15 @@ public class KeystrokeHud extends TextHudEntry {
         keystrokes.add(createFromKey(new Rectangle(36, 18, 17, 17), pos, client.options.rightKey));
 
         // Space
-        keystrokes.add(new Keystroke(new Rectangle(0, 54, 53, 7), pos, client.options.jumpKey, (stroke, matrices) -> {
+        keystrokes.add(new Keystroke(new Rectangle(0, 54, 53, 7), pos, client.options.jumpKey, (stroke, context) -> {
             Rectangle bounds = stroke.bounds;
             Rectangle spaceBounds = new Rectangle(bounds.x() + stroke.offset.x() + 4,
                     bounds.y() + stroke.offset.y() + 2,
                     bounds.width() - 8, 1
             );
-            fillRect(matrices, spaceBounds, stroke.getFGColor());
+            fillRect(context, spaceBounds, stroke.getFGColor());
             if (shadow.getValue()) {
-                fillRect(matrices, spaceBounds.offset(1, 1),
+                fillRect(context, spaceBounds.offset(1, 1),
                         new Color((stroke.getFGColor().color() & 16579836) >> 2 | stroke.getFGColor().color() & -16777216)
                 );
             }
@@ -102,40 +102,40 @@ public class KeystrokeHud extends TextHudEntry {
     }
 
     @Override
-    public void render(MatrixStack matrices, float delta) {
-        matrices.push();
-        scale(matrices);
-        renderComponent(matrices, delta);
-        matrices.pop();
+    public void render(DrawContext context, float delta) {
+        context.getMatrices().push();
+        scale(context);
+        renderComponent(context, delta);
+        context.getMatrices().pop();
     }
 
     @Override
-    public void renderComponent(MatrixStack matrices, float delta) {
+    public void renderComponent(DrawContext context, float delta) {
         if (keystrokes == null) {
             setKeystrokes();
         }
         for (Keystroke stroke : keystrokes) {
-            stroke.render(matrices);
+            stroke.render(context);
         }
         if (mouseMovement.getValue()) {
             int spaceY = 62 + getRawY();
             int spaceX = getRawX();
             if (background.getValue()) {
-                RenderUtil.drawRectangle(matrices, spaceX, spaceY, width, 35, backgroundColor.getValue());
+                RenderUtil.drawRectangle(context, spaceX, spaceY, width, 35, backgroundColor.getValue());
             }
             if (outline.getValue()) {
-                RenderUtil.drawOutline(matrices, spaceX, spaceY, width, 35, outlineColor.getValue());
+                RenderUtil.drawOutline(context, spaceX, spaceY, width, 35, outlineColor.getValue());
             }
 
             float calculatedMouseX = (lastMouseX + ((mouseX - lastMouseX) * delta)) - 5;
             float calculatedMouseY = (lastMouseY + ((mouseY - lastMouseY) * delta)) - 5;
 
-            RenderUtil.drawRectangle(matrices, spaceX + (width / 2) - 1, spaceY + 17, 1, 1, ColorUtil.WHITE);
+            RenderUtil.drawRectangle(context, spaceX + (width / 2) - 1, spaceY + 17, 1, 1, ColorUtil.WHITE);
 
-            matrices.translate(calculatedMouseX, calculatedMouseY, 0); // Woah KodeToad, good use of translate
+            context.getMatrices().translate(calculatedMouseX, calculatedMouseY, 0); // Woah KodeToad, good use of translate
 
             RenderUtil.drawOutline(
-                    matrices,
+                    context,
                     spaceX + (width / 2) - 1,
                     spaceY + 17,
                     11,
@@ -183,8 +183,8 @@ public class KeystrokeHud extends TextHudEntry {
     }
 
     @Override
-    public void renderPlaceholderComponent(MatrixStack matrices, float delta) {
-        renderComponent(matrices, delta);
+    public void renderPlaceholderComponent(DrawContext context, float delta) {
+        renderComponent(context, delta);
     }
 
     public Keystroke createFromKey(Rectangle bounds, DrawPosition offset, KeyBinding key) {
@@ -196,13 +196,13 @@ public class KeystrokeHud extends TextHudEntry {
     }
 
     public Keystroke createFromString(Rectangle bounds, DrawPosition offset, KeyBinding key, String word) {
-        return new Keystroke(bounds, offset, key, (stroke, matrices) -> {
+        return new Keystroke(bounds, offset, key, (stroke, context) -> {
             Rectangle strokeBounds = stroke.bounds;
             float x = (strokeBounds.x() + stroke.offset.x() + ((float) strokeBounds.width() / 2)) -
                     ((float) client.textRenderer.getWidth(word) / 2);
             float y = strokeBounds.y() + stroke.offset.y() + ((float) strokeBounds.height() / 2) - 4;
 
-            drawString(matrices, client.textRenderer, Text.literal(word), x, y, stroke.getFGColor().color(), shadow.getValue());
+            drawString(context, client.textRenderer, Text.literal(word), x, y, stroke.getFGColor().color(), shadow.getValue());
         });
     }
 
@@ -260,16 +260,16 @@ public class KeystrokeHud extends TextHudEntry {
             this.render = render;
         }
 
-        public void renderStroke(MatrixStack matrices) {
+        public void renderStroke(DrawContext context) {
             if (key.isPressed() != wasPressed) {
                 start = Util.getMeasuringTimeMs();
             }
             Rectangle rect = bounds.offset(offset);
             if (background.getValue()) {
-                fillRect(matrices, rect, getColor());
+                fillRect(context, rect, getColor());
             }
             if (outline.getValue()) {
-                outlineRect(matrices, rect, getOutlineColor());
+                outlineRect(context, rect, getOutlineColor());
             }
             if ((Util.getMeasuringTimeMs() - start) / animTime >= 1) {
                 start = -1;
@@ -320,15 +320,15 @@ public class KeystrokeHud extends TextHudEntry {
                    );
         }
 
-        public void render(MatrixStack matrices) {
-            renderStroke(matrices);
-            render.render(this, matrices);
+        public void render(DrawContext context) {
+            renderStroke(context);
+            render.render(this, context);
         }
 
     }
 
     public interface KeystrokeRenderer {
-        void render(Keystroke stroke, MatrixStack matrices);
+        void render(Keystroke stroke, DrawContext context);
     }
 
 }

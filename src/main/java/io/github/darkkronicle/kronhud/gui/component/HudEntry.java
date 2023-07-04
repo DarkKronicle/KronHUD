@@ -1,7 +1,6 @@
 package io.github.darkkronicle.kronhud.gui.component;
 
-import io.github.darkkronicle.kronhud.util.DrawPosition;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 
 public interface HudEntry extends Identifiable, Configurable, Positionable {
 
@@ -25,9 +24,9 @@ public interface HudEntry extends Identifiable, Configurable, Positionable {
         return 0;
     }
 
-    void render(MatrixStack matrices, float delta);
+    void render(DrawContext context, float delta);
 
-    void renderPlaceholder(MatrixStack matrices, float delta);
+    void renderPlaceholder(DrawContext context, float delta);
 
     void setHovered(boolean hovered);
 

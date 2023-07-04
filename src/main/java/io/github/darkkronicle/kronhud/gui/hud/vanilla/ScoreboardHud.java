@@ -11,12 +11,8 @@ import io.github.darkkronicle.kronhud.gui.component.DynamicallyPositionable;
 import io.github.darkkronicle.kronhud.gui.entry.TextHudEntry;
 import io.github.darkkronicle.kronhud.gui.layout.AnchorPoint;
 import io.github.darkkronicle.kronhud.util.Rectangle;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.scoreboard.ScoreboardCriterion;
-import net.minecraft.scoreboard.ScoreboardObjective;
-import net.minecraft.scoreboard.ScoreboardPlayerScore;
-import net.minecraft.scoreboard.Team;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.scoreboard.*;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -60,15 +56,15 @@ public class ScoreboardHud extends TextHudEntry implements DynamicallyPositionab
     }
 
     @Override
-    public void render(MatrixStack matrices, float delta) {
-        matrices.push();
-        scale(matrices);
-        renderComponent(matrices, delta);
-        matrices.pop();
+    public void render(DrawContext context, float delta) {
+        context.getMatrices().push();
+        scale(context);
+        renderComponent(context, delta);
+        context.getMatrices().pop();
     }
 
     @Override
-    public void renderComponent(MatrixStack matrices, float delta) {
+    public void renderComponent(DrawContext context, float delta) {
         Scoreboard scoreboard = this.client.world.getScoreboard();
         ScoreboardObjective scoreboardObjective = null;
         Team team = scoreboard.getPlayerTeam(this.client.player.getEntityName());
@@ -81,18 +77,18 @@ public class ScoreboardHud extends TextHudEntry implements DynamicallyPositionab
 
         ScoreboardObjective scoreboardObjective2 = scoreboardObjective != null ? scoreboardObjective : scoreboard.getObjectiveForSlot(1);
         if (scoreboardObjective2 != null) {
-            this.renderScoreboardSidebar(matrices, scoreboardObjective2);
+            this.renderScoreboardSidebar(context, scoreboardObjective2);
         }
     }
 
     @Override
-    public void renderPlaceholderComponent(MatrixStack matrices, float delta) {
-        renderScoreboardSidebar(matrices, placeholder);
+    public void renderPlaceholderComponent(DrawContext context, float delta) {
+        renderScoreboardSidebar(context, placeholder);
     }
 
     // Abusing this could break some stuff/could allow for unfair advantages. The goal is not to do this, so it won't
     // show any more information than it would have in vanilla.
-    private void renderScoreboardSidebar(MatrixStack matrices, ScoreboardObjective objective) {
+    private void renderScoreboardSidebar(DrawContext context, ScoreboardObjective objective) {
         Scoreboard scoreboard = objective.getScoreboard();
         Collection<ScoreboardPlayerScore> scores = scoreboard.getAllPlayerScores(objective);
         List<ScoreboardPlayerScore> filteredScores = scores.stream().filter((testScore) ->
@@ -162,50 +158,42 @@ public class ScoreboardHud extends TextHudEntry implements DynamicallyPositionab
             if (background.getValue() && backgroundColor.getValue().alpha() > 0) {
                 if (num == scoresSize) {
                     RenderUtil.drawRectangle(
-                            matrices,
+                            context,
                             textOffset, relativeY - 1, maxWidth, 10, backgroundColor.getValue()
                     );
                 } else if (num == 1) {
                     RenderUtil.drawRectangle(
-                            matrices,
+                            context,
                             textOffset,
                            relativeY, maxWidth, 10, backgroundColor.getValue()
                     );
                 } else {
                     RenderUtil.drawRectangle(
-                            matrices,
+                            context,
                             textOffset, relativeY, maxWidth, 9, backgroundColor.getValue()
                     );
                 }
             }
 
-            if (shadow.getValue()) {
-                client.textRenderer.drawWithShadow(matrices, scoreText, (float) scoreX, (float) relativeY, -1);
-            } else {
-                client.textRenderer.draw(matrices, scoreText, (float) scoreX, (float) relativeY, -1);
-            }
+            context.drawText(client.textRenderer, scoreText, scoreX, relativeY, -1, shadow.getValue());
             if (this.scores.getValue()) {
-                drawString(matrices, client.textRenderer, Text.literal(score),
+                drawString(context, client.textRenderer, Text.literal(score),
                         (float) (scoreX + maxWidth - client.textRenderer.getWidth(score) - 6), (float) relativeY,
                         scoreColor.getValue().color(), shadow.getValue());
             }
             if (num == scoresSize) {
                 // Draw the title
                 if (background.getValue()) {
-                    RenderUtil.drawRectangle(matrices, textOffset, relativeY - 10 - topPadding.getValue() * 2 - 1, maxWidth, 10 + topPadding.getValue() * 2, topColor.getValue());
+                    RenderUtil.drawRectangle(context, textOffset, relativeY - 10 - topPadding.getValue() * 2 - 1, maxWidth, 10 + topPadding.getValue() * 2, topColor.getValue());
                 }
-                float title = (float) (renderX + (maxWidth - displayNameWidth) / 2);
-                if (shadow.getValue()) {
-                    client.textRenderer.drawWithShadow(matrices, text, title, (float) (relativeY - 9) - topPadding.getValue(), -1);
-                }
-                else {
-                    client.textRenderer.draw(matrices, text, title, (float) (relativeY - 9), -1);
-                }
+                int title = renderX + (maxWidth - displayNameWidth) / 2;
+
+                context.drawText(client.textRenderer, text, title, (relativeY - 9), -1, shadow.getValue());
             }
         }
 
         if (outline.getValue() && outlineColor.getValue().alpha() > 0) {
-            RenderUtil.drawOutline(matrices, textOffset, bounds.y(), maxWidth, fullHeight + 2, outlineColor.getValue());
+            RenderUtil.drawOutline(context, textOffset, bounds.y(), maxWidth, fullHeight + 2, outlineColor.getValue());
         }
     }
 

@@ -9,7 +9,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.scoreboard.ScoreboardObjective;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
@@ -27,7 +27,7 @@ public class MixinInGameHud {
     private int overlayRemaining;
 
     @Inject(method = "renderStatusEffectOverlay", at = @At("HEAD"), cancellable = true)
-    public void renderStatusEffect(MatrixStack matrices, CallbackInfo ci) {
+    public void renderStatusEffect(DrawContext context, CallbackInfo ci) {
         PotionsHud hud = (PotionsHud) HudManager.getInstance().get(PotionsHud.ID);
         if (hud != null && hud.isEnabled()) {
             ci.cancel();
@@ -35,7 +35,7 @@ public class MixinInGameHud {
     }
 
     @Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
-    public void renderCrosshair(MatrixStack matrices, CallbackInfo ci) {
+    public void renderCrosshair(DrawContext context, CallbackInfo ci) {
         CrosshairHud hud = (CrosshairHud) HudManager.getInstance().get(CrosshairHud.ID);
         if (hud != null && hud.isEnabled()) {
             ci.cancel();
@@ -43,21 +43,21 @@ public class MixinInGameHud {
     }
 
     @Inject(method = "renderScoreboardSidebar", at = @At("HEAD"), cancellable = true)
-    public void renderScoreboard(MatrixStack matrices, ScoreboardObjective objective, CallbackInfo ci) {
+    public void renderScoreboard(DrawContext context, ScoreboardObjective objective, CallbackInfo ci) {
         ScoreboardHud hud = (ScoreboardHud) HudManager.getInstance().get(ScoreboardHud.ID);
         if (hud != null && hud.isEnabled()) {
             ci.cancel();
         }
     }
 
-    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;drawWithShadow(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/text/Text;FFI)I"))
-    public int getActionBar(TextRenderer instance, MatrixStack matrices, Text message, float x, float y, int color) {
+    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTextWithShadow(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/text/Text;III)I"))
+    public int getActionBar(DrawContext instance, TextRenderer textRenderer, Text text, int x, int y, int color) {
         ActionBarHud hud = (ActionBarHud) HudManager.getInstance().get(ActionBarHud.ID);
         if (hud != null && hud.isEnabled()) {
-            hud.setActionBar(message, color);
+            hud.setActionBar(text, color);
             return 0; // Doesn't matter since return value is not used
         } else {
-            return instance.drawWithShadow(matrices, message, x, y, color);
+            return instance.drawTextWithShadow(textRenderer, text, x, y, color);
         }
     }
 
