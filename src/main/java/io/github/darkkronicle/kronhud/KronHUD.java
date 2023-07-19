@@ -60,6 +60,7 @@ public class KronHUD implements ClientModInitializer {
         hudManager.add(new CompassHud());
         hudManager.add(new TPSHud());
         hudManager.add(new ComboHud());
+        hudManager.add(new ElytraHud());
         HudRenderCallback.EVENT.register(hudManager::render);
         hudManager.getEntries().forEach(HudEntry::init);
     }
