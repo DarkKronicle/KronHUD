@@ -72,8 +72,8 @@ public class HudManager {
         return entries.get(identifier);
     }
 
-    public void render(DrawContext context, float delta) {
-        if (!(client.currentScreen instanceof HudEditScreen) && !client.options.debugEnabled) {
+    public void render(DrawContext context, float delta) { // Maybe property removed?
+        if (!(client.currentScreen instanceof HudEditScreen) /* && !client.options.debugEnabled */) {
             for (HudEntry hud : getEntries()) {
                 if (hud.isEnabled()) {
                     hud.render(context, delta);

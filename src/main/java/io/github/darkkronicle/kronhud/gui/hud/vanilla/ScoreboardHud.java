@@ -15,6 +15,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.scoreboard.*;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 
@@ -40,7 +41,7 @@ public class ScoreboardHud extends TextHudEntry implements DynamicallyPositionab
         ScoreboardPlayerScore kode = placeScore.getPlayerScore("TheKodeToad", objective);
         kode.setScore(2948);
 
-        placeScore.setObjectiveSlot(1, objective);
+        placeScore.setObjectiveSlot(ScoreboardDisplaySlot.SIDEBAR, objective);
         return objective;
     });
 
@@ -69,13 +70,14 @@ public class ScoreboardHud extends TextHudEntry implements DynamicallyPositionab
         ScoreboardObjective scoreboardObjective = null;
         Team team = scoreboard.getPlayerTeam(this.client.player.getEntityName());
         if (team != null) {
-            int t = team.getColor().getColorIndex();
-            if (t >= 0) {
-                scoreboardObjective = scoreboard.getObjectiveForSlot(3 + t);
+            Formatting t = team.getColor();
+            int tc = t.getColorIndex();
+            if (tc >= 0) {
+                scoreboardObjective = scoreboard.getObjectiveForSlot(ScoreboardDisplaySlot.fromFormatting(t));
             }
         }
 
-        ScoreboardObjective scoreboardObjective2 = scoreboardObjective != null ? scoreboardObjective : scoreboard.getObjectiveForSlot(1);
+        ScoreboardObjective scoreboardObjective2 = scoreboardObjective != null ? scoreboardObjective : scoreboard.getObjectiveForSlot(ScoreboardDisplaySlot.SIDEBAR);
         if (scoreboardObjective2 != null) {
             this.renderScoreboardSidebar(context, scoreboardObjective2);
         }
