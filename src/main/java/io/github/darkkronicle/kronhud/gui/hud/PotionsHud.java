@@ -7,9 +7,11 @@ import io.github.darkkronicle.kronhud.config.KronConfig;
 import io.github.darkkronicle.kronhud.config.KronOptionList;
 import io.github.darkkronicle.kronhud.gui.component.DynamicallyPositionable;
 import io.github.darkkronicle.kronhud.gui.entry.TextHudEntry;
+import io.github.darkkronicle.kronhud.gui.hud.simple.TPSHud;
 import io.github.darkkronicle.kronhud.gui.layout.AnchorPoint;
 import io.github.darkkronicle.kronhud.gui.layout.CardinalOrder;
 import io.github.darkkronicle.kronhud.util.Rectangle;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.entity.effect.StatusEffect;
@@ -106,7 +108,7 @@ public class PotionsHud extends TextHudEntry implements DynamicallyPositionable 
         RenderSystem.setShaderColor(1, 1, 1, 1);
         context.drawSprite(x, y, 0, 18, 18, sprite);
         if (!iconsOnly.getValue()) {
-            drawString(context, client.textRenderer, StatusEffectUtil.getDurationText(effect, 1), x + 19, y + 5,
+            drawString(context, client.textRenderer, StatusEffectUtil.getDurationText(effect, 1, 20), x + 19, y + 5,    //TODO: replace 20 with tickRate (don't know how :[)
                     textColor.getValue().color(), shadow.getValue()
             );
         }
