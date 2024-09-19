@@ -1,6 +1,6 @@
 plugins {
-    id "fabric-loom" version "1.2-SNAPSHOT"
-    id "maven-publish"
+    id 'fabric-loom' version '1.5-SNAPSHOT'
+    id 'maven-publish'
     id "io.freefair.lombok" version "8.0.1"
 }
 
@@ -26,7 +26,7 @@ repositories {
         name = 'Ladysnake Mods'
         url = 'https://maven.ladysnake.org/releases'
         content {
-            includeGroup 'io.github.ladysnake'
+            includeGroup 'org.ladysnake'
             includeGroupByRegex 'io\\.github\\.onyxstudios.*'
         }
     }
@@ -44,7 +44,7 @@ dependencies {
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
     // You may need to force-disable transitiveness on them.
     //modImplementation "com.github.DarkKronicle:DarkKore:${project.darkkore_version}" // 1.20.1 version not yet published
-    modCompileOnly files("run/mods/DarkKore-0.3.5-1.20.1.jar")
+    modCompileOnly files("run/mods/DarkKore-0.3.5-1.20.4.jar")
 
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
     

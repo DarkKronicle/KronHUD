@@ -73,7 +73,7 @@ public class HudManager {
     }
 
     public void render(DrawContext context, float delta) {
-        if (!(client.currentScreen instanceof HudEditScreen) && !client.options.debugEnabled) {
+        if (!(client.currentScreen instanceof HudEditScreen) && !client.getDebugHud().shouldShowDebugHud()) {
             for (HudEntry hud : getEntries()) {
                 if (hud.isEnabled()) {
                     hud.render(context, delta);
