@@ -1,3 +1,7 @@
+# Important
+
+I have no real interest in mod development at the moment, so I am archiving this. Feel free to fork, and consider checking some of the community forks/
+
 # KronHUD
 
 A mod to add clean and useful HUD widgets.
