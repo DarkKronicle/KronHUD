@@ -12,7 +12,7 @@ A mod to add clean and useful HUD widgets.
 
 Download this mod on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/kronhud).
 
-Requires [DarkKore](https://www.curseforge.com/minecraft/mc-mods/darkkore) and Minecraft 1.19.
+Requires [DarkKore](https://www.curseforge.com/minecraft/mc-mods/darkkore) and Minecraft 1.20.1.
 
 
 ## Widgets
@@ -37,6 +37,7 @@ Currenty KronHUD has:
 - Player Model
 - Game Clock
 - IRL Clock
+- Elytra helper
 
 All modules can be moved around freely, and have snapable movement so you can get everything in line!
 
