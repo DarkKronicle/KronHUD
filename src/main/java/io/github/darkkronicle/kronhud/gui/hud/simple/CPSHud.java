@@ -54,7 +54,7 @@ public class CPSHud extends SimpleTextHudEntry {
         if (rmb.getValue()) {
             return ClickList.LEFT.clicks() + " | " + ClickList.RIGHT.clicks() + " CPS";
         } else {
-            return ClickList.LEFT.clicks() + " CPS";
+            return ClickList.LEFT.clicks() + " | " + ClickList.RIGHT.clicks() " CPS";
         }
     }
 
